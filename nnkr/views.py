@@ -1,6 +1,4 @@
 from django.views.generic import CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import get_user_model, login, authenticate
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
@@ -22,6 +20,26 @@ class Index(ListView):
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
         return questions
+
+class TagQuestion(ListView):
+    template_name = 'nnkr/tag_question.html'
+    model = Question
+    context_object_name = 'questions'
+
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
+        all_questions = Question.objects.all().filter(tags__in=[tag]).order_by('-created_datetime')
+        paginator = Paginator(all_questions, 6)
+        p = self.request.GET.get('page')
+        questions = paginator.get_page(p)
+        return questions
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
+        context['tag'] = tag
+        return context
+
 
 class Detail(DetailView):
     template_name = 'nnkr/detail.html'
@@ -46,19 +64,6 @@ class CreateComment(CreateView):
         Comment.objects.create(target=question, text=text, commenter=self.request.user, comment_id=comment_id)
         return redirect('nnkr:detail',pk=question_id)
 
-def vote(request, pk):
-    choice = get_object_or_404(Choice, pk=pk)
-    response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
-    # you can set anchor.
-    # response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
-    key = 'voted_{}'.format(choice.question.id)
-    voted = request.COOKIES.get(key,False)
-    if not voted:
-        response.set_cookie(key,True)
-        choice.votes+=1
-        choice.save()
-    return response
-
 def create_tag(request, pk):
     question = get_object_or_404(Question, pk=pk)
     form = TagForm(request.POST or None)
@@ -77,6 +82,20 @@ def delete_tag(request, q_pk, t_pk):
     tag = get_object_or_404(Tag, pk=t_pk)
     question.tags.remove(tag)
     return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+
+def vote(request, pk):
+    choice = get_object_or_404(Choice, pk=pk)
+    response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
+    # you can set anchor.
+    # response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
+    key = 'voted_{}'.format(choice.question.id)
+    voted = request.COOKIES.get(key,False)
+    if not voted:
+        response.set_cookie(key,True)
+        choice.votes+=1
+        choice.save()
+    return response
+
 
 def create_question(request):
     """ use QuestionForm and ChoiceFormset """

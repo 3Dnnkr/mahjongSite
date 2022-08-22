@@ -11,4 +11,5 @@ urlpatterns = [
     path('vote/<int:pk>', views.vote, name="vote"),
     path('create_tag/<int:pk>/', views.create_tag, name='create_tag'),
     path('delete_tag/<int:q_pk>/<int:t_pk>/', views.delete_tag, name='delete_tag'),
+    path('tag_question/<int:pk>/', views.TagQuestion.as_view(), name='tag_question'),
 ]

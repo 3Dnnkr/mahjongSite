@@ -20,7 +20,7 @@
         <!-- タグ -->
         <div class="pt-1">
           {% for tag in question.tags.all %}
-            <a class="tag-box link-dark-nu shadow-sm">
+            <a class="tag-box link-dark-nu shadow-sm" href="{% url 'nnkr:tag_question' tag.id %}">
               {{tag.name}}
             </a>
           {% endfor %}
