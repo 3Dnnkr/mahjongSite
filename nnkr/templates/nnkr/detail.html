@@ -1,0 +1,214 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+
+<div class="py-3">
+  <div class="container">
+    <div class="row">
+
+      <!-- 問題情報 -->
+      <div class="col-md-8">
+        <h5>{{question.title}}</h5>
+        {{question.description | linebreaksbr}}
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="left-aria"></div>
+          <div class="right-aria">
+            <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' question.author.id %}">[{{question.author}}]</a></small>
+            <small class="text-muted">{{question.updated_datetime|date:"y年m月j日H:i:s"}}</small>
+          </div>
+        </div>
+        <!-- タグ -->
+        <div class="pt-1">
+          {% for tag in question.tags.all %}
+            <a class="tag-box link-dark-nu shadow-sm">
+              {{tag.name}}
+            </a>
+          {% endfor %}
+          <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#tagModal">
+            タグ編集
+          </button>
+        </div>
+      </div>
+
+      <!-- タグ編集Modal -->
+      <div class="modal fade" id="tagModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h5 class="modal-title">タグ編集</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+              <div class="pb-3">
+                {% for tag in question.tags.all %}
+                  <div class="tag-box shadow-sm">
+                    <form action="{% url 'nnkr:delete_tag' question.pk tag.pk %}" method="post">{% csrf_token %}
+                      {{tag.name}}
+                      <button type="submit" style="border:none; outline:none; background:transparent; margin:-0.5rem;">
+                        <i class="bi bi-x-circle-fill" style="font-size: 1rem; color: crimson;"></i>
+                      </button>
+                    </form>
+                  </div>
+                {% endfor %}
+              </div>
+
+
+              <div class="tag-form">
+                <form  action="{% url 'nnkr:create_tag' question.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                  <div class="input-group">
+                    <input type="{{tag_form.name.field.widget.input_type}}" 
+                      class="form-control" placeholder="新規タグ" aria-describedby="button-addon2"
+                      {% if tag_form.name.field.required %}required{% endif %}
+                      name="{{tag_form.name.name}}"
+                      id="{{tag_form.name.id_for_label}}">
+                    <button class="btn btn-outline-primary" type="submit" id="button-addon2">登録</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 画像 -->
+      <div class="col-md-8 py-2">
+        <div id="image" class="as-outer">
+          <div class="as-inner">
+            <a data-bs-toggle="modal" data-bs-target="#imgModal" style="cursor:pointer">
+              <img
+                src="{{ question.image.url }}" alt="何切る画像"
+                style="width:100%;height:100%;object-fit:contain">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 画像Modal -->
+      <div class="modal fade" id="imgModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-fluid">
+         <div class="modal-content">
+           <div class="modal-body">
+             <div id="image" class="as-outer">
+               <div class="as-inner">
+                 <img  class="card-img-top"
+                   src="{{ question.image.url }}" alt="何切る画像"
+                   style="width:100%;height:100%;object-fit:contain">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 選択肢と投票フォーム -->
+      <div class="col-md-4 py-2">
+        <table id="vote" class="table table-light table-hover table-striped shadow-sm">
+          <thead>
+            <tr class="text-white">
+              <th scope="col" class="bg-dark text-left">選択肢</th>
+              <th scope="col" class="bg-dark text-center">得票数</th>
+              <th scope="col" class="bg-dark text-center">得票率</th>
+              <th scope="col" class="bg-dark text-center"></th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
+          <tr>
+            <th scope="row">{{choice.choice_text}}</th>
+            <td class="text-center">{{choice.votes}}</td>
+            <td class="text-center">{{choice.get_voterate|floatformat}}%</td>
+            <td>
+              {% with question.id|stringformat:"s" as question_id %}
+              {% cookie "voted_"|add:question_id as voted %}
+                {% if voted %}
+                  投票済
+                {% else %}
+                  <form action="{% url 'nnkr:vote' choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                    <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                  </form>
+                {% endif %}
+              {% endwith %}
+            </td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- コメントボックスとフォーム -->
+      <div class="col-md-12 offset-md-0 py-3">
+        <div class="p-3 shadow" style="background:aliceblue">
+          
+          <div class="comment-box">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
+            <h6>コメントチャットです。質問に関することを書きましょう。</h6>
+            {% for comment in question.comment_set.all %}
+            <hr>
+            <div class="comment-content">
+              {{comment.comment_id}}
+              {% if comment.commenter %}
+                <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                  {{comment.commenter}}
+                </a>
+              {% else %}
+                名無しさん
+              {% endif %}
+              <small>
+              {{comment.posted_at|date:"y年m月j日 H:i"}}
+              </small>
+              <br>
+              {{comment.text | linebreaksbr}}
+            </div>
+            {% endfor %}<hr>
+          </div>
+
+          <div class="comment-form">
+            <form  action="{% url 'nnkr:create_comment' question.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+            <div class="container">
+              <div class="row">
+                <div class="col-md-10 form-group">
+                  <textarea
+                    placeholder="コメント"
+                    type="{{comment_form.text.field.widget.input_type}}"
+                    class="form-control"
+                    {% if comment_form.text.field.required %}required{% endif %}
+                    name="{{comment_form.text.name}}"
+                    id="{{comment_form.text.id_for_label}}"
+                    rows="1"></textarea>
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-primary" style="width:100%;height:auto">送信</button>
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+
+
+{% block extrajs %}
+<script>
+$(function(){
+    $('.submit-only-one').submit(function(){
+        $(this).find(':submit').text('送信');
+        //$('form').each(function(i, elem) {
+        //    $(elem).find(':submit').prop('disabled', 'true');
+        //});
+        $(this).find(':submit').prop('disabled', 'true');
+    });
+});
+</script>
+{% endblock %}

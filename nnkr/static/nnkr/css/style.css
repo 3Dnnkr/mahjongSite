@@ -1,0 +1,57 @@
+.as-outer {
+	position: relative;
+	width: 100%;
+}
+.as-outer:before {
+	content:"";
+	display: block;
+	padding-top: calc(9/16*100%);
+}
+.as-inner {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+    background: black;
+}
+
+.modal-dialog-fluid {
+	max-width: inherit;
+	max-height: 85%;
+	width: 85%;
+	height:85%;
+  }
+
+.tag-box {
+	display:inline-block;
+	padding-left   : 10px;
+	padding-right  : 10px;
+	padding-top    : 5px;
+	padding-bottom : 5px;
+	margin-left    : 5px;
+	margin-right   : 5px;
+	margin-bottom  : 5px;
+	border: 1px solid #333333;
+	border-radius: 10px;
+	background: white;
+}
+
+.link-dark-u {
+	text-decoration: underline;
+	color: black;
+}
+.link-dark-u:hover {
+	text-decoration: none;
+	color: black;
+}
+
+.link-dark-nu {
+	text-decoration: none;
+	color: black;
+}
+.link-dark-nu:hover {
+	text-decoration: underline;
+	color: black;
+}
+

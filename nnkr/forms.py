@@ -1,0 +1,31 @@
+#from xml.etree.ElementTree import Comment
+from django import forms
+from django.contrib.auth import get_user_model
+
+from .models import Choice, Question, Comment, Tag
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['image','title','description']
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ['choice_text']
+
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = ['name']
+
+ChoiceFormset = forms.inlineformset_factory(
+    Question, Choice, fields=['choice_text'],
+    extra=0, min_num=2, max_num=10, can_delete=False,
+)

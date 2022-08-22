@@ -1,0 +1,28 @@
+{% extends "nnkr/base.html" %}
+{% block content %}
+<form action="" method="POST">
+    <!-- ログインエリア -->
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    {{ field.label }}
+                    {{ field }}
+                    {{ field.error }}
+                {% endfor %}
+                <button type="submit" class="btn btn-success btn-lg btn-block" >ログイン</button>
+                <input type="hidden" name="next" value="{{ next }}" />
+                {% csrf_token %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 会員登録エリア -->
+    <div class="card col-md-12">
+        <div class="card-body">
+            <a href="{% url 'user:create' %}" class="btn btn-success btn-lg btn-block" >会員登録</a>
+        </div>
+    </div>
+</form>
+{% endblock %}

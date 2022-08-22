@@ -1,0 +1,107 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+<div>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}      
+    <h2 class="text-center">問題作成</h2>
+    <div>
+
+      <div>
+          <div class="form-group">
+            <label for="{{form.image.id_for_label}}">{{form.image.label}}</label>
+            <input
+              type="{{form.image.field.widget.input_type}}"
+              class="form-control"
+              {% if form.image.field.required %}required{% endif %}
+              name="{{form.image.name}}"
+              id="{{form.image.id_for_label}}">
+          </div>
+          <div class="form-group">
+            <label for="{{form.title.id_for_label}}">{{form.title.label}}</label>
+            <input
+              type="{{form.title.field.widget.input_type}}"
+              class="form-control"
+              {% if form.title.field.required %}required{% endif %}
+              name="{{form.title.name}}"
+              id="{{form.title.id_for_label}}">
+          </div>
+          <div class="form-group">
+            <label for="{{form.description.id_for_label}}">{{form.description.label}}</label>
+            <textarea
+              type="{{form.description.field.widget.input_type}}"
+              class="form-control"
+              {% if form.description.field.required %}required{% endif %}
+              name="{{form.description.name}}"
+              id="{{form.description.id_for_label}}"
+              cols="50" rows="2"></textarea>
+          </div>
+          {% comment %} <div class="form-group">
+            <label for="{{form.answer.id_for_label}}">{{form.answer.label}}</label>
+            <textarea
+              type="{{form.answer.field.widget.input_type}}"
+              class="form-control"
+              {% if form.answer.field.required %}required{% endif %}
+              name="{{form.answer.name}}"
+              id="{{form.answer.id_for_label}}"
+              cols="50" rows="2"></textarea>
+          </div> {% endcomment %}
+      </div>
+      <hr>
+      <div id="choice-area">
+        {% for choice_form in formset %}
+          <div id="choice-form-{{ forloop.counter0 }}">
+            {{ choice_form.as_p }}
+          </div>
+        {% endfor %}
+      </div>
+      {{ formset.management_form }}
+      <button id="add" type="button" class="btn btn-primary">選択肢の追加</button>
+      <button id="remove" type="button" class="btn btn-primary">削除</button><hr>
+
+    </div>
+    <button type="submit" class="btn btn-primary">作成</button>
+  </form>
+</div>
+{% endblock %}
+
+
+{% block extrajs %}
+<!-- 選択肢フォームの基本型 -->
+<script type="text/html" id="choiceCreate-template">
+    <div id="choice-form-__prefix__">
+        <p>
+          <label for="id_choice_set-__prefix__-choice_text">選択肢:</label> 
+          <input type="text" name="choice_set-__prefix__-choice_text" 
+                maxlength="200"id="id_choice_set-__prefix__-choice_text">
+          <input type="hidden" name="choice_set-__prefix__-id" id="id_choice_set-__prefix__-id">
+          <input type="hidden" name="choice_set-__prefix__-question" id="id_choice_set-__prefix__-question">
+        </p> 
+    </div>
+</script>
+
+<!-- 選択肢フォームの複製と削除 -->
+<script>
+$(function(){
+    var totalManageElement = $('input#id_choice_set-TOTAL_FORMS');
+    var currentChoiceCount = parseInt(totalManageElement.val());
+    var maxNumChoice = parseInt($('input#id_choice_set-MAX_NUM_FORMS').val());
+    var minNumChoice = parseInt($('input#id_choice_set-MIN_NUM_FORMS').val());
+    var tmpMarkup = $('#choiceCreate-template').html();
+
+    $('button#add').on('click', function(){
+        if ( currentChoiceCount == maxNumChoice ) { return; }
+        currentChoiceCount += 1;
+        var compiledTmp = tmpMarkup.replace(/__prefix__/g, currentChoiceCount-1);
+        $('div#choice-area').append(compiledTmp);
+        totalManageElement.attr('value', currentChoiceCount);
+    });
+    
+    $('button#remove').on('click', function(){
+        if ( currentChoiceCount == minNumChoice ) { return; }
+        $('#choice-form-' + (currentChoiceCount-1)).remove();   
+        currentChoiceCount -= 1;
+        totalManageElement.attr('value', currentChoiceCount);
+    });
+});
+</script>
+{% endblock %}
