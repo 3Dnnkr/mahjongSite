@@ -64,10 +64,13 @@ class CreateComment(CreateView):
         Comment.objects.create(target=question, text=text, commenter=self.request.user, comment_id=comment_id)
         return redirect('nnkr:detail',pk=question_id)
 
-def create_tag(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-    form = TagForm(request.POST or None)
-    if request.method=='POST' and form.is_valid():
+class CreateTag(CreateView):
+    model = Tag
+    form_class = TagForm
+
+    def form_valid(self, form):
+        question_id = self.kwargs.get('pk')
+        question = get_object_or_404(Question, pk=question_id)
         name = form.cleaned_data.get('name')
         tag = Tag.objects.filter(name=name).first()
         if tag==None:
@@ -75,7 +78,7 @@ def create_tag(request, pk):
         q_tag = question.tags.filter(name=name).first()
         if q_tag==None:
             Tagging.objects.create(question=question, tag=tag, tagging_datetime=timezone.datetime.now())
-    return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+        return redirect('nnkr:detail',pk=question_id)
 
 def delete_tag(request, q_pk, t_pk):
     question = get_object_or_404(Question, pk=q_pk)

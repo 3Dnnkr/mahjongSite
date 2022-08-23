@@ -9,7 +9,8 @@ from django.core.paginator import Paginator
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
 
-class UserIndex(ListView):
+
+class Index(ListView):
     template_name = 'user/user_index.html'
     model = get_user_model()
     context_object_name = 'users'
@@ -47,7 +48,8 @@ class UserCreate(CreateView):
         login(self.request, user)
         return response
 
-class UserUpdate(UpdateView):
+
+class UserDetail(UpdateView):
     template_name = 'user/user_detail.html'
     model = get_user_model()
     context_object_name = 'target_user'
@@ -60,7 +62,7 @@ class UserUpdate(UpdateView):
         """
         return resolve_url('user:detail',pk=self.kwargs['pk'])
 
-class UserQuestionIndex(ListView):
+class UserQuestion(ListView):
     template_name = 'user/user_question.html'
     model = Question
     context_object_name = 'questions'
@@ -80,6 +82,10 @@ class UserQuestionIndex(ListView):
         target_user = get_object_or_404(get_user_model(), pk=user_id)
         context['target_user'] = target_user
         return context
+
+class UserBookmark(ListView):
+    pass
+
 
 class OnlyYouMixin(UserPassesTestMixin):
     """Restrict accessible user"""
