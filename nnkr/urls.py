@@ -12,4 +12,5 @@ urlpatterns = [
     path('create_tag/<int:pk>/', views.CreateTag.as_view(), name='create_tag'),
     path('delete_tag/<int:q_pk>/<int:t_pk>/', views.delete_tag, name='delete_tag'),
     path('tag_question/<int:pk>/', views.TagQuestion.as_view(), name='tag_question'),
+    path('bookmark/<int:q_pk>/', views.create_bookmark, name='bookmark'),
 ]

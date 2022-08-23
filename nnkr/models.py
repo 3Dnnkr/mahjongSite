@@ -35,6 +35,12 @@ class Tagging(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     tagging_datetime = models.DateTimeField()
 
+class Bookmark(models.Model):
+    """ use for order of bookmarks. """
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    bookmark_datetime = models.DateTimeField()
+
 class Comment(models.Model):
     target = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問')
     comment_id = models.IntegerField('コメントID',default=1)

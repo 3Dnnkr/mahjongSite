@@ -70,7 +70,7 @@ class UserQuestion(ListView):
     def get_queryset(self):
         user_id = self.kwargs.get('pk')
         target_user = get_object_or_404(get_user_model(), pk=user_id)
-        all_questions = Question.objects.all().filter(author=target_user).order_by('-updated_datetime')
+        all_questions = Question.objects.all().filter(author=target_user).order_by('-created_datetime')
         paginator = Paginator(all_questions, 6)
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
@@ -84,7 +84,25 @@ class UserQuestion(ListView):
         return context
 
 class UserBookmark(ListView):
-    pass
+    template_name = 'user/user_bookmark.html'
+    model = Question
+    context_object_name = 'questions'
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        all_questions = target_user.bookmarks.all()
+        paginator = Paginator(all_questions, 6)
+        p = self.request.GET.get('page')
+        questions = paginator.get_page(p)
+        return questions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        context['target_user'] = target_user
+        return context
 
 
 class OnlyYouMixin(UserPassesTestMixin):

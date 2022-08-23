@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpResponseRedirect,HttpResponse
 from django.core.paginator import Paginator
 
-from .models import Question, Comment, Choice, Tag, Tagging
+from .models import Question, Comment, Choice, Tag, Tagging, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
 
 
@@ -98,6 +98,15 @@ def vote(request, pk):
         choice.votes+=1
         choice.save()
     return response
+
+def create_bookmark(request, q_pk):
+    question = get_object_or_404(Question, pk=q_pk)
+    user = request.user
+    b_question = user.bookmarks.filter(id=question.id).first()
+    if b_question==None:
+        Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
+    return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+
 
 
 def create_question(request):

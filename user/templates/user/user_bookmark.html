@@ -4,14 +4,14 @@
 <div class="py-1">
   <button type="button" class="btn btn-outline-primary shadow mx-1"
     onclick="location.href='{% url "user:detail" target_user.id %}'">プロフィール</button>
-  <button type="button" class="btn btn-outline-primary shadow mx-1" disabled="true"
-    onclick="location.href='{% url "user:question" target_user.id %}'">出題した問題</button>
   <button type="button" class="btn btn-outline-primary shadow mx-1"
+    onclick="location.href='{% url "user:question" target_user.id %}'">出題した問題</button>
+  <button type="button" class="btn btn-outline-primary shadow mx-1" disabled="true"
     onclick="location.href='{% url "user:bookmark" target_user.id %}'">ブックマーク</button>
 </div>
 
 <div class="pt-3">
-<h3 class="text-center"><b>{{ target_user.username }}さんが出題した問題</b></h3><hr>
+<h3 class="text-center"><b>{{ target_user.username }}さんのブックマーク</b></h3><hr>
 </div>
 
 <div class="album pb-5">
