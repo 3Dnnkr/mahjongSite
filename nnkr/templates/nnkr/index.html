@@ -58,10 +58,12 @@
           <div class="col-md-9">
             <div class="card-body">
               <a  class="link-dark-nu" href="{% url 'nnkr:detail' question.id %}">
-                <h5 class="card-title">{{question.title}}</h5>
+                <h5 class="card-title" style="display:inline;">{{question.title}}</h5>
               </a>
+              <br>
               {{question.description | truncatechars:40}}
-              <br><br>
+              <br>
+              <br>
 
               <div class="d-flex justify-content-between align-items-center">
                 <div class="left-aria">

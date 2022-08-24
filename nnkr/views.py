@@ -80,8 +80,8 @@ class CreateTag(CreateView):
             Tagging.objects.create(question=question, tag=tag, tagging_datetime=timezone.datetime.now())
         return redirect('nnkr:detail',pk=question_id)
 
-def delete_tag(request, q_pk, t_pk):
-    question = get_object_or_404(Question, pk=q_pk)
+def delete_tag(request, pk, t_pk):
+    question = get_object_or_404(Question, pk=pk)
     tag = get_object_or_404(Tag, pk=t_pk)
     question.tags.remove(tag)
     return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
@@ -99,14 +99,22 @@ def vote(request, pk):
         choice.save()
     return response
 
-def create_bookmark(request, q_pk):
-    question = get_object_or_404(Question, pk=q_pk)
+def create_bookmark(request, pk):
+    question = get_object_or_404(Question, pk=pk)
     user = request.user
+    if user.is_anonymous:
+        return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
     b_question = user.bookmarks.filter(id=question.id).first()
     if b_question==None:
         Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
-    return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+    return redirect(request.META['HTTP_REFERER'])
 
+def delete_bookmark(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.user.is_anonymous:
+        return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+    request.user.bookmarks.remove(question)
+    return redirect(request.META['HTTP_REFERER'])
 
 
 def create_question(request):

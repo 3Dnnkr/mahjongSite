@@ -85,6 +85,18 @@
      crossorigin="anonymous"></script>
 
     
+    <!-- tooptip用 -->
+    <script>
+    (function() {
+      window.addEventListener("load", function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+          return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+      });
+    })();
+    </script>
+    
     <!-- JS追加部分 -->
     {% block extrajs %}{% endblock %}
 </body>
