@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'nnkr',
     'user',
+    'social_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -64,6 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends', 
+                'social_django.context_processors.login_redirect',
             ],
             'builtins':[
                 'nnkr.templatetags.extra_tags'
@@ -136,3 +139,11 @@ LOGOUT_REDIRECT_URL = 'nnkr:index'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media_local"
+
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+SOCIAL_AUTH_TWITTER_KEY = 'hMUiJj7gVv2jOC2kajGCd9uv0'
+SOCIAL_AUTH_TWITTER_SECRET = 'nIMaIJyOQQbIG2qtcE9TL6bUXIqrq53AVF4BBJC6MX5wFcwzB4'
