@@ -5,7 +5,6 @@ asgiref==3.5.2
 dj-database-url==1.0.0
 django==4.1
 django-heroku==0.3.1
-git==2.34.1
 gunicorn==20.1.0
 pillow==9.2.0
 pip==22.1.2
