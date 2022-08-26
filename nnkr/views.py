@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 
 from .models import Question, Comment, Choice, Tag, Tagging, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
-
+import os
 
 class Index(ListView):
     template_name = 'nnkr/index.html'
@@ -50,6 +50,7 @@ class Detail(DetailView):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm
         context['tag_form'] = TagForm
+        context['secret_key'] = os.environ.get('SECRET_KEY',"no_key")
         return context
 
 class CreateComment(CreateView):

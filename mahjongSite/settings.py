@@ -148,17 +148,19 @@ MEDIA_ROOT = BASE_DIR / "media_local"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# User Authorization setting
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'user:login'
 LOGIN_REDIRECT_URL = 'nnkr:index'
 LOGOUT_REDIRECT_URL = 'nnkr:index'
 
 
+# Twitter Authorization setting
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.twitter.TwitterOAuth',
     'django.contrib.auth.backends.ModelBackend',
 ]
-
 SOCIAL_AUTH_TWITTER_KEY = 'hMUiJj7gVv2jOC2kajGCd9uv0'
 SOCIAL_AUTH_TWITTER_SECRET = 'nIMaIJyOQQbIG2qtcE9TL6bUXIqrq53AVF4BBJC6MX5wFcwzB4'
 
@@ -180,9 +182,3 @@ except ImportError:
 if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
-
-# if not DEBUG:
-#     SECRET_KEY = 'ao$9s-ff3e$e@5*@un%l$%&s=cvck2yfxs564p!2)@pdqy2)-7'
-
-# import django_heroku
-# django_heroku.settings(locals())
