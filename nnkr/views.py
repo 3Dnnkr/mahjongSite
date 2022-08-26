@@ -51,6 +51,7 @@ class Detail(DetailView):
         context['comment_form'] = CommentForm
         context['tag_form'] = TagForm
         context['secret_key'] = os.environ.get('SECRET_KEY',"no_key")
+        context['time'] = os.environ.get('TIME',0) 
         return context
 
 class CreateComment(CreateView):
