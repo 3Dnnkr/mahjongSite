@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["secure-ravine-28540.herokuapp.com"]
 
 
 # Application definition
@@ -163,20 +163,26 @@ SOCIAL_AUTH_TWITTER_KEY = 'hMUiJj7gVv2jOC2kajGCd9uv0'
 SOCIAL_AUTH_TWITTER_SECRET = 'nIMaIJyOQQbIG2qtcE9TL6bUXIqrq53AVF4BBJC6MX5wFcwzB4'
 
 
-#Heroku database
+# Heroku database setting
 import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 db_from_env = dj_database_url.config(conn_max_age=600,ssl_require=True)
 DATABASES['default'].update(db_from_env)
 
+
+# provide separation between Heroku and Local
 try:
     from .local_settings import *
 except ImportError:
     pass
 
 if not DEBUG:
-    SECRET_KEY = 'ao$9s-ff3e$e@5*@un%l$%&s=cvck2yfxs564p!2)@pdqy2)-7'
+    import django_heroku
+    django_heroku.settings(locals())
 
-import django_heroku
-django_heroku.settings(locals())
+# if not DEBUG:
+#     SECRET_KEY = 'ao$9s-ff3e$e@5*@un%l$%&s=cvck2yfxs564p!2)@pdqy2)-7'
+
+# import django_heroku
+# django_heroku.settings(locals())
