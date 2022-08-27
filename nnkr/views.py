@@ -1,5 +1,6 @@
 from django.views.generic import CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
 from django.contrib.auth import get_user_model, login, authenticate
+from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpResponseRedirect,HttpResponse
@@ -118,7 +119,7 @@ def delete_bookmark(request, pk):
     request.user.bookmarks.remove(question)
     return redirect(request.META['HTTP_REFERER'])
 
-
+@login_required
 def create_question(request):
     """ use QuestionForm and ChoiceFormset """
     form = QuestionForm(request.POST or None, files=request.FILES)

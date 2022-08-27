@@ -1,39 +1,57 @@
 {% extends "nnkr/base.html" %}
 {% block content %}
 
-<button type="button" class="button"
-    onclick="location.href='{% url 'social:begin' 'twitter' %}?next={{ next }}'">
-    Twitter でログイン
-</button>
+<div class="pt-3">
+  <h3 class="text-center"><b>ログイン画面</b></h3><hr>
+</div>
 
-<button type="button" 
-    onclick="location.href='{% url 'social:begin' 'twitter' %}'">
-    Twitterログイン
-</button>
+<form action="" method="POST">{% csrf_token %}
 
-<form action="" method="POST">
-    <!-- ログインエリア -->
-    <div class="col-md-12">
-        <div class="card">
+    <!-- ログイン -->
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
             <div class="card-body">
                 {{ form.non_field_errors }}
-                {% for field in form %}
-                    {{ field.label }}
-                    {{ field }}
-                    {{ field.error }}
-                {% endfor %}
-                <button type="submit" class="btn btn-success btn-lg btn-block" >ログイン</button>
-                <input type="hidden" name="next" value="{{ next }}" />
-                {% csrf_token %}
+                {{ form.username.label }}
+                {{ form.username }}
+                {{ form.username.error }}
+
+                <div class="row">
+                  <div class="col-md-10">
+                    {{ form.password.label }}
+                    {{ form.password }}
+                    {{ form.password.error }}
+                  </div>
+
+                  <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm mt-3" style="width:100%;height:auto">
+                      ログイン
+                    </button>
+                    <!-- ログインが必要なページから飛ばされたとき一時保存 -->
+                    <input type="hidden" name="next" value="{{ next }}" />
+                  </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 会員登録エリア -->
-    <div class="card col-md-12">
+    <!-- Twitterログイン -->
+    <div class="card col-md-6 offset-md-3 mt-3">
+      <div class="card">
         <div class="card-body">
-            <a href="{% url 'user:create' %}" class="btn btn-success btn-lg btn-block" >会員登録</a>
+          <button type="button" class="button btn btn-light text-white shadow-sm" style="background:#2bc4ff"
+            onclick="location.href='{% url 'social:begin' 'twitter' %}?next={{ next }}'">
+            <i class="bi bi-twitter"></i>
+            Twitterでログイン
+          </button>
         </div>
+      </div>
+    </div>
+
+    <!-- 新規会員登録 -->
+    <div class="card col-md-8 offset-md-2 my-3">
+        <a href="{% url 'user:create' %}" class="btn btn-success btn-lg shadow" style="width:100%;height:auto">新規会員登録</a>
     </div>
 </form>
+
 {% endblock %}
