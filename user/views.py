@@ -104,6 +104,29 @@ class UserBookmark(ListView):
         context['target_user'] = target_user
         return context
 
+class UserHistory(ListView):
+    template_name = 'user/user_history.html'
+    model = Question
+    context_object_name = 'questions'
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+
+        custom_list = [q.id for q in Question.objects.all() if target_user in q.voters.all()]
+        all_questions = Question.objects.filter(id__in=custom_list)
+
+        paginator = Paginator(all_questions, 6)
+        p = self.request.GET.get('page')
+        questions = paginator.get_page(p)
+        return questions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        context['target_user'] = target_user
+        return context
 
 class OnlyYouMixin(UserPassesTestMixin):
     """Restrict accessible user"""

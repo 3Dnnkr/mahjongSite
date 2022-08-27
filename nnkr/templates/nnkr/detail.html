@@ -157,20 +157,39 @@
           <tbody>
           {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
           <tr>
-            <th scope="row">{{choice.choice_text}}</th>
-            <td class="text-center">{{choice.votes}}</td>
-            <td class="text-center">{{choice.get_voterate|floatformat}}%</td>
+            <th scope="row">{{choice.text}}</th>
+            <td class="text-center">{{ choice.votes }}</td>
+            <td class="text-center">{{choice.voterate|floatformat}}%</td>
             <td>
-              {% with question.id|stringformat:"s" as question_id %}
-              {% cookie "voted_"|add:question_id as voted %}
-                {% if voted %}
-                  投票済
+              <!-- ログイン時 -->
+              {% if user.is_authenticated %}
+                {% if user in question.voters.all %}
+                  {% if user in choice.voters.all %}
+                    投票済
+                  {% endif %}
                 {% else %}
                   <form action="{% url 'nnkr:vote' choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
                     <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
                   </form>
                 {% endif %}
-              {% endwith %}
+              <!-- 非ログイン時 -->
+              {% else %}
+                {% with question.id|stringformat:"s" as question_id %}
+                {% cookie "voted_"|add:question_id as voted %}
+                  {% if voted %}
+                    {% with choice.id|stringformat:"s" as choice_id %}
+                    {% cookie "voted_choice_"|add:choice_id as voted_choice %}
+                      {% if voted_choice %}
+                        投票済
+                      {% endif %}
+                    {% endwith %}
+                  {% else %}
+                    <form action="{% url 'nnkr:secret_vote' choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                    </form>
+                  {% endif %}
+                {% endwith %}
+              {% endif %}
             </td>
           </tr>
           {% endfor %}

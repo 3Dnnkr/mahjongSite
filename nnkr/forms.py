@@ -18,7 +18,7 @@ class CommentForm(forms.ModelForm):
 class ChoiceForm(forms.ModelForm):
     class Meta:
         model = Choice
-        fields = ['choice_text']
+        fields = ['text']
 
 class TagForm(forms.ModelForm):
     class Meta:
@@ -26,6 +26,6 @@ class TagForm(forms.ModelForm):
         fields = ['name']
 
 ChoiceFormset = forms.inlineformset_factory(
-    Question, Choice, fields=['choice_text'],
+    Question, Choice, fields=['text'],
     extra=0, min_num=2, max_num=10, can_delete=False,
 )

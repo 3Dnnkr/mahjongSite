@@ -1,10 +1,10 @@
 {% extends 'nnkr/base.html' %}
 {% block content %}
 
-{% include "user/user_subheader.html" with bookmark="True" %}
+{% include "user/user_subheader.html" with history="True" %}
 
 <div class="pt-3">
-  <h3 class="text-center"><b>{{ target_user.username }}さんのブックマーク</b></h3><hr>
+  <h3 class="text-center"><b>{{ user.username }}さんの投票履歴</b></h3><hr>
 </div>
 
 <div class="album pb-5">
@@ -52,37 +52,17 @@
           <!-- その他 -->
           <div class="col-md-9">
             <div class="card-body">
-
-              <!-- ブックマーク解除 -->
-              <div class="position-relative">
-                <div class="position-absolute end-0">
-
-                  <div style="display:inline-flex">
-                    <form action="{% url 'nnkr:delete_bookmark' question.id %}" method="post">{% csrf_token %}
-                      <button type="submit" class="btn btn-outline-danger shadow mx-1"
-                        data-bs-toggle="tooltip" data-bs-placement="top" data-bs-delay="200" title="ブックマーク解除">
-                        <div style="margin:-0.5rem">
-                          <i class="bi bi-bookmark-dash" style="font-size: 1.8rem; "></i>
-                        </div>
-                      </button>
-                    </form>
-                  </div>
-
-                </div>
-              </div>
-
               <a  class="link-dark-nu" href="{% url 'nnkr:detail' question.id %}">
-                <h5 class="card-title" style="display:inline;">{{question.title}}</h5>
+                <h5 class="card-title">{{question.title}}</h5>
               </a>
-              <br>
               {{question.description | truncatechars:40}}
               <br>
               <br>
 
               <div class="d-flex justify-content-between align-items-center">
                 <div class="left-aria">
-                  <small>投票:</small>{{question.get_sum_of_votes}}
-                  <small>コメ:</small>{{question.get_num_of_comments}}
+                  <small>投票:</small>{{question.votes}}
+                  <small>コメ:</small>{{question.comments_num}}
                 </div>
                 <div class="right-aria">
                   <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' question.author.id %}">[{{question.author}}]</a></small>
