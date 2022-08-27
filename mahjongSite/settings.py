@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["fathomless-stream-64710.herokuapp.com"]
+ALLOWED_HOSTS = ["still-ravine-13029.herokuapp.com"]
 
 
 # Application definition
