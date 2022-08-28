@@ -10,6 +10,7 @@ class Question(models.Model):
     title = models.CharField('タイトル',max_length=100)
     description = models.TextField('説明文',blank=True)
     tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ')
+    bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
 
     def __str__(self):
         return self.title
@@ -44,8 +45,8 @@ class Tagging(models.Model):
 
 class Bookmark(models.Model):
     """ use for order of bookmarks. """
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     bookmark_datetime = models.DateTimeField()
 
 class Comment(models.Model):

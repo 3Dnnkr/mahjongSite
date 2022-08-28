@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Question, Choice, Comment, Tag, Tagging, Bookmark, Voting
+from .models import Question, Choice, Comment, Tag, Tagging, Voting
 
 
 class ChoiceInline(admin.TabularInline):
@@ -44,9 +44,9 @@ class TaggingAdmin(admin.ModelAdmin):
     list_display = ('id','question','tag',)
     list_display_links = ('id',)
 
-class BookmarkAdmin(admin.ModelAdmin):
-    list_display = ('id','user','question')
-    list_display_links = ('id',)
+# class BookmarkAdmin(admin.ModelAdmin):
+#     list_display = ('id','user','question')
+#     list_display_links = ('id',)
 
 class VotingAdmin(admin.ModelAdmin):
     list_display = ('id','choice','voter',)

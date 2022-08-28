@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpResponseRedirect,HttpResponse
 from django.core.paginator import Paginator
 
-from .models import Question, Comment, Choice, Tag, Tagging, Bookmark, Voting
+from .models import Question, Comment, Choice, Tag, Tagging, Voting, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
 import os
 
