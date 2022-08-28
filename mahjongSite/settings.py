@@ -163,9 +163,7 @@ AUTHENTICATION_BACKENDS = [
     'social_core.backends.twitter.TwitterOAuth',
     'django.contrib.auth.backends.ModelBackend',
 ]
-SOCIAL_AUTH_TWITTER_KEY = 'hMUiJj7gVv2jOC2kajGCd9uv0'
-SOCIAL_AUTH_TWITTER_SECRET = 'nIMaIJyOQQbIG2qtcE9TL6bUXIqrq53AVF4BBJC6MX5wFcwzB4'
-
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/nnkr/'
 
 # Heroku database setting
 import dj_database_url
