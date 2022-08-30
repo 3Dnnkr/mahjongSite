@@ -9,15 +9,11 @@ class Question(models.Model):
     updated_datetime = models.DateTimeField('最終更新日',auto_now=True)
     title = models.CharField('タイトル',max_length=100)
     description = models.TextField('説明文',blank=True)
-    tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ')
+    tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ',related_name='questions')
     bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
 
     def __str__(self):
         return self.title
-
-    @property
-    def comments_num(self):
-        return self.comment_set.all().count()
 
     @property
     def votes(self):
@@ -50,7 +46,7 @@ class Bookmark(models.Model):
     bookmark_datetime = models.DateTimeField()
 
 class Comment(models.Model):
-    target = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問')
+    target = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問', related_name='comments')
     comment_id = models.IntegerField('コメントID',default=1)
     commenter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, verbose_name='発言者')
     posted_at = models.DateTimeField('発言日',auto_now_add=True)

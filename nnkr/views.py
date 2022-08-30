@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpResponseRedirect,HttpResponse
 from django.core.paginator import Paginator
+from django.db.models import Count
 
 from .models import Question, Comment, Choice, Tag, Tagging, Voting, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
@@ -21,6 +22,11 @@ class Index(ListView):
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
         return questions
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:20]
+        return context
 
 class Detail(DetailView):
     template_name = 'nnkr/detail.html'
@@ -31,8 +37,6 @@ class Detail(DetailView):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm
         context['tag_form'] = TagForm
-        context['secret_key'] = os.environ.get('SECRET_KEY',"no_key")
-        context['time'] = os.environ.get('TIME',0) 
         return context
 
 @login_required
@@ -90,7 +94,7 @@ class CreateComment(CreateView):
         question_id = self.kwargs.get('pk')
         question = get_object_or_404(Question, pk=question_id)
         text = form.cleaned_data.get('text')
-        comment_id = question.comment_set.count() + 1
+        comment_id = question.comments.count() + 1
         if self.request.user.is_authenticated:
             Comment.objects.create(target=question, text=text, commenter=self.request.user, comment_id=comment_id)
         else:

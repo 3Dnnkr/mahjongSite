@@ -1,10 +1,15 @@
 from django.views.generic import TemplateView,CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth import get_user_model, login, authenticate
+from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model, login, authenticate, update_session_auth_hash
+from django.contrib import messages
 from django.urls import reverse_lazy
-from django.shortcuts import resolve_url, get_object_or_404
+from django.shortcuts import resolve_url, get_object_or_404, render, redirect
 from django.core.paginator import Paginator
+
+from social_django.models import UserSocialAuth
 
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
@@ -49,6 +54,26 @@ class UserCreate(CreateView):
         return response
 
 
+@login_required
+def password(request):
+    if request.user.has_usable_password():
+        PasswordForm = PasswordChangeForm
+    else:
+        PasswordForm = AdminPasswordChangeForm
+
+    if request.method == 'POST':
+        form = PasswordForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, 'Your password was successfully updated!')
+            return redirect('password')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordForm(request.user)
+    return render(request, 'user/password.html', {'form': form})
+
 class UserDetail(UpdateView):
     template_name = 'user/user_detail.html'
     model = get_user_model()
@@ -61,6 +86,23 @@ class UserDetail(UpdateView):
         Called by FormMixin.form_valid()
         """
         return resolve_url('user:detail',pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        context['target_user'] = target_user
+
+        try:
+            twitter_login = target_user.social_auth.get(provider='twitter')
+        except UserSocialAuth.DoesNotExist:
+            twitter_login = None
+        context['twitter_login'] = twitter_login
+        
+        can_disconnect = (target_user.social_auth.count() > 1 or target_user.has_usable_password())
+        context['can_disconnect'] = can_disconnect
+
+        return context
 
 class UserQuestion(ListView):
     template_name = 'user/user_question.html'

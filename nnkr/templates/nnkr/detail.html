@@ -1,8 +1,6 @@
 {% extends 'nnkr/base.html' %}
 {% block content %}
 
-テスト： {{ secret_key }}<br>
-テスト:  {{ time }}
 <div class="py-3">
   <div class="container">
     <div class="row">
@@ -90,15 +88,17 @@
       <!-- 画像Modal -->
       <div class="modal fade" id="imgModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-fluid">
-         <div class="modal-content">
-           <div class="modal-body">
-             <div id="image" class="as-outer">
-               <div class="as-inner">
-                 <img  class="card-img-top"
-                   src="{{ question.image.url }}" alt="何切る画像"
-                   style="width:100%;height:100%;object-fit:contain">
+          <div class="modal-content">
+            <div class="modal-body">
+              <a data-bs-dismiss="modal">
+                <div id="image" class="as-outer">
+                  <div class="as-inner">
+                   <img  class="card-img-top"
+                     src="{{ question.image.url }}" alt="何切る画像"
+                     style="width:100%;height:100%;object-fit:contain">
+                  </div>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>
@@ -202,10 +202,10 @@
       <div class="col-md-12 offset-md-0 py-3">
         <div class="p-3 shadow" style="background:aliceblue">
           
-          <div class="comment-box">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
+          <div class="comment-box" style="height:400px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
             <b>コメントチャットです。質問に関することを書きましょう。</b>
-            {% for comment in question.comment_set.all %}
-            <hr>
+            <hr style="margin:8px">
+            {% for comment in question.comments.all %}
             <div class="comment-content">
               {{comment.comment_id}}
               {% if comment.commenter %}
@@ -221,10 +221,11 @@
               <br>
               {{comment.text | linebreaksbr}}
             </div>
-            {% endfor %}<hr>
+            <hr style="margin-bottom:8px">
+            {% endfor %}
           </div>
 
-          <div class="comment-form">
+          <div class="comment-form mt-1">
             <form  action="{% url 'nnkr:create_comment' question.pk %}" method="post" class="submit-only-one">{% csrf_token %}
             <div class="container">
               <div class="row">
