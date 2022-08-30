@@ -15,4 +15,5 @@ urlpatterns = [
     path('question/<int:pk>/delete_tag/<int:t_pk>/', views.delete_tag, name='delete_tag'),
     path('question/<int:pk>/create_bookmark/', views.create_bookmark, name='create_bookmark'),
     path('question/<int:pk>/delete_bookmark/', views.delete_bookmark, name='delete_bookmark'),
+    path('question/<int:pk>/create_comment_liek/<int:c_pk>/', views.create_comment_like, name='create_comment_like'),
 ]

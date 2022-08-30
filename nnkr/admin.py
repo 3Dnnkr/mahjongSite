@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
-from .models import Question, Choice, Comment, Tag, Tagging, Bookmark, Voting
+from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookmark, Voting
 
 
 class ChoiceInline(admin.TabularInline):
@@ -44,6 +45,17 @@ class ChoiceAdmin(admin.ModelAdmin):
     inlines=(VotingInline,)
 
 
+class CommentLikeInline(admin.TabularInline):
+    model = CommentLike
+    extra = 0
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'question', 'comment_id', 'commenter', 'posted_at',)
+    list_display_links = ('id', 'question',)
+    filter_horizontal = ('likers',)
+    inlines = (CommentLikeInline,)
+
+
 class TaggingAdmin(admin.ModelAdmin):
     list_display = ('id','question','tag',)
     list_display_links = ('id',)
@@ -59,3 +71,4 @@ class VotingAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Choice, ChoiceAdmin)
+admin.site.register(Comment, CommentAdmin)

@@ -218,6 +218,22 @@
               <small>
               {{comment.posted_at|date:"y年m月j日 H:i"}}
               </small>
+
+              <!-- イイねボタン -->
+              <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                <button type="submit" class="btn-icon">
+                  <div style="margin:-0.5rem">
+                    <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                  </div>
+                </button>
+              </form>
+
+              {% with comment.likers.all|length as likers_num %}
+                {% if likers_num > 0 %}
+                  +{{likers_num}}
+                {% endif %}
+              {% endwith %}
+
               <br>
               {{comment.text | linebreaksbr}}
             </div>

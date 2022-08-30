@@ -96,3 +96,12 @@
 	background: #2bc4ff;
 	color: white;
 }
+
+.btn-icon{
+	background:transparent;
+	border:transparent;
+	filter: brightness(100%);
+}
+.btn-icon:hover {
+	filter: brightness(150%);
+}

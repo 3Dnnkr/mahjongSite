@@ -7,7 +7,7 @@ from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpR
 from django.core.paginator import Paginator
 from django.db.models import Count
 
-from .models import Question, Comment, Choice, Tag, Tagging, Voting, Bookmark
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
 import os
 
@@ -59,31 +59,6 @@ def create_question(request):
         context['formset']=ChoiceFormset()
     return render(request, 'nnkr/create_question.html', context)
 
-class CreateQuestion(FormView):
-    template_name = 'nnkr/create_question.html'
-    model = Question
-    form_class = QuestionForm
-    success_url = reverse_lazy('nnkr:index')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['formset']=ChoiceFormset()
-        return context
-
-    def form_valid(self, form):
-        """ When Form is valid, create question. """
-        response = super().form_valid(form)
-        question = form.save(commit=False)
-        formset = ChoiceFormset(self.request.POST, instance=question)
-        if formset.is_valid():
-            question.author = self.request.user
-            question.save()
-            formset.save()
-        # title = form.cleaned_data.get('title')
-        # image = form.cleaned_data.get('image')
-        # description = form.cleaned_data.get('description')
-        # Question.objects.create(title=title, image=image, description=description, author=self.request.user)
-        return response
 
 # ==== Comment ====
 class CreateComment(CreateView):
@@ -96,10 +71,21 @@ class CreateComment(CreateView):
         text = form.cleaned_data.get('text')
         comment_id = question.comments.count() + 1
         if self.request.user.is_authenticated:
-            Comment.objects.create(target=question, text=text, commenter=self.request.user, comment_id=comment_id)
+            Comment.objects.create(question=question, text=text, commenter=self.request.user, comment_id=comment_id)
         else:
-            Comment.objects.create(target=question, text=text, comment_id=comment_id)
+            Comment.objects.create(question=question, text=text, comment_id=comment_id)
         return redirect(self.request.META['HTTP_REFERER'])
+
+def create_comment_like(request, pk, c_pk):
+    comment = get_object_or_404(Comment, pk=c_pk)
+    user = request.user
+    if user.is_anonymous:
+        return redirect(request.META['HTTP_REFERER'])
+     # check if commnet.likers contain user.
+    _liker = comment.likers.filter(pk=user.pk).first()
+    if _liker==None and user!=comment.commenter:
+        CommentLike.objects.create(liker=user, comment=comment)
+    return redirect(request.META['HTTP_REFERER'])
 
 # ==== Tag ====
 class TagQuestion(ListView):
@@ -143,6 +129,7 @@ def delete_tag(request, pk, t_pk):
     question.tags.remove(tag)
     return redirect(request.META['HTTP_REFERER'])
 
+
 # ==== Vote ====
 @login_required
 def vote(request, pk):
@@ -164,12 +151,13 @@ def secret_vote(request, pk):
         choice.save()
     return response
 
+
 # ==== Bookmark ====
 def create_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     user = request.user
     if user.is_anonymous:
-        return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+        redirect(request.META['HTTP_REFERER'])
     b_question = user.bookmarks.filter(id=question.id).first()
     if b_question==None:
         Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
@@ -178,7 +166,7 @@ def create_bookmark(request, pk):
 def delete_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     if request.user.is_anonymous:
-        return redirect(reverse('nnkr:detail',kwargs={'pk':question.id}))
+        redirect(request.META['HTTP_REFERER'])
     request.user.bookmarks.remove(question)
     return redirect(request.META['HTTP_REFERER'])
 

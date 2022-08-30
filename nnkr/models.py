@@ -46,11 +46,17 @@ class Bookmark(models.Model):
     bookmark_datetime = models.DateTimeField()
 
 class Comment(models.Model):
-    target = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問', related_name='comments')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問', related_name='comments')
     comment_id = models.IntegerField('コメントID',default=1)
-    commenter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, verbose_name='発言者')
+    commenter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, related_name='comments', verbose_name='発言者')
     posted_at = models.DateTimeField('発言日',auto_now_add=True)
     text = models.TextField('本文')
+    likers = models.ManyToManyField(get_user_model(),through='CommentLike',blank=True,related_name='like_comments',verbose_name='いいねした人')
+
+class CommentLike(models.Model):
+    """ use for order of likers. """
+    liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
 
 class Choice(models.Model):
     question = models.ForeignKey(Question,on_delete=models.CASCADE)
@@ -69,8 +75,6 @@ class Choice(models.Model):
     def voterate(self):
         sum_votes = sum([c.votes for c in Choice.objects.filter(question=self.question)])
         return 0 if sum_votes==0 else 100*self.votes/sum_votes
-
-
 
 class Voting(models.Model):
     """ use for order of voters. """

@@ -9,7 +9,7 @@
   <div class="container">
     <div class="row">
       <!-- 問題一覧 -->
-      <div class="col-lg-8 col-md-10 col-sm-12"> 
+      <div class="col-lg-9 col-md-12"> 
         <div class="bg-white"> 
           {% for question in questions %}
 
@@ -37,7 +37,7 @@
               <div class="row">
                 
                 <!-- 画像 -->
-                <div class="col-4 my-auto">
+                <div class="col-12 col-sm-5 col-md-4 my-auto">
                   <div class="as-outer">
                     <div class="as-inner">
                       <a data-bs-toggle="modal" data-bs-target='{{"#imgModal-"|addstr:forloop.counter}}' style="cursor:pointer">
@@ -50,13 +50,13 @@
                 </div>
 
                 <!-- その他 -->
-                <div class="col-8">
+                <div class="col-12 col-sm-7 col-md-8">
                   <div class="card-body">
                     <a  class="link-dark-nu" href="{% url 'nnkr:detail' question.id %}">
                       <h5 class="card-title" style="display:inline;">{{question.title}}</h5>
                     </a>
                     <br>
-                    <div class="d-none d-lg-block">
+                    <div class="d-none d-xl-block">
                       {{question.description | truncatechars:65}}
                     </div>
 
@@ -90,7 +90,7 @@
       </div>
 
       <!-- 人気タグ -->
-      <div class="col-lg-4 col-md-12 d-lg-block">
+      <div class="col-md-12 col-lg-3 d-lg-block">
         <div class="border border-2 bg-gray mb-2 p-1">
           <div class="text-center">
             <h5 style="display:inline-block;">人気タグ</h5>
