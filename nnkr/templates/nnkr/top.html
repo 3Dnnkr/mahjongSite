@@ -1,0 +1,56 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+<div class="pt-3">
+  <h3 class="text-center">『雀魂何切る』へようこそ！</h3><hr>
+</div>
+
+<div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
+  <h4><i class="bi bi-info-circle"></i> 説明</h4>
+  <ul>
+    <li>当サイトは、雀魂段位戦を想定した立体何切るサイトです。プレイ中の画像をアップロードし、投票・意見交換をすることができます。</li>
+    <li>基本は段位戦を想定していますが、場合によってはその限りではありません。問題に回答する前に出題者の説明をきちんと読みましょう。</li>
+    <li>投票・コメントにユーザー登録は不要です。問題投稿する際は右上のナビバーからユーザー登録をお願いします。</li>
+    <li>スクリーンショットの撮り方は<a>こちら</a>で解説しています。</li>
+  </ul>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+
+
+<div>
+  <div class="container">
+    <div class="row">
+      <!-- 問題一覧 -->
+      <div class="col-lg-9 col-md-12"> 
+        <div> 
+            <div class="card-body">
+              <h5>注目されている問題</h5>
+              <hr>
+              {% include "nnkr/question_cards.html" with questions=questions %}
+            </div>
+        </div>
+      </div>
+
+      <!-- 人気タグ -->
+      <div class="col-12 col-lg-3 d-lg-block">
+        <div class="border border-2 bg-gray mb-2 p-1">
+          <div class="text-center">
+            <h5 style="display:inline-block;">人気タグ</h5>
+            <small><a>(タグ一覧)</a></small>
+          </div>
+          {% for tag in tags %}
+            <a class="tag-box link-dark-nu shadow-sm" href="{% url 'nnkr:tag_question' tag.id %}">
+              <i class="bi bi-tag" style="font-size: 1rem;"></i>
+              {{tag.name}}({{tag.questions.all|length}})
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+
+</div>
+{% endblock %}

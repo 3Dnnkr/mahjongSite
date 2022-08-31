@@ -11,6 +11,8 @@ from django.core.paginator import Paginator
 
 from social_django.models import UserSocialAuth
 
+import os
+import tweepy
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
 
@@ -89,12 +91,15 @@ class UserDetail(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_id = self.kwargs.get('pk')
-        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        target_user = get_object_or_404(get_user_model(), pk=self.kwargs.get('pk'))
         context['target_user'] = target_user
+        context['comments_likers_num'] = sum([c.likers.all().count() for c in target_user.comments.all()])
 
+        # Twitter context
         try:
             twitter_login = target_user.social_auth.get(provider='twitter')
+            user_id = twitter_login.extra_data['access_token']['user_id']
+            context['profile_image_url'] = get_profile_image_url(user_id)
         except UserSocialAuth.DoesNotExist:
             twitter_login = None
         context['twitter_login'] = twitter_login
@@ -177,3 +182,16 @@ class OnlyYouMixin(UserPassesTestMixin):
     def test_func(self):
         user = self.request.user
         return user.pk == self.kwargs['pk'] or user.is_superuser
+
+def get_profile_image_url(user_id):
+    CONSUMER_KEY = os.environ.get('SOCIAL_AUTH_TWITTER_KEY')
+    CONSUMER_SECRET = os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
+    ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN')
+    ACCESS_SECRET = os.environ.get('TWITTER_ACCESS_SECRET')
+
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+    api = tweepy.API(auth)
+
+    user = api.get_user(user_id=user_id)
+    return user.profile_image_url_https

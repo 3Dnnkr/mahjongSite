@@ -155,8 +155,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # User Authorization setting
 AUTH_USER_MODEL = 'user.User'
 LOGIN_URL = 'user:login'
-LOGIN_REDIRECT_URL = 'nnkr:index'
-LOGOUT_REDIRECT_URL = 'nnkr:index'
+LOGIN_REDIRECT_URL = 'nnkr:top'
+LOGOUT_REDIRECT_URL = 'nnkr:top'
 
 
 # Twitter Authorization setting
@@ -166,7 +166,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 SOCIAL_AUTH_TWITTER_KEY = os.environ.get('SOCIAL_AUTH_TWITTER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/nnkr/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'nnkr:top'
+
 
 # Heroku database setting
 import dj_database_url

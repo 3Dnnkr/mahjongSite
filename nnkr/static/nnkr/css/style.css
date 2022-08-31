@@ -18,9 +18,9 @@
 
 .modal-dialog-fluid {
 	max-width: inherit;
-	max-height: 85%;
-	width: 85%;
-	height:85%;
+	max-height: 82%;
+	width: 82%;
+	height:82%;
   }
 
 .tag-box {
@@ -104,4 +104,48 @@
 }
 .btn-icon:hover {
 	filter: brightness(150%);
+}
+
+.bg-img{
+	background: right;
+	background: bottom;
+	background-image: url("/static/nnkr/img/umi.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+    background-attachment: fixed;
+	background-color:rgba(255, 255, 255, 0.9);
+    background-blend-mode:lighten; 
+}
+
+.icon-frame{
+	display:inline-block;
+	vertical-align: middle;
+	position:relative;
+	width:60px;
+	height:60px;
+	border-radius:50%;
+	background:white;
+	border-color: black;
+	border-width: 3rem;
+}
+.icon {
+	overflow: hidden;
+	width:85%;
+	height:85%;
+	border-radius:50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+}
+.icon img{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	height:100%;
 }

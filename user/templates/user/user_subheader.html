@@ -1,10 +1,10 @@
 <div class="py-1">
-  <button type="button" class="btn btn-outline-primary shadow mx-1" {% if detail %} disabled="true" {% endif %}
+  <button type="button" class="btn btn-outline-primary shadow m-1" {% if detail %} disabled="true" {% endif %}
     onclick="location.href='{% url "user:detail" target_user.id %}'">プロフィール</button>
-  <button type="button" class="btn btn-outline-primary shadow mx-1" {% if question %} disabled="true" {% endif %}
+  <button type="button" class="btn btn-outline-primary shadow m-1" {% if question %} disabled="true" {% endif %}
     onclick="location.href='{% url "user:question" target_user.id %}'">出題した問題</button>
-  <button type="button" class="btn btn-outline-primary shadow mx-1" {% if bookmark %} disabled="true" {% endif %}
+  <button type="button" class="btn btn-outline-primary shadow m-1" {% if bookmark %} disabled="true" {% endif %}
     onclick="location.href='{% url "user:bookmark" target_user.id %}'">ブックマーク</button>
-  <button type="button" class="btn btn-outline-primary shadow mx-1" {% if history %} disabled="true" {% endif %}
+  <button type="button" class="btn btn-outline-primary shadow m-1" {% if history %} disabled="true" {% endif %}
     onclick="location.href='{% url "user:history" target_user.id %}'">投票履歴</button>
 </div>

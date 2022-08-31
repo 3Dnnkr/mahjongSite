@@ -220,13 +220,17 @@
               </small>
 
               <!-- イイねボタン -->
-              <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                <button type="submit" class="btn-icon">
-                  <div style="margin:-0.5rem">
-                    <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
-                  </div>
-                </button>
-              </form>
+              {% if user in comment.likers.all %}
+                <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
+              {% else %}
+                <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                  <button type="submit" class="btn-icon">
+                    <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                      <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                    </div>
+                  </button>
+                </form>
+              {% endif %}
 
               {% with comment.likers.all|length as likers_num %}
                 {% if likers_num > 0 %}
@@ -266,7 +270,8 @@
         </div>
       </div>
 
-
+      <!-- 問題の削除 -->
+      
 
     </div>
   </div>

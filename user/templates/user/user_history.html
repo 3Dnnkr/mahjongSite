@@ -9,87 +9,13 @@
 
 <div class="album pb-5">
   <!-- 問題一覧 -->
-  <div class="container">
-    <div class="row">
-      
-    {% for question in questions %}
-    <div class="col-md-10 offset-md-1 col-sm-12"><!--col-{prefix}-{columns}-->
-      
-      <!-- Modal -->
-      <div class="modal fade" id='{{ "imgModal-"|addstr:forloop.counter }}' tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-fluid">
-         <div class="modal-content">
-           <div class="modal-body">
-             <div id="image" class="as-outer">
-               <div class="as-inner">
-                 <img  class="card-img-top"
-                   src="{{ question.image.url }}" alt="何切る画像"
-                   style="width:100%;height:100%;object-fit:contain">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- カード -->
-      <div class="card mb-2 shadow-sm">
-        <div class="row no-gutters">
-          
-          <!-- 画像 -->
-          <div class="col-md-3 my-auto">
-            <div class="as-outer">
-              <div class="as-inner">
-                <a data-bs-toggle="modal" data-bs-target='{{"#imgModal-"|addstr:forloop.counter}}' style="cursor:pointer">
-                  <img  class="card-img-top"
-                    src="{{ question.image.url }}" alt="何切る画像"
-                    style="width:100%;height:100%;object-fit:contain">
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- その他 -->
-          <div class="col-md-9">
-            <div class="card-body">
-              <a  class="link-dark-nu" href="{% url 'nnkr:detail' question.id %}">
-                <h5 class="card-title">{{question.title}}</h5>
-              </a>
-              {{question.description | truncatechars:40}}
-              <br>
-              <br>
-
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="left-aria">
-                  <small>投票:</small>{{question.votes}}
-                  <small>コメ:</small>{{question.comments_num}}
-                </div>
-                <div class="right-aria">
-                  <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' question.author.id %}">[{{question.author}}]</a></small>
-                  <small class="text-muted">{{question.updated_datetime|date:"y年m月j日H:i"}}</small>
-                </div>
-              </div>
-
-
-            </div>
-          </div>
-
-        </div>
-      </div>
-        
-    </div>
-
-    {% empty %}
-    問題がありません
-    {% endfor %}
-
-    </div>
-  </div>
+  <div class="col-lg-8 offset-lg-2">
+  {% include "nnkr/question_cards.html" with questions=questions %}
   
   <!-- ページング -->
   {% if questions %}
   {% include "nnkr/pagination.html" with page_obj=questions %}
   {% endif %}
-
+  </div>
 </div>
 {% endblock %}

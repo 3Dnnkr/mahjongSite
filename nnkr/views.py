@@ -1,4 +1,4 @@
-from django.views.generic import CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
+from django.views.generic import TemplateView, CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
 from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy, reverse
@@ -10,6 +10,20 @@ from django.db.models import Count
 from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
 from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
 import os
+import random
+
+class Top(TemplateView):
+    template_name = 'nnkr/top.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:10]
+        hot_comments = list(Comment.objects.order_by('posted_at')[:10])
+        random.shuffle(hot_comments)
+        hot_comments = hot_comments[:1]
+        hot_questions = [c.question for c in hot_comments]
+        context['questions'] = hot_questions
+        return context
 
 class Index(ListView):
     template_name = 'nnkr/index.html'
