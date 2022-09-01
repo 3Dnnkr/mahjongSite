@@ -6,7 +6,7 @@
     <div class="row">
 
       <!-- 問題情報 -->
-      <div class="col-md-8">
+      <div class="col-md-7">
         <h5>{{question.title}}</h5>
         {{question.description | linebreaksbr}}
         <div class="d-flex justify-content-between align-items-center">
@@ -73,7 +73,7 @@
       </div>
 
       <!-- 画像 -->
-      <div class="col-md-8 py-2">
+      <div class="col-md-7 py-2">
         <div id="image" class="as-outer">
           <div class="as-inner">
             <a data-bs-toggle="modal" data-bs-target="#imgModal" style="cursor:pointer">
@@ -105,7 +105,7 @@
       </div>
 
       <!-- ブクマと投票機能 -->
-      <div class="col-md-4 py-2">
+      <div class="col-md-5 py-2">
 
         <!-- ブクマ -->
         <div class="border border-2 bg-gray mb-2 p-1">
@@ -155,44 +155,95 @@
             </tr>
           </thead>
           <tbody>
-          {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
-          <tr>
-            <th scope="row">{{choice.text}}</th>
-            <td class="text-center">{{ choice.votes }}</td>
-            <td class="text-center">{{choice.voterate|floatformat}}%</td>
-            <td>
+            <!-- 選択肢 -->
+            {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
+            <tr>
+              <th scope="row">{{choice.text}}</th>
+              <td class="text-center">{{ choice.votes }}</td>
+              <td class="text-center">{{choice.voterate|floatformat}}%</td>
+              <td>
+                <!-- ログイン時 -->
+                {% if user.is_authenticated %}
+                  {% if user in question.voters.all %}
+                    {% if user in choice.voters.all %}
+                      投票済
+                    {% endif %}
+                  {% else %}
+                    <form action="{% url 'nnkr:vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                    </form>
+                  {% endif %}
+                <!-- 非ログイン時 -->
+                {% else %}
+                  {% with question.id|stringformat:"s" as question_id %}
+                    {% cookie "voted_"|add:question_id as voted %}
+                    {% if voted %}
+                      {% with choice.id|stringformat:"s" as choice_id %}
+                        {% cookie "voted_choice_"|add:choice_id as voted_choice %}
+                        {% if voted_choice %}
+                          投票済
+                        {% endif %}
+                      {% endwith %}
+                    {% else %}
+                      <form action="{% url 'nnkr:secret_vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                      </form>
+                    {% endif %}
+                  {% endwith %}
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+
+            <!-- その他 -->
+            <tr>
               <!-- ログイン時 -->
               {% if user.is_authenticated %}
-                {% if user in question.voters.all %}
-                  {% if user in choice.voters.all %}
-                    投票済
-                  {% endif %}
-                {% else %}
-                  <form action="{% url 'nnkr:vote' choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                    <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                {% if not user in question.voters.all %}
+                  <th scope="row">その他</th>
+                  <form  action="{% url 'nnkr:create_choice' question.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                    <td colspan="2">
+                      <input
+                        style="display:inline-block"
+                        placeholder="新しい選択肢"
+                        type="{{choice_form.text.field.widget.input_type}}"
+                        class="form-control"
+                        {% if choice_form.text.field.required %}required{% endif %}
+                        name="{{choice_form.text.name}}"
+                        id="{{choice_form.text.id_for_label}}">
+                    </td>
+                    <td>
+                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                    </td>
                   </form>
                 {% endif %}
               <!-- 非ログイン時 -->
               {% else %}
                 {% with question.id|stringformat:"s" as question_id %}
-                {% cookie "voted_"|add:question_id as voted %}
-                  {% if voted %}
-                    {% with choice.id|stringformat:"s" as choice_id %}
-                    {% cookie "voted_choice_"|add:choice_id as voted_choice %}
-                      {% if voted_choice %}
-                        投票済
-                      {% endif %}
-                    {% endwith %}
-                  {% else %}
-                    <form action="{% url 'nnkr:secret_vote' choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                  {% cookie "voted_"|add:question_id as voted %}
+                  {% if not voted %}
+                    <th scope="row">その他</th>
+                    <form  action="{% url 'nnkr:create_choice' question.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                      <td colspan="2">
+                        <input
+                          style="display:inline-block"
+                          placeholder="新しい選択肢"
+                          type="{{choice_form.text.field.widget.input_type}}"
+                          class="form-control"
+                          {% if choice_form.text.field.required %}required{% endif %}
+                          name="{{choice_form.text.name}}"
+                          id="{{choice_form.text.id_for_label}}">
+                      </td>
+                      <td>
+                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                      </td>
                     </form>
                   {% endif %}
                 {% endwith %}
               {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
+            </tr>
+          
+
           </tbody>
         </table>
 

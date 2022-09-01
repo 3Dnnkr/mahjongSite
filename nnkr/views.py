@@ -15,7 +15,7 @@ from PIL import Image
 from io import BytesIO
 
 from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
-from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
+from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset
 from . import twitter
 from django.conf import settings
 
@@ -66,6 +66,7 @@ class Detail(DetailView):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm
         context['tag_form'] = TagForm
+        context['choice_form'] = ChoiceForm
         return context
 
 class CreateQuestion(LoginRequiredMixin, CreateView):
@@ -129,6 +130,21 @@ def delete_question(request, pk):
     # delete question
     question.delete()
     return redirect('nnkr:index')
+
+
+class CreateChoice(CreateView):
+    model = Choice
+    form_class = ChoiceForm
+
+    def form_valid(self, form):
+        question_id = self.kwargs.get('pk')
+        question = get_object_or_404(Question, pk=question_id)
+        text = form.cleaned_data.get('text')
+        choice = Choice.objects.create(question=question, text=text)
+        if self.request.user.is_authenticated:
+            return redirect(reverse('nnkr:vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
+        else:
+            return redirect(reverse('nnkr:secret_vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
 
 
 class CreateComment(CreateView):
@@ -201,15 +217,15 @@ def delete_tag(request, pk, t_pk):
 
 
 @login_required
-def vote(request, pk):
-    choice = get_object_or_404(Choice, pk=pk)
+def vote(request, pk, c_pk):
+    choice = get_object_or_404(Choice, pk=c_pk)
     if not request.user in choice.question.voters.all():
         Voting.objects.create(choice=choice, voter=request.user, voting_datetime=timezone.datetime.now())
     # return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
     return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
 
-def secret_vote(request, pk):
-    choice = get_object_or_404(Choice, pk=pk)
+def secret_vote(request, pk, c_pk):
+    choice = get_object_or_404(Choice, pk=c_pk)
     response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
     key = 'voted_{}'.format(choice.question.id)
     voted = request.COOKIES.get(key,False)
