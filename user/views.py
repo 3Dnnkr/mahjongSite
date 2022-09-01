@@ -11,11 +11,9 @@ from django.core.paginator import Paginator
 
 from social_django.models import UserSocialAuth
 
-import os
-import tweepy
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
-
+from nnkr import twitter
 
 class Index(ListView):
     template_name = 'user/user_index.html'
@@ -83,10 +81,6 @@ class UserDetail(UpdateView):
     form_class = UserUpdateForm
 
     def get_success_url(self):
-        """
-        Redirect to dynamic URL.
-        Called by FormMixin.form_valid()
-        """
         return resolve_url('user:detail',pk=self.kwargs['pk'])
 
     def get_context_data(self, **kwargs):
@@ -99,7 +93,8 @@ class UserDetail(UpdateView):
         try:
             twitter_login = target_user.social_auth.get(provider='twitter')
             user_id = twitter_login.extra_data['access_token']['user_id']
-            context['profile_image_url'] = get_profile_image_url(user_id)
+            api = twitter.get_api()
+            context['profile_image_url'] = api.get_user(user_id=user_id).profile_image_url_https
         except UserSocialAuth.DoesNotExist:
             twitter_login = None
         context['twitter_login'] = twitter_login
@@ -174,24 +169,3 @@ class UserHistory(ListView):
         target_user = get_object_or_404(get_user_model(), pk=user_id)
         context['target_user'] = target_user
         return context
-
-class OnlyYouMixin(UserPassesTestMixin):
-    """Restrict accessible user"""
-    raise_exception = True
-
-    def test_func(self):
-        user = self.request.user
-        return user.pk == self.kwargs['pk'] or user.is_superuser
-
-def get_profile_image_url(user_id):
-    CONSUMER_KEY = os.environ.get('SOCIAL_AUTH_TWITTER_KEY')
-    CONSUMER_SECRET = os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
-    ACCESS_TOKEN = os.environ.get('TWITTER_ACCESS_TOKEN')
-    ACCESS_SECRET = os.environ.get('TWITTER_ACCESS_SECRET')
-
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-    api = tweepy.API(auth)
-
-    user = api.get_user(user_id=user_id)
-    return user.profile_image_url_https

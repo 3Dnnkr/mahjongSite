@@ -1,0 +1,151 @@
+.as-outer {
+	position: relative;
+	width: 100%;
+}
+.as-outer:before {
+	content:"";
+	display: block;
+	padding-top: calc(9/16*100%);
+}
+.as-inner {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+    background: black;
+}
+
+.modal-dialog-fluid {
+	max-width: inherit;
+	max-height: 82%;
+	width: 82%;
+	height:82%;
+  }
+
+.tag-box {
+	display:inline-block;
+	padding-left   : 10px;
+	padding-right  : 10px;
+	padding-top    : 5px;
+	padding-bottom : 5px;
+	margin-left    : 5px;
+	margin-right   : 5px;
+	margin-bottom  : 5px;
+	border: 1px solid #333333;
+	border-radius: 10px;
+	background: white;
+}
+
+.link-dark-u {
+	text-decoration: underline;
+	color: black;
+}
+.link-dark-u:hover {
+	text-decoration: none;
+	color: black;
+}
+
+.link-dark-nu {
+	text-decoration: none;
+	color: black;
+}
+.link-dark-nu:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+.link-white-nu {
+	text-decoration: none;
+	color: white;
+}
+.link-white-nu:hover {
+	text-decoration: underline;
+	color: white;
+}
+
+.btn-twitter{
+	display:inline-block;
+	padding-left   : 10px;
+	padding-right  : 10px;
+	padding-top    : 5px;
+	padding-bottom : 5px;
+	margin-left    : 5px;
+	margin-right   : 5px;
+	margin-bottom  : 5px;
+	border-radius: 10px;
+	border: 0px solid #333333;
+	background: #2bc4ff;
+	color: white;
+}
+.btn-twitter:hover {
+	filter: brightness(80%);
+}
+
+.box-twitter{
+	display:inline-block;
+	padding-left   : 10px;
+	padding-right  : 10px;
+	padding-top    : 5px;
+	padding-bottom : 5px;
+	margin-left    : 5px;
+	margin-right   : 5px;
+	margin-bottom  : 5px;
+	border-radius: 10px;
+	border: 0px solid #333333;
+	background: #2bc4ff;
+	color: white;
+}
+
+.btn-icon{
+	background:transparent;
+	border:transparent;
+	filter: brightness(100%);
+}
+.btn-icon:hover {
+	filter: brightness(150%);
+}
+
+.bg-img{
+	background: right;
+	background: bottom;
+	background-image: url("/static/img/umi.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+    background-attachment: fixed;
+	background-color:rgba(255, 255, 255, 0.9);
+    background-blend-mode:lighten; 
+}
+
+.icon-frame{
+	display:inline-block;
+	vertical-align: middle;
+	position:relative;
+	width:60px;
+	height:60px;
+	border-radius:50%;
+	background:white;
+	border-color: black;
+	border-width: 3rem;
+}
+.icon {
+	overflow: hidden;
+	width:85%;
+	height:85%;
+	border-radius:50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+}
+.icon img{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	height:100%;
+}

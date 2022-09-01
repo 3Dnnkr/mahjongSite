@@ -1,19 +1,31 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from . import twitter
 
 class Question(models.Model):
     author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE,default=1,verbose_name='投稿者')
-    image = models.ImageField('画像',upload_to='images')
+    image = models.ImageField('画像',upload_to='images',blank=True,null=True)
     created_datetime = models.DateTimeField('作成日',auto_now_add=True)
     updated_datetime = models.DateTimeField('最終更新日',auto_now=True)
     title = models.CharField('タイトル',max_length=100)
     description = models.TextField('説明文',blank=True)
     tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ',related_name='questions')
     bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
+    tweet_id = models.CharField('TweetID', max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.title
+
+    def delete(self, *args, **kwargs):
+        try:
+            api = twitter.get_api()
+            api.destroy_status(int(self.tweet_id))
+
+        except:
+            print("The status has been successfully deleted.")
+        
+        #self.image.delete() 
+        super(Question, self).delete(*args, **kwargs)
 
     @property
     def votes(self):

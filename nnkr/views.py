@@ -1,16 +1,24 @@
 from django.views.generic import TemplateView, CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
 from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpResponseRedirect,HttpResponse
 from django.core.paginator import Paginator
 from django.db.models import Count
 
-from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
-from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
 import os
 import random
+import requests
+from PIL import Image
+from io import BytesIO
+
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
+from .forms import QuestionForm, CommentForm, TagForm, ChoiceFormset
+from . import twitter
+from django.conf import settings
+
 
 class Top(TemplateView):
     template_name = 'nnkr/top.html'
@@ -23,6 +31,13 @@ class Top(TemplateView):
         hot_comments = hot_comments[:1]
         hot_questions = [c.question for c in hot_comments]
         context['questions'] = hot_questions
+        return context
+
+class FAQ(TemplateView):
+    template_name = 'nnkr/faq.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         return context
 
 class Index(ListView):
@@ -53,28 +68,52 @@ class Detail(DetailView):
         context['tag_form'] = TagForm
         return context
 
-@login_required
-def create_question(request):
-    """ use QuestionForm and ChoiceFormset """
-    form = QuestionForm(request.POST or None, files=request.FILES)
-    context = {'form':form}
-    if request.method=='POST' and form.is_valid():
+class CreateQuestion(LoginRequiredMixin, CreateView):
+    template_name = 'nnkr/create_question.html'
+    model = Question
+    form_class = QuestionForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['formset']=ChoiceFormset()
+        return context
+
+    def form_valid(self, form):
         question = form.save(commit=False)
-        question.author = request.user
-        formset = ChoiceFormset(request.POST, instance=question)
+        formset = ChoiceFormset(self.request.POST, instance=question)
         if formset.is_valid():
+            question.author = self.request.user
             question.save()
             formset.save()
+
+            # Tweet Question Info
+            txts = []
+            txts.append(question.author.username + "さんの出題")
+            txts.append("『"+question.title+"』")
+            txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
+            txts.append("#雀魂何切る")
+            status = '\n'.join(txts)
+
+            api = twitter.get_api()
+            media_ids = api.media_upload(filename=question.image.file.name)
+            
+            params = {'status': status, 'media_ids': [media_ids.media_id_string]}
+            tweet = api.update_status(**params)
+            question.tweet_id = tweet.id
+            question.save()
+            
             return redirect('nnkr:detail',pk=question.id)
-        else:
-            context['formset']=formset
-    else:
-        context['form']=QuestionForm()
-        context['formset']=ChoiceFormset()
-    return render(request, 'nnkr/create_question.html', context)
+        return render(self.request, 'nnkr/create_question.html', {'formset':formset})
+
+def delete_question(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    delete_title = request.POST.get("delete_title")
+    if request.user != question.author or question.title!=delete_title:
+        return redirect(request.META['HTTP_REFERER'])
+    question.delete()
+    return redirect('nnkr:index')
 
 
-# ==== Comment ====
 class CreateComment(CreateView):
     model = Comment
     form_class = CommentForm
@@ -101,7 +140,7 @@ def create_comment_like(request, pk, c_pk):
         CommentLike.objects.create(liker=user, comment=comment)
     return redirect(request.META['HTTP_REFERER'])
 
-# ==== Tag ====
+
 class TagQuestion(ListView):
     template_name = 'nnkr/tag_question.html'
     model = Question
@@ -144,7 +183,6 @@ def delete_tag(request, pk, t_pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
-# ==== Vote ====
 @login_required
 def vote(request, pk):
     choice = get_object_or_404(Choice, pk=pk)
@@ -166,7 +204,6 @@ def secret_vote(request, pk):
     return response
 
 
-# ==== Bookmark ====
 def create_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     user = request.user

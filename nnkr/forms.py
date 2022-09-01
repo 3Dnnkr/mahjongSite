@@ -27,5 +27,5 @@ class TagForm(forms.ModelForm):
 
 ChoiceFormset = forms.inlineformset_factory(
     Question, Choice, fields=['text'],
-    extra=0, min_num=2, max_num=10, can_delete=False,
+    extra=2, max_num=9, can_delete=False,
 )

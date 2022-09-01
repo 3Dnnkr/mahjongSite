@@ -270,29 +270,61 @@
         </div>
       </div>
 
-      <!-- 問題の削除 -->
+      <!-- 問題設定画面 -->
+      {% if user == question.author %}
+        <div class="accordion mb-2" id="accordionFlushExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="flush-headingOne">
+              <button class="accordion-button collapsed" type="button" 
+                data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                aria-expanded="false" aria-controls="flush-collapseOne">
+                問題設定画面を開く
+              </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body">
       
+                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                  問題の削除
+                </button>
+      
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- 削除Modal -->
+        <div class="modal fade" id="deleteModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <h5 class="modal-title">最終確認</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body">
+                <div class="delete-form">
+                  <form  action="{% url 'nnkr:delete_question' question.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                    <div class="input-group">
+                      <input type="text" 
+                        class="form-control" placeholder="タイトルを入力して下さい" aria-describedby="button-addon2"
+                        name="delete_title" required>
+                      <button class="btn btn-outline-danger" type="submit" id="button-addon2">削除</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      {% endif %}
 
     </div>
   </div>
 </div>
 
 
-{% endblock %}
-
-
-
-{% block extrajs %}
-<!-- 二重サブミット防止 -->
-<script>
-$(function(){
-    $('.submit-only-one').submit(function(){
-        $(this).find(':submit').text('送信');
-        //$('form').each(function(i, elem) {
-        //    $(elem).find(':submit').prop('disabled', 'true');
-        //});
-        $(this).find(':submit').prop('disabled', 'true');
-    });
-});
-</script>
 {% endblock %}

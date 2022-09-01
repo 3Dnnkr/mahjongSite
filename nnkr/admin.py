@@ -23,7 +23,7 @@ class BookmarkInline(admin.TabularInline):
     extra = 0
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author','created_datetime', 'updated_datetime')
+    list_display = ('id', 'title', 'author','created_datetime', 'updated_datetime', 'tweet_id')
     list_display_links = ('id', 'title')
     filter_horizontal = ('tags',)
     inlines=(TaggingInline, ChoiceInline, CommentInline, BookmarkInline,)
