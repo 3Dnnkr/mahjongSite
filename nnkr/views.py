@@ -93,14 +93,21 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
             txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
             txts.append("#雀魂何切る")
             status = '\n'.join(txts)
-
             api = twitter.get_api()
-            media_ids = api.media_upload(filename=question.image.file.name)
+
+            # # if image is ImageField
+            # media_ids = api.media_upload(filename=question.image.file.name)
             
+            # else if image is CloudinaryField
+            img = requests.get(question.image.url).content
+            media_ids = api.media_upload(filename='img.png', file=BytesIO(img))
+
             params = {'status': status, 'media_ids': [media_ids.media_id_string]}
             tweet = api.update_status(**params)
+
             question.tweet_id = tweet.id
             question.save()
+            print(question.image.url)
             
             return redirect('nnkr:detail',pk=question.id)
         return render(self.request, 'nnkr/create_question.html', {'formset':formset})
@@ -110,6 +117,16 @@ def delete_question(request, pk):
     delete_title = request.POST.get("delete_title")
     if request.user != question.author or question.title!=delete_title:
         return redirect(request.META['HTTP_REFERER'])
+    
+    # delete tweet
+    tweet_id = question.tweet_id
+    try:
+        api = twitter.get_api()
+        api.destroy_status(int(tweet_id))
+    except:
+        print("The status has been successfully deleted.")
+    
+    # delete question
     question.delete()
     return redirect('nnkr:index')
 

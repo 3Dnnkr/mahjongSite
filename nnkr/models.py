@@ -1,10 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from . import twitter
+from cloudinary.models import CloudinaryField
+import cloudinary
+
 
 class Question(models.Model):
     author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE,default=1,verbose_name='投稿者')
-    image = models.ImageField('画像',upload_to='images',blank=True,null=True)
+    #image = models.ImageField('画像',upload_to='images',blank=True,null=True)
+    image = CloudinaryField('画像',folder='media/images',blank=True,null=True)
     created_datetime = models.DateTimeField('作成日',auto_now_add=True)
     updated_datetime = models.DateTimeField('最終更新日',auto_now=True)
     title = models.CharField('タイトル',max_length=100)
@@ -17,14 +20,8 @@ class Question(models.Model):
         return self.title
 
     def delete(self, *args, **kwargs):
-        try:
-            api = twitter.get_api()
-            api.destroy_status(int(self.tweet_id))
-
-        except:
-            print("The status has been successfully deleted.")
-        
-        #self.image.delete() 
+        #self.image.delete() # if image is ImageField
+        cloudinary.uploader.destroy(self.image.public_id) # if image is CloudinaryField
         super(Question, self).delete(*args, **kwargs)
 
     @property
