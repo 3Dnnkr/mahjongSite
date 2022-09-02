@@ -190,7 +190,7 @@ if not DEBUG:
 
 # Cloudinary Setting
 cloudinary.config(
-    cloud_name = 'hcoz11mmc',
+    cloud_name = os.environ.get('CLOUD_NAME'),
     api_key    = os.environ.get('CLOUDINARY_API_KEY'),
     api_secret = os.environ.get('CLOUDINARY_API_SECRET'),
 )
