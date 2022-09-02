@@ -23,5 +23,5 @@ class User(AbstractUser):
     
     def __init__(self, *args, **kwargs):
         super(AbstractUser, self).__init__(*args, **kwargs)
-        icon = get_or_create_guest_icon()
+        self.icon = get_or_create_guest_icon()
 
