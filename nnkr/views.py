@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView, CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
+from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -69,6 +70,7 @@ class Detail(DetailView):
         context['choice_form'] = ChoiceForm
         return context
 
+
 class CreateQuestion(LoginRequiredMixin, CreateView):
     template_name = 'nnkr/create_question.html'
     model = Question
@@ -113,6 +115,7 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
             return redirect('nnkr:detail',pk=question.id)
         return render(self.request, 'nnkr/create_question.html', {'formset':formset})
 
+@require_POST
 def delete_question(request, pk):
     question = get_object_or_404(Question, pk=pk)
     delete_title = request.POST.get("delete_title")
@@ -131,7 +134,6 @@ def delete_question(request, pk):
     question.delete()
     return redirect('nnkr:index')
 
-
 class CreateChoice(CreateView):
     model = Choice
     form_class = ChoiceForm
@@ -145,7 +147,6 @@ class CreateChoice(CreateView):
             return redirect(reverse('nnkr:vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
         else:
             return redirect(reverse('nnkr:secret_vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
-
 
 class CreateComment(CreateView):
     model = Comment
@@ -162,6 +163,7 @@ class CreateComment(CreateView):
             Comment.objects.create(question=question, text=text, comment_id=comment_id)
         return redirect(self.request.META['HTTP_REFERER'])
 
+@require_POST
 def create_comment_like(request, pk, c_pk):
     comment = get_object_or_404(Comment, pk=c_pk)
     user = request.user
@@ -209,14 +211,15 @@ class CreateTag(CreateView):
             Tagging.objects.create(question=question, tag=tag, tagging_datetime=timezone.datetime.now())
         return redirect(self.request.META['HTTP_REFERER'])
 
+@require_POST
 def delete_tag(request, pk, t_pk):
     question = get_object_or_404(Question, pk=pk)
     tag = get_object_or_404(Tag, pk=t_pk)
     question.tags.remove(tag)
     return redirect(request.META['HTTP_REFERER'])
 
-
 @login_required
+@require_POST
 def vote(request, pk, c_pk):
     choice = get_object_or_404(Choice, pk=c_pk)
     if not request.user in choice.question.voters.all():
@@ -224,6 +227,7 @@ def vote(request, pk, c_pk):
     # return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
     return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
 
+@require_POST
 def secret_vote(request, pk, c_pk):
     choice = get_object_or_404(Choice, pk=c_pk)
     response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
@@ -236,7 +240,7 @@ def secret_vote(request, pk, c_pk):
         choice.save()
     return response
 
-
+@require_POST
 def create_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     user = request.user
@@ -247,6 +251,7 @@ def create_bookmark(request, pk):
         Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
     return redirect(request.META['HTTP_REFERER'])
 
+@require_POST
 def delete_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     if request.user.is_anonymous:

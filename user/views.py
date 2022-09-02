@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView,CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
+from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -14,6 +15,7 @@ from social_django.models import UserSocialAuth
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
 from nnkr import twitter
+from .models import Icon
 
 class Index(ListView):
     template_name = 'user/user_index.html'
@@ -88,6 +90,10 @@ class UserDetail(UpdateView):
         target_user = get_object_or_404(get_user_model(), pk=self.kwargs.get('pk'))
         context['target_user'] = target_user
         context['comments_likers_num'] = sum([c.likers.all().count() for c in target_user.comments.all()])
+
+        # Icon cobtext
+        if self.request.user == target_user:
+            context['icons'] = Icon.objects.order_by('order')
 
         # Twitter context
         try:
@@ -169,3 +175,11 @@ class UserHistory(ListView):
         target_user = get_object_or_404(get_user_model(), pk=user_id)
         context['target_user'] = target_user
         return context
+
+@login_required
+def update_icon(request, pk, i_pk):
+    user = get_object_or_404(get_user_model(),pk=pk)
+    icon = get_object_or_404(Icon, pk=i_pk)
+    user.icon = icon
+    user.save()
+    return redirect(request.META['HTTP_REFERER'])

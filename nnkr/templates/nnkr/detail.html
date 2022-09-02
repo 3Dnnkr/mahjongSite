@@ -1,4 +1,5 @@
 {% extends 'nnkr/base.html' %}
+{% load static %}
 {% block content %}
 
 <div class="py-3">
@@ -8,7 +9,9 @@
       <!-- 問題情報 -->
       <div class="col-md-7">
         <h5>{{question.title}}</h5>
-        {{question.description | linebreaksbr}}
+        <div class="ms-2">
+          {{question.description | linebreaksbr}}
+        </div>
         <div class="d-flex justify-content-between align-items-center">
           <div class="left-aria"></div>
           <div class="right-aria">
@@ -170,7 +173,7 @@
                     {% endif %}
                   {% else %}
                     <form action="{% url 'nnkr:vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
                     </form>
                   {% endif %}
                 <!-- 非ログイン時 -->
@@ -186,7 +189,7 @@
                       {% endwith %}
                     {% else %}
                       <form action="{% url 'nnkr:secret_vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
                       </form>
                     {% endif %}
                   {% endwith %}
@@ -213,7 +216,7 @@
                         id="{{choice_form.text.id_for_label}}">
                     </td>
                     <td>
-                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
                     </td>
                   </form>
                 {% endif %}
@@ -235,7 +238,7 @@
                           id="{{choice_form.text.id_for_label}}">
                       </td>
                       <td>
-                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:80%">投票</button>
+                        <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
                       </td>
                     </form>
                   {% endif %}
@@ -251,12 +254,12 @@
 
       <!-- コメントボックスとフォーム -->
       <div class="col-md-12 offset-md-0 py-3">
-        <div class="p-3 shadow" style="background:aliceblue">
+        <div class="p-3 shadow" style="background:#f5f5f5">
           
-          <div class="comment-box" style="height:400px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
+          <div class="comment-box" style="height:500px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
             <b>コメントチャットです。質問に関することを書きましょう。</b>
             <hr style="margin:8px">
-            {% for comment in question.comments.all %}
+            {% for comment in question.comments.all reversed %}
             <div class="comment-content">
               {{comment.comment_id}}
               {% if comment.commenter %}
@@ -290,9 +293,34 @@
               {% endwith %}
 
               <br>
-              {{comment.text | linebreaksbr}}
+              
+              <!-- 本文 -->
+              <div class="d-flex flex-row  mb-3">
+
+                <div class="p-2 bd-highlight">
+                  <div  style="display:inline-block; vertical-align:top;">
+                    <div class="icon-frame shadow-sm">
+                      <div class="icon">
+                        {% if comment.commenter %}
+                          <img src="{{ comment.commenter.icon.url }}">
+                        {% else %}
+                          <img src="{% static 'img/icon/icon_guest.png' %}">
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="p-2 bd-highlight">
+                  <div style="font-size:18px;">
+                    {{comment.text | linebreaksbr}}
+                  </div>
+                </div>
+              </div>
+
             </div>
-            <hr style="margin-bottom:8px">
+            <hr style="margin-top:-5px;margin-bottom:8px;">
             {% endfor %}
           </div>
 
