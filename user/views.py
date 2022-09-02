@@ -53,12 +53,6 @@ class UserCreate(CreateView):
         raw_pw = form.cleaned_data.get('password1')
         user = authenticate(username=username, password=raw_pw)
         login(self.request, user)
-
-        # set default icon
-        icon, _ = Icon.objects.get_or_create(name='icon_guest.png')
-        user.icon = icon
-        user.save()
-        
         return response
 
 

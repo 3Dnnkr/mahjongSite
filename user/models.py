@@ -12,12 +12,16 @@ class Icon(models.Model):
     def url(self):
         return static("img/icon/" + self.name)
 
-# def get_or_create_guest_icon():
-#     icon, _ = Icon.objects.get_or_create(name='icon_guest.png')
-#     return icon
+def get_or_create_guest_icon():
+    icon, _ = Icon.objects.get_or_create(name='icon_guest.png')
+    return icon
 
 class User(AbstractUser):
     introduction = models.TextField('紹介文',blank=True)
     #icon = models.ForeignKey(Icon,on_delete=models.SET_DEFAULT,blank=True,null=True,verbose_name="アイコン",default=get_or_create_guest_icon)
     icon = models.ForeignKey(Icon,on_delete=models.PROTECT,blank=True,null=True,verbose_name="アイコン")
+    
+    def __init__(self, *args, **kwargs):
+        super(AbstractUser, self).__init__(*args, **kwargs)
+        icon = get_or_create_guest_icon()
 
