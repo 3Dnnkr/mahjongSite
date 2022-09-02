@@ -9,102 +9,165 @@
   <form method="post" enctype="multipart/form-data" class="submit-only-one">{% csrf_token %}      
     <div>
 
-      <div>
-          <div class="form-group">
-            <label for="{{form.image.id_for_label}}">{{form.image.label}}</label>
-            <input
-              type="{{form.image.field.widget.input_type}}"
-              class="form-control"
-              {% if form.image.field.required %}required{% endif %}
-              name="{{form.image.name}}"
-              id="{{form.image.id_for_label}}">
+      <div class="container">
+        <div class="row">
+
+          <!-- 基本フォーム -->
+          <div class="col-lg-7">
+            <div class="form-group">
+              <label for="{{form.image.id_for_label}}">{{form.image.label}}</label>
+              <input
+                type="{{form.image.field.widget.input_type}}"
+                class="form-control"
+                {% if form.image.field.required %}required{% endif %}
+                name="{{form.image.name}}"
+                id="{{form.image.id_for_label}}"
+                onchange="previewImage(this);">
+            </div>
+            <div class="form-group">
+              <label for="{{form.title.id_for_label}}">{{form.title.label}}</label>
+              <input
+                type="{{form.title.field.widget.input_type}}"
+                class="form-control"
+                {% if form.title.field.required %}required{% endif %}
+                name="{{form.title.name}}"
+                id="{{form.title.id_for_label}}">
+            </div>
+            <div class="form-group">
+              <label for="{{form.description.id_for_label}}">{{form.description.label}}</label>
+              <textarea
+                type="{{form.description.field.widget.input_type}}"
+                class="form-control"
+                {% if form.description.field.required %}required{% endif %}
+                name="{{form.description.name}}"
+                id="{{form.description.id_for_label}}"
+                cols="50" rows="2"></textarea>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="{{form.title.id_for_label}}">{{form.title.label}}</label>
-            <input
-              type="{{form.title.field.widget.input_type}}"
-              class="form-control"
-              {% if form.title.field.required %}required{% endif %}
-              name="{{form.title.name}}"
-              id="{{form.title.id_for_label}}">
+
+          <!-- プレビュー -->
+          <div class="col-lg-5">
+            <div id="image" class="as-outer p-2 mt-2">
+              <div class="as-inner">
+                <a data-bs-toggle="modal" data-bs-target="#imgModal" style="cursor:pointer">
+                  <img
+                    id="preview"  alt="何切る画像"
+                    src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+                    style="width:100%;height:100%;object-fit:contain">
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="{{form.description.id_for_label}}">{{form.description.label}}</label>
-            <textarea
-              type="{{form.description.field.widget.input_type}}"
-              class="form-control"
-              {% if form.description.field.required %}required{% endif %}
-              name="{{form.description.name}}"
-              id="{{form.description.id_for_label}}"
-              cols="50" rows="2"></textarea>
-          </div>
-          {% comment %} <div class="form-group">
-            <label for="{{form.answer.id_for_label}}">{{form.answer.label}}</label>
-            <textarea
-              type="{{form.answer.field.widget.input_type}}"
-              class="form-control"
-              {% if form.answer.field.required %}required{% endif %}
-              name="{{form.answer.name}}"
-              id="{{form.answer.id_for_label}}"
-              cols="50" rows="2"></textarea>
-          </div> {% endcomment %}
+
+        </div>
       </div>
+
       <hr>
-      <div id="choice-area">
-        {% for choice_form in formset %}
-          <div id="choice-form-{{ forloop.counter0 }}">
-            {{ choice_form.as_p }}
+
+      <!-- 選択肢フォームセット -->
+      <div class="container">
+        <div class="row">
+          <div class="col-7">
+            <div id="choice-area">
+              {% for choice_form in formset %}
+                <div id="choice-form-{{ forloop.counter0 }}">
+                  {{ choice_form.as_p }}
+                </div>
+              {% endfor %}
+            </div>
+            {{ formset.management_form }}
+            <button id="add" type="button" class="btn btn-primary">選択肢の追加</button>
+            <button id="remove" type="button" class="btn btn-primary">削除</button>
           </div>
-        {% endfor %}
+          
+          <div class="col-5">
+            <div class="text-end">
+              ※必須ではありません
+            </div>
+          </div>
+        </div>
       </div>
-      {{ formset.management_form }}
-      <button id="add" type="button" class="btn btn-primary">選択肢の追加</button>
-      <button id="remove" type="button" class="btn btn-primary">削除</button><hr>
+
+      <hr>
 
     </div>
     <button type="submit" class="btn btn-primary">作成</button>
   </form>
 </div>
+
+<!-- プレビューModal -->
+<div class="modal fade" id="imgModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-fluid">
+    <div class="modal-content">
+      <div class="modal-body">
+        <a data-bs-dismiss="modal">
+          <div id="image" class="as-outer">
+            <div class="as-inner">
+            <img  class="card-img-top"
+              id="preview-modal"  alt="何切る画像"
+              src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+              style="width:100%;height:100%;object-fit:contain">
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 
 {% block extrajs %}
-<!-- 選択肢フォームの基本型 -->
-<script type="text/html" id="choiceCreate-template">
-    <div id="choice-form-__prefix__">
-        <p>
-          <label for="id_choice_set-__prefix__-text">選択肢:</label> 
-          <input type="text" name="choice_set-__prefix__-text" 
-                maxlength="200"id="id_choice_set-__prefix__-text">
-          <input type="hidden" name="choice_set-__prefix__-id" id="id_choice_set-__prefix__-id">
-          <input type="hidden" name="choice_set-__prefix__-question" id="id_choice_set-__prefix__-question">
-        </p> 
-    </div>
-</script>
+  <!-- 選択肢フォームの基本型 -->
+  <script type="text/html" id="choiceCreate-template">
+      <div id="choice-form-__prefix__">
+          <p>
+            <label for="id_choice_set-__prefix__-text">選択肢:</label> 
+            <input type="text" name="choice_set-__prefix__-text" 
+                  maxlength="200"id="id_choice_set-__prefix__-text">
+            <input type="hidden" name="choice_set-__prefix__-id" id="id_choice_set-__prefix__-id">
+            <input type="hidden" name="choice_set-__prefix__-question" id="id_choice_set-__prefix__-question">
+          </p> 
+      </div>
+  </script>
 
-<!-- 選択肢フォームの複製と削除 -->
-<script>
-$(function(){
-    var totalManageElement = $('input#id_choice_set-TOTAL_FORMS');
-    var currentChoiceCount = parseInt(totalManageElement.val());
-    var maxNumChoice = parseInt($('input#id_choice_set-MAX_NUM_FORMS').val());
-    var minNumChoice = parseInt($('input#id_choice_set-MIN_NUM_FORMS').val());
-    var tmpMarkup = $('#choiceCreate-template').html();
+  <!-- 選択肢フォームの複製と削除 -->
+  <script>
+    $(function(){
+      var totalManageElement = $('input#id_choice_set-TOTAL_FORMS');
+      var currentChoiceCount = parseInt(totalManageElement.val());
+      var maxNumChoice = parseInt($('input#id_choice_set-MAX_NUM_FORMS').val());
+      var minNumChoice = parseInt($('input#id_choice_set-MIN_NUM_FORMS').val());
+      var tmpMarkup = $('#choiceCreate-template').html();
 
-    $('button#add').on('click', function(){
-        if ( currentChoiceCount == maxNumChoice ) { return; }
-        currentChoiceCount += 1;
-        var compiledTmp = tmpMarkup.replace(/__prefix__/g, currentChoiceCount-1);
-        $('div#choice-area').append(compiledTmp);
-        totalManageElement.attr('value', currentChoiceCount);
+      $('button#add').on('click', function(){
+          if ( currentChoiceCount == maxNumChoice ) { return; }
+          currentChoiceCount += 1;
+          var compiledTmp = tmpMarkup.replace(/__prefix__/g, currentChoiceCount-1);
+          $('div#choice-area').append(compiledTmp);
+          totalManageElement.attr('value', currentChoiceCount);
+      });
+      
+      $('button#remove').on('click', function(){
+          if ( currentChoiceCount == minNumChoice ) { return; }
+          $('#choice-form-' + (currentChoiceCount-1)).remove();   
+          currentChoiceCount -= 1;
+          totalManageElement.attr('value', currentChoiceCount);
+      });
     });
-    
-    $('button#remove').on('click', function(){
-        if ( currentChoiceCount == minNumChoice ) { return; }
-        $('#choice-form-' + (currentChoiceCount-1)).remove();   
-        currentChoiceCount -= 1;
-        totalManageElement.attr('value', currentChoiceCount);
-    });
-});
-</script>
+  </script>
+
+  <!-- 画像プレビュー -->
+  <script>
+    function previewImage(obj)
+    {
+      var fileReader = new FileReader();
+      fileReader.onload = (function() {
+        document.getElementById('preview').src = fileReader.result;
+        document.getElementById('preview-modal').src = fileReader.result;
+      });
+      fileReader.readAsDataURL(obj.files[0]);
+    }
+  </script>
 {% endblock %}
