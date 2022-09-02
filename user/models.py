@@ -18,10 +18,7 @@ def get_or_create_guest_icon():
 
 class User(AbstractUser):
     introduction = models.TextField('紹介文',blank=True)
-    #icon = models.ForeignKey(Icon,on_delete=models.SET_DEFAULT,blank=True,null=True,verbose_name="アイコン",default=get_or_create_guest_icon)
-    icon = models.ForeignKey(Icon,on_delete=models.PROTECT,blank=True,null=True,verbose_name="アイコン")
+    icon = models.ForeignKey(Icon,on_delete=models.SET_DEFAULT,blank=True,null=True,verbose_name="アイコン",default=get_or_create_guest_icon)
+    #icon = models.ForeignKey(Icon,on_delete=models.PROTECT,blank=True,null=True,verbose_name="アイコン")
     
-    def __init__(self, *args, **kwargs):
-        super(AbstractUser, self).__init__(*args, **kwargs)
-        self.icon = get_or_create_guest_icon()
 
