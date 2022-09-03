@@ -15,6 +15,7 @@ class Question(models.Model):
     tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ',related_name='questions')
     bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
     tweet_id = models.CharField('TweetID', max_length=200, blank=True, null=True)
+    no_vote = models.BooleanField('投票機能を使わない', default=False)
 
     def __str__(self):
         return self.title

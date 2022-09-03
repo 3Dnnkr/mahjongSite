@@ -6,8 +6,6 @@ from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookma
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 0
-    min_num = 2
-    max_num = 10
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -22,7 +20,7 @@ class BookmarkInline(admin.TabularInline):
     extra = 0
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'author','created_datetime', 'updated_datetime', 'tweet_id')
+    list_display = ('id', 'title', 'author','created_datetime', 'updated_datetime', 'tweet_id', 'no_vote')
     list_display_links = ('id', 'title')
     filter_horizontal = ('tags',)
     inlines=(TaggingInline, ChoiceInline, CommentInline, BookmarkInline,)

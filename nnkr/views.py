@@ -83,37 +83,43 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         question = form.save(commit=False)
-        formset = ChoiceFormset(self.request.POST, instance=question)
-        if formset.is_valid():
+        if question.no_vote:
             question.author = self.request.user
             question.save()
-            formset.save()
-
-            # Tweet Question Info
-            txts = []
-            txts.append(question.author.username + "さんの出題")
-            txts.append("『"+question.title+"』")
-            txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
-            txts.append("#雀魂何切る")
-            status = '\n'.join(txts)
-            api = twitter.get_api()
-
-            # # if image is ImageField
-            # media_ids = api.media_upload(filename=question.image.file.name)
-            
-            # else if image is CloudinaryField
-            img = requests.get(question.image.url).content
-            media_ids = api.media_upload(filename='img.png', file=BytesIO(img))
-
-            params = {'status': status, 'media_ids': [media_ids.media_id_string]}
-            tweet = api.update_status(**params)
-
-            question.tweet_id = tweet.id
-            question.save()
-            print(question.image.url)
-            
+            self.post_tweet(question)
             return redirect('nnkr:detail',pk=question.id)
+        else:
+            formset = ChoiceFormset(self.request.POST, instance=question)
+            if formset.is_valid():
+                question.author = self.request.user
+                question.save()
+                formset.save()
+                self.post_tweet(question)
+                return redirect('nnkr:detail',pk=question.id)
         return render(self.request, 'nnkr/create_question.html', {'formset':formset})
+
+    def post_tweet(self, question):
+        api = twitter.get_api()
+        txts = []
+        txts.append(question.author.username + "さんの出題")
+        txts.append("『"+question.title+"』")
+        txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
+        txts.append("#雀魂何切る")
+        status = '\n'.join(txts)
+
+        # # if image is ImageField
+        # media_ids = api.media_upload(filename=question.image.file.name)
+        
+        # else if image is CloudinaryField
+        img = requests.get(question.image.url).content
+        media_ids = api.media_upload(filename='img.png', file=BytesIO(img))
+
+        params = {'status': status, 'media_ids': [media_ids.media_id_string]}
+        tweet = api.update_status(**params)
+
+        question.tweet_id = tweet.id
+        question.save()
+
 
 @require_POST
 def delete_question(request, pk):

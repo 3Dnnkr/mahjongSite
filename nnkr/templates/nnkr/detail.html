@@ -148,83 +148,63 @@
         </div>
 
         <!-- 投票 -->
-        <table id="vote" class="table table-light table-hover table-striped shadow-sm">
-          <thead>
-            <tr class="text-white">
-              <th scope="col" class="bg-dark text-left">選択肢</th>
-              <th scope="col" class="bg-dark text-center">得票数</th>
-              <th scope="col" class="bg-dark text-center">得票率</th>
-              <th scope="col" class="bg-dark text-center"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 選択肢 -->
-            {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
-            <tr>
-              <th scope="row">{{choice.text}}</th>
-              <td class="text-center">{{ choice.votes }}</td>
-              <td class="text-center">{{choice.voterate|floatformat}}%</td>
-              <td>
-                <!-- ログイン時 -->
-                {% if user.is_authenticated %}
-                  {% if user in question.voters.all %}
-                    {% if user in choice.voters.all %}
-                      投票済
-                    {% endif %}
-                  {% else %}
-                    <form action="{% url 'nnkr:vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
-                    </form>
-                  {% endif %}
-                <!-- 非ログイン時 -->
-                {% else %}
-                  {% with question.id|stringformat:"s" as question_id %}
-                    {% cookie "voted_"|add:question_id as voted %}
-                    {% if voted %}
-                      {% with choice.id|stringformat:"s" as choice_id %}
-                        {% cookie "voted_choice_"|add:choice_id as voted_choice %}
-                        {% if voted_choice %}
-                          投票済
-                        {% endif %}
-                      {% endwith %}
+        {% if question.no_vote %}
+        {% else %}
+          <table id="vote" class="table table-light table-hover table-striped shadow-sm">
+            <thead>
+              <tr class="text-white">
+                <th scope="col" class="bg-dark text-left">選択肢</th>
+                <th scope="col" class="bg-dark text-center">得票数</th>
+                <th scope="col" class="bg-dark text-center">得票率</th>
+                <th scope="col" class="bg-dark text-center"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 選択肢 -->
+              {% for choice in question.choice_set.all|dictsortreversed:"votes" %}
+              <tr>
+                <th scope="row">{{choice.text}}</th>
+                <td class="text-center">{{ choice.votes }}</td>
+                <td class="text-center">{{choice.voterate|floatformat}}%</td>
+                <td>
+                  <!-- ログイン時 -->
+                  {% if user.is_authenticated %}
+                    {% if user in question.voters.all %}
+                      {% if user in choice.voters.all %}
+                        投票済
+                      {% endif %}
                     {% else %}
-                      <form action="{% url 'nnkr:secret_vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                      <form action="{% url 'nnkr:vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
                         <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
                       </form>
                     {% endif %}
-                  {% endwith %}
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
+                  <!-- 非ログイン時 -->
+                  {% else %}
+                    {% with question.id|stringformat:"s" as question_id %}
+                      {% cookie "voted_"|add:question_id as voted %}
+                      {% if voted %}
+                        {% with choice.id|stringformat:"s" as choice_id %}
+                          {% cookie "voted_choice_"|add:choice_id as voted_choice %}
+                          {% if voted_choice %}
+                            投票済
+                          {% endif %}
+                        {% endwith %}
+                      {% else %}
+                        <form action="{% url 'nnkr:secret_vote' question.id choice.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                          <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
+                        </form>
+                      {% endif %}
+                    {% endwith %}
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
 
-            <!-- その他 -->
-            <tr>
-              <!-- ログイン時 -->
-              {% if user.is_authenticated %}
-                {% if not user in question.voters.all %}
-                  <th scope="row">その他</th>
-                  <form  action="{% url 'nnkr:create_choice' question.id %}" method="post" class="submit-only-one">{% csrf_token %}
-                    <td colspan="2">
-                      <input
-                        style="display:inline-block"
-                        placeholder="新しい選択肢"
-                        type="{{choice_form.text.field.widget.input_type}}"
-                        class="form-control"
-                        {% if choice_form.text.field.required %}required{% endif %}
-                        name="{{choice_form.text.name}}"
-                        id="{{choice_form.text.id_for_label}}">
-                    </td>
-                    <td>
-                      <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
-                    </td>
-                  </form>
-                {% endif %}
-              <!-- 非ログイン時 -->
-              {% else %}
-                {% with question.id|stringformat:"s" as question_id %}
-                  {% cookie "voted_"|add:question_id as voted %}
-                  {% if not voted %}
+              <!-- その他 -->
+              <tr>
+                <!-- ログイン時 -->
+                {% if user.is_authenticated %}
+                  {% if not user in question.voters.all %}
                     <th scope="row">その他</th>
                     <form  action="{% url 'nnkr:create_choice' question.id %}" method="post" class="submit-only-one">{% csrf_token %}
                       <td colspan="2">
@@ -242,13 +222,35 @@
                       </td>
                     </form>
                   {% endif %}
-                {% endwith %}
-              {% endif %}
-            </tr>
-          
-
-          </tbody>
-        </table>
+                <!-- 非ログイン時 -->
+                {% else %}
+                  {% with question.id|stringformat:"s" as question_id %}
+                    {% cookie "voted_"|add:question_id as voted %}
+                    {% if not voted %}
+                      <th scope="row">その他</th>
+                      <form  action="{% url 'nnkr:create_choice' question.id %}" method="post" class="submit-only-one">{% csrf_token %}
+                        <td colspan="2">
+                          <input
+                            style="display:inline-block"
+                            placeholder="新しい選択肢"
+                            type="{{choice_form.text.field.widget.input_type}}"
+                            class="form-control"
+                            {% if choice_form.text.field.required %}required{% endif %}
+                            name="{{choice_form.text.name}}"
+                            id="{{choice_form.text.id_for_label}}">
+                        </td>
+                        <td>
+                          <button name="vote" type="submit" class="btn btn-success btn-sm" style="width:95%">投票</button>
+                        </td>
+                      </form>
+                    {% endif %}
+                  {% endwith %}
+                {% endif %}
+              </tr>
+            
+            </tbody>
+          </table>
+        {% endif %}
 
       </div>
 

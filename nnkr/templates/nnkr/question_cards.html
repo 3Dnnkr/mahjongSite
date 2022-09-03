@@ -90,7 +90,12 @@
 
         <div class="d-flex justify-content-between align-items-center">
           <div class="left-aria">
-            <small>投票</small>{{question.votes}}
+            <small>投票</small>
+            {% if question.no_vote %}
+              -
+            {% else %}
+              {{question.votes}}
+            {% endif %}
             <small>コメ</small>{{question.comments.all|length}}
           </div>
           <div class="right-aria">

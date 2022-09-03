@@ -8,7 +8,7 @@ from .models import Choice, Question, Comment, Tag
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['image','title','description']
+        fields = ['image','title','description','no_vote']
 
 class CommentForm(forms.ModelForm):
     class Meta:
