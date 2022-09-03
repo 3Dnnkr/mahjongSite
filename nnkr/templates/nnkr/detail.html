@@ -8,15 +8,35 @@
 
       <!-- 問題情報 -->
       <div class="col-md-7">
-        <h5>{{question.title}}</h5>
-        <div class="ms-2">
-          {{question.description | linebreaksbr}}
+        
+        <div class="d-flex justify-content-between align-items-end">
+          <div>
+            <h5>{{question.title}}</h5>
+            <div class="ms-2">
+              {{question.description | linebreaksbr}}
+            </div>
+          </div>
+          <div>
+            <div class="icon-frame shadow-sm">
+              <div class="icon">
+                <img src="{{ question.author.icon.url }}">
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center">
+
+        <div class="d-flex justify-content-between">
           <div class="left-aria"></div>
           <div class="right-aria">
             <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' question.author.id %}">[{{question.author}}]</a></small>
             <small class="text-muted">{{question.updated_datetime|date:"y年m月j日H:i:s"}}</small>
+            {% comment %} <div style="display:inline-block;">
+              <div class="icon-frame shadow-sm">
+                <div class="icon">
+                  <img src="{{ question.author.icon.url }}">
+                </div>
+              </div>
+            </div> {% endcomment %}
           </div>
         </div>
         <!-- タグ -->
@@ -299,7 +319,7 @@
               <!-- 本文 -->
               <div class="d-flex flex-row  mb-3">
 
-                <div class="p-2 bd-highlight">
+                <div class="p-2">
                   <div  style="display:inline-block; vertical-align:top;">
                     <div class="icon-frame shadow-sm">
                       <div class="icon">
@@ -314,7 +334,7 @@
                 </div>
 
 
-                <div class="p-2 bd-highlight">
+                <div class="p-2">
                   <div style="font-size:18px;">
                     {{comment.text | linebreaksbr}}
                   </div>

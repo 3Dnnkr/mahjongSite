@@ -69,17 +69,19 @@
 
         <!-- 選択肢 -->
         <div>
-          <div id="choice-area">
-            {% for choice_form in formset %}
-              <div id="choice-form-{{ forloop.counter0 }}">
-                {{ choice_form.as_p }}
-              </div>
-            {% endfor %}
+          <div class="choice-form">
+            <div id="choice-area">
+              {% for choice_form in formset %}
+                <div id="choice-form-{{ forloop.counter0 }}">
+                  {{ choice_form.as_p }}
+                </div>
+              {% endfor %}
+            </div>
+            {{ formset.management_form }}
+            <button id="add" type="button" class="btn btn-primary">選択肢の追加</button>
+            <button id="remove" type="button" class="btn btn-primary">削除</button>
+            ※空欄可
           </div>
-          {{ formset.management_form }}
-          <button id="add" type="button" class="btn btn-primary">選択肢の追加</button>
-          <button id="remove" type="button" class="btn btn-primary">削除</button>
-          ※空欄可
         </div>
         
         <!-- 投票機能を使わない -->
@@ -91,7 +93,8 @@
                 {% if form.no_vote.field.required %}required{% endif %}
                 name="{{form.no_vote.name}}"
                 id="{{form.no_vote.id_for_label}}"
-                value="true">
+                value="true"
+                class="hide-choice-form">
               {{form.no_vote.label}}
             </label>
           </div>
@@ -181,4 +184,14 @@
       fileReader.readAsDataURL(obj.files[0]);
     }
   </script>
+
+  <!-- 選択フォームの表示/非表示 -->
+  <script>
+    $(function(){
+      $('.hide-choice-form').click(function(){
+        $('.choice-form').toggle();
+      });
+    });
+  </script>
+
 {% endblock %}
