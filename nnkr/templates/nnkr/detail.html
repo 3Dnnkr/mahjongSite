@@ -12,7 +12,7 @@
         <div class="d-flex justify-content-between align-items-end">
           <div>
             <h5>{{question.title}}</h5>
-            <div class="ms-2">
+            <div class="ms-2" style="font-size:17px;">
               {{question.description | linebreaksbr}}
             </div>
           </div>
@@ -127,21 +127,55 @@
         </div>
       </div>
 
-      <!-- ブクマと投票機能 -->
+      <!-- 各種機能と投票機能 -->
       <div class="col-md-5 py-2">
 
-        <!-- ブクマ -->
+        <!-- 各種機能 -->
         <div class="border border-2 bg-gray mb-2 p-1">
+          <div class="d-flex align-items-center mx-3">
 
-          <div class="mx-3">
-            <div style="display:inline-flex">
+            <!-- 評価 -->
+            <div class="me-2">
+              <div class='btn-toolbar shadow' role="toolbar">
+                <form  method="post">{% csrf_token %}
+                  <div class="btn-group" role="group">
+                    
+                    <div class="input-group-text">
+                      <b>Intresting
+                      {% if question.rating >= 0 %}+{% endif %} 
+                      {{ question.rating }}</b>
+                    </div>
+                      
+                    <button type="submit" class="btn btn-secondary"
+                      formaction="{% url 'nnkr:create_liker' question.id %}"
+                      {% if question in user.likes.all or question in user.dislikes.all or question.author == user %} disabled {% endif %}>
+                      <div style="margin:-0.5rem">
+                        <i class="bi bi-plus" style="font-size: 1.6rem;"></i>
+                      </div>
+                    </button>
+
+                    <button type="submit" class="btn btn-secondary"
+                      formaction="{% url 'nnkr:create_disliker' question.id %}"
+                      {% if question in user.likes.all or question in user.dislikes.all or question.author == user %} disabled {% endif %}>
+                      <div style="margin:-0.5rem">
+                        <i class="bi bi-dash" style="font-size: 1.6rem;"></i>
+                      </div>
+                    </button>
+                  
+                  </div> 
+                </form>
+              </div>
+            </div>
+
+            <!-- ブクマ -->
+            <div>
 
               {% if question in user.bookmarks.all %}
 
               <!-- ブックマーク解除 -->
               <form action="{% url 'nnkr:delete_bookmark' question.id %}" method="post">{% csrf_token %}
-                <button type="submit" class="btn btn-outline-danger shadow mx-1"
-                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-delay="200" title="ブックマーク解除">
+                <button type="submit" class="btn btn-success shadow mx-1"
+                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-delay="500" title="ブックマーク解除">
                   <div style="margin:-0.5rem">
                     <i class="bi bi-bookmark-dash" style="font-size: 1.8rem; "></i>
                   </div>
@@ -152,8 +186,8 @@
 
               <!-- ブックマーク -->
               <form action="{% url 'nnkr:create_bookmark' question.id %}" method="post">{% csrf_token %}
-                <button type="submit" class="btn btn-outline-success shadow mx-1"
-                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-delay="200" title="ブックマーク">
+                <button type="submit" class="btn btn-secondary shadow mx-1"
+                  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-delay="500" title="ブックマーク">
                   <div style="margin:-0.5rem">
                     <i class="bi bi-bookmark-plus" style="font-size: 1.8rem; "></i>
                   </div>
@@ -163,8 +197,8 @@
               {% endif %}
 
             </div>
+            
           </div>
-          
         </div>
 
         <!-- 投票 -->
@@ -333,12 +367,22 @@
                   </div>
                 </div>
 
-
                 <div class="p-2">
                   <div style="font-size:18px;">
                     {{comment.text | linebreaksbr}}
+
+                    {% if comment.posted_at != comment.updated_at %}
+                      <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                    {% endif %}
+
+                    {% if user == comment.commenter %}
+                      <a href="{% url 'nnkr:update_comment' question.pk comment.pk %}"
+                        class="link-dark-u"><small>編集</small>
+                      </a>
+                    {% endif %}
                   </div>
                 </div>
+
               </div>
 
             </div>

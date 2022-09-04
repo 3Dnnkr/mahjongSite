@@ -13,6 +13,7 @@ urlpatterns = [
     path('question/<int:pk>/', views.Detail.as_view(), name='detail'),
     path('question/<int:pk>/create_choice/', views.CreateChoice.as_view(), name='create_choice'),
     path('question/<int:pk>/create_comment/', views.CreateComment.as_view(), name='create_comment'),
+    path('question/<int:q_pk>/update_comment/<int:pk>/', views.UpdateComment.as_view(), name='update_comment'),
     path('question/<int:pk>/create_comment_liek/<int:c_pk>/', views.create_comment_like, name='create_comment_like'),
     path('question/<int:pk>/vote/<int:c_pk>/', views.vote, name="vote"),
     path('question/<int:pk>/secret_vote/<int:c_pk>/', views.secret_vote, name="secret_vote"),
@@ -20,4 +21,7 @@ urlpatterns = [
     path('question/<int:pk>/delete_tag/<int:t_pk>/', views.delete_tag, name='delete_tag'),
     path('question/<int:pk>/create_bookmark/', views.create_bookmark, name='create_bookmark'),
     path('question/<int:pk>/delete_bookmark/', views.delete_bookmark, name='delete_bookmark'),
+    path('question/<int:pk>/create_liker/', views.CreateLiker.as_view(), name='create_liker'),
+    path('question/<int:pk>/delete_liker/', views.delete_liker, name='delete_liker'),
+    path('question/<int:pk>/create_disliker/', views.CreateDisliker.as_view(), name='create_disliker'),
 ]

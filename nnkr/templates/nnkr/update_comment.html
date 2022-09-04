@@ -1,0 +1,45 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+<div class="pt-3">
+  <h3 class="text-center">コメント編集</h3><hr>
+</div>
+
+<div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+
+        <div class="card my-2 shadow-sm">
+          <div class="card-body">
+            <h5><a href="{% url 'nnkr:detail' comment.question.pk %}" class="link-dark-nu">編集せずに戻る<a></h5>
+            {% if comment.commenter == user %}
+              <form  action="{% url 'nnkr:update_comment' comment.question.pk comment.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-10 form-group">
+                    <textarea
+                      placeholder="コメント"
+                      type="{{form.text.field.widget.input_type}}"
+                      class="form-control"
+                      {% if form.text.field.required %}required{% endif %}
+                      name="{{form.text.name}}"
+                      id="{{form.text.id_for_label}}"
+                      rows="4">{{comment.text}}</textarea>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary" style="width:100%;height:auto">送信</button>
+                  </div>
+                </div>
+              </form>
+            {% else %}
+              発言者以外は編集できません.
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -91,16 +91,15 @@
         <div class="d-flex justify-content-between align-items-center">
           <div class="left-aria">
             <small>投票</small>
-            {% if question.no_vote %}
-              -
-            {% else %}
-              {{question.votes}}
-            {% endif %}
-            <small>コメ</small>{{question.comments.all|length}}
+            {% if question.no_vote %}-{% else %}{{question.votes}}{% endif %}
+            <small>コメ</small>
+            {{question.comments.all|length}}
+            <small>評価</small>
+            {% if question.rating >= 0 %}+{% endif %}{{question.rating}}
           </div>
           <div class="right-aria">
             <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' question.author.id %}">[{{question.author}}]</a></small>
-            <small class="text-muted">{{question.updated_datetime|date:"y年m月j日H:i"}}</small>
+            <small class="text-muted">{{question.created_datetime|date:"y年m月j日H:i"}}</small>
           </div>
         </div>
 

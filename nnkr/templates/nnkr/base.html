@@ -63,6 +63,14 @@
       </div>
     </nav>
 
+    <!-- メッセージ -->
+    {% for message in messages %}
+      <div id="alertID" {% if message.tags %}class="{{ message.tags }} alert-dismissible shadow fade show fixed-top alert-fade"{% endif %}>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+
     <!-- メインコンテント -->
     <div class="container mt-3">
         {% block content %}{% endblock %}
@@ -86,12 +94,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
      crossorigin="anonymous"></script>
-
-    
+   
     <!-- My JS -->
     <script type="text/javascript" src="{% static 'js/myScript.js' %}"></script>
 
-    
+    <!-- Autodismiss alert -->
+    <script type="text/javascript">
+      // Enable dismissal of an alert via JavaScript:
+      var alertList = document.querySelectorAll('.alert')
+      alertList.forEach(function(alert) {
+        new bootstrap.Alert(alert)
+      })
+
+      // Get the alert element
+      // var alertQs = document.querySelector('.alert')  // This line would target all alerts on the page
+      var alertQs = document.querySelector('#alertID') // This line only targets the element with ID #alertID
+      // Create a Bootstrap alert instance
+      var bsAlert = bootstrap.Alert.getInstance(alertQs)
+      // Dismiss alert after specified amount of time in milliseconds
+      window.setTimeout(() => { bsAlert.close(); }, 2000);
+    </script>
+
     <!-- JS追加部分 -->
     {% block extrajs %}{% endblock %}
 </body>

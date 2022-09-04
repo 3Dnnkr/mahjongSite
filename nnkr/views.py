@@ -1,5 +1,6 @@
 from django.views.generic import TemplateView, CreateView, ListView, FormView, DetailView, DeleteView, UpdateView
 from django.views.decorators.http import require_POST, require_GET
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,7 +16,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker
 from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset
 from . import twitter
 from django.conf import settings
@@ -56,6 +57,25 @@ class Index(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:20]
+        return context
+
+class TagQuestion(ListView):
+    template_name = 'nnkr/tag_question.html'
+    model = Question
+    context_object_name = 'questions'
+
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
+        all_questions = Question.objects.all().filter(tags__in=[tag]).order_by('-created_datetime')
+        paginator = Paginator(all_questions, 6)
+        p = self.request.GET.get('page')
+        questions = paginator.get_page(p)
+        return questions
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
+        context['tag'] = tag
         return context
 
 class Detail(DetailView):
@@ -120,8 +140,6 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
         question.tweet_id = tweet.id
         question.save()
 
-
-@require_POST
 def delete_question(request, pk):
     question = get_object_or_404(Question, pk=pk)
     delete_title = request.POST.get("delete_title")
@@ -169,7 +187,15 @@ class CreateComment(CreateView):
             Comment.objects.create(question=question, text=text, comment_id=comment_id)
         return redirect(self.request.META['HTTP_REFERER'])
 
-@require_POST
+class UpdateComment(UpdateView):
+    template_name = 'nnkr/update_comment.html'
+    model = Comment
+    fields = ['text',]
+ 
+    def get_success_url(self):
+        comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        return resolve_url('nnkr:detail',pk=comment.question.pk)
+ 
 def create_comment_like(request, pk, c_pk):
     comment = get_object_or_404(Comment, pk=c_pk)
     user = request.user
@@ -181,25 +207,6 @@ def create_comment_like(request, pk, c_pk):
         CommentLike.objects.create(liker=user, comment=comment)
     return redirect(request.META['HTTP_REFERER'])
 
-
-class TagQuestion(ListView):
-    template_name = 'nnkr/tag_question.html'
-    model = Question
-    context_object_name = 'questions'
-
-    def get_queryset(self):
-        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
-        all_questions = Question.objects.all().filter(tags__in=[tag]).order_by('-created_datetime')
-        paginator = Paginator(all_questions, 6)
-        p = self.request.GET.get('page')
-        questions = paginator.get_page(p)
-        return questions
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
-        context['tag'] = tag
-        return context
 
 class CreateTag(CreateView):
     model = Tag
@@ -217,15 +224,13 @@ class CreateTag(CreateView):
             Tagging.objects.create(question=question, tag=tag, tagging_datetime=timezone.datetime.now())
         return redirect(self.request.META['HTTP_REFERER'])
 
-@require_POST
 def delete_tag(request, pk, t_pk):
     question = get_object_or_404(Question, pk=pk)
     tag = get_object_or_404(Tag, pk=t_pk)
     question.tags.remove(tag)
     return redirect(request.META['HTTP_REFERER'])
 
-@login_required
-@require_POST
+
 def vote(request, pk, c_pk):
     choice = get_object_or_404(Choice, pk=c_pk)
     if not request.user in choice.question.voters.all():
@@ -233,7 +238,6 @@ def vote(request, pk, c_pk):
     # return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
     return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
 
-@require_POST
 def secret_vote(request, pk, c_pk):
     choice = get_object_or_404(Choice, pk=c_pk)
     response = redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
@@ -246,23 +250,67 @@ def secret_vote(request, pk, c_pk):
         choice.save()
     return response
 
-@require_POST
+
 def create_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     user = request.user
     if user.is_anonymous:
+        messages.warning(request, "ログインが必要です")
         redirect(request.META['HTTP_REFERER'])
     b_question = user.bookmarks.filter(id=question.id).first()
     if b_question==None:
         Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
+        messages.success(request, "ブックマークしました！")
     return redirect(request.META['HTTP_REFERER'])
 
-@require_POST
 def delete_bookmark(request, pk):
     question = get_object_or_404(Question, pk=pk)
     if request.user.is_anonymous:
+        messages.warning(request, "ログインが必要です")
         redirect(request.META['HTTP_REFERER'])
-    request.user.bookmarks.remove(question)
+    else:
+        request.user.bookmarks.remove(question)
+        messages.success(request, "ブックマークを解除しました")
     return redirect(request.META['HTTP_REFERER'])
 
+
+class CreateLiker(CreateView):
+    model = Liker
+    fields = []
+
+    def form_valid(self, form):
+        question_id = self.kwargs.get('pk')
+        question = get_object_or_404(Question, pk=question_id)
+
+        if self.request.user.is_authenticated:
+            Liker.objects.create(question=question, user=self.request.user)
+            messages.success(self.request, "問題を評価しました！")
+        else:
+            messages.warning(self.request, "ログインが必要です")
+        return redirect(self.request.META['HTTP_REFERER'])
+
+class CreateDisliker(CreateView):
+    model = Disliker
+    fields = []
+
+    def form_valid(self, form):
+        question_id = self.kwargs.get('pk')
+        question = get_object_or_404(Question, pk=question_id)
+
+        if self.request.user.is_authenticated:
+            Disliker.objects.create(question=question, user=self.request.user)
+            messages.success(self.request, "問題の評価を下げました")
+        else:
+            messages.warning(self.request, "ログインが必要です")
+        return redirect(self.request.META['HTTP_REFERER'])
+
+def delete_liker(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+    if request.user.is_authenticated:
+        request.user.likes.remove(question)
+        messages.success(request, "イイねを解除しました")
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        messages.warning(request, "ログインが必要です")
+    return redirect(request.META['HTTP_REFERER'])
 

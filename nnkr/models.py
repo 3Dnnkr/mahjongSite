@@ -13,9 +13,12 @@ class Question(models.Model):
     title = models.CharField('タイトル',max_length=100)
     description = models.TextField('説明文',blank=True)
     tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ',related_name='questions')
-    bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
     tweet_id = models.CharField('TweetID', max_length=200, blank=True, null=True)
     no_vote = models.BooleanField('投票機能を使わない', default=False)
+
+    bookmarkers = models.ManyToManyField(get_user_model(),through='Bookmark',blank=True,related_name='bookmarks',verbose_name='ブックマーカー')
+    likers = models.ManyToManyField(get_user_model(),through='Liker',blank=True,related_name='likes',verbose_name='評価したユーザー')
+    dislikers = models.ManyToManyField(get_user_model(),through='Disliker',blank=True,related_name='dislikes',verbose_name='否定したユーザー')
 
     def __str__(self):
         return self.title
@@ -35,6 +38,10 @@ class Question(models.Model):
         for c in self.choice_set.all():
             _voters = c.voters.union(_voters)
         return _voters
+    
+    @property
+    def rating(self):
+        return self.likers.all().count() - self.dislikers.all().count()
 
 
 class Tag(models.Model):
@@ -55,11 +62,22 @@ class Bookmark(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     bookmark_datetime = models.DateTimeField()
 
+class Liker(models.Model):
+    """ use for order of likers. """
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+class Disliker(models.Model):
+    """ use for order of dislikers. """
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
 class Comment(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name='対象質問', related_name='comments')
     comment_id = models.IntegerField('コメントID',default=1)
     commenter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, related_name='comments', verbose_name='発言者')
     posted_at = models.DateTimeField('発言日',auto_now_add=True)
+    updated_at = models.DateTimeField('更新日時',auto_now=True)
     text = models.TextField('本文')
     likers = models.ManyToManyField(get_user_model(),through='CommentLike',blank=True,related_name='like_comments',verbose_name='いいねした人')
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookmark, Voting
+from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookmark, Voting, Liker, Disliker
 
 
 class ChoiceInline(admin.TabularInline):
@@ -19,11 +19,19 @@ class BookmarkInline(admin.TabularInline):
     model = Bookmark
     extra = 0
 
+class LikerInline(admin.TabularInline):
+    model = Liker
+    extra = 0
+
+class DislikerInline(admin.TabularInline):
+    model = Disliker
+    extra = 0
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'author','created_datetime', 'updated_datetime', 'tweet_id', 'no_vote')
     list_display_links = ('id', 'title')
     filter_horizontal = ('tags',)
-    inlines=(TaggingInline, ChoiceInline, CommentInline, BookmarkInline,)
+    inlines=(TaggingInline, ChoiceInline, CommentInline, BookmarkInline, LikerInline, DislikerInline)
 
 
 class TagAdmin(admin.ModelAdmin):
