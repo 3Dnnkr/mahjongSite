@@ -46,7 +46,7 @@ class Question(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField('タグ名', unique=True, blank=False, max_length=32)
+    name = models.CharField('タグ名', unique=False, blank=False, max_length=32)
 
     def __str__(self):
         return self.name
