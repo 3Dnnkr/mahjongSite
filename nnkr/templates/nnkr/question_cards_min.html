@@ -65,7 +65,7 @@
   <div class="row">
     
     <!-- 画像 -->
-    <div class="col-12 col-md-4 my-auto">
+    <div class="col-12 my-auto">
       <div class="as-outer">
         <div class="as-inner">
             <a data-bs-toggle="modal" data-bs-target='{{"#imgModal-"|addstr:forloop.counter0}}' style="cursor:pointer">
@@ -78,15 +78,12 @@
     </div>
 
     <!-- その他 -->
-    <div class="col-12 col-md-8">
+    <div class="col-12">
       <div class="card-body">
         <a  class="link-dark-nu" href="{% url 'nnkr:detail' question.id %}">
           <h5 class="card-title" style="display:inline;">{{question.title}}</h5>
         </a>
         <br>
-        <div class="d-none d-xl-block">
-          {{question.description | truncatechars:65}}
-        </div>
 
         <div class="d-flex justify-content-between align-items-center">
           <div class="left-aria">

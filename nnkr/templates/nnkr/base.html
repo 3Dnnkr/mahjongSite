@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 
     <!-- My CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     
     <title>雀魂何切る</title>
@@ -35,9 +36,9 @@
             <li>
               <a class="nav-item nav-link" href="{% url 'user:index' %}">ユーザーリスト</a>
             </li>
-            <li>
+            {% comment %} <li>
               <a class="nav-item nav-link" href="{% url 'nnkr:faq' %}">FAQ</a>
-            </li>
+            </li> {% endcomment %}
           </ul>
 
           <ul class="navbar-nav">
@@ -77,11 +78,34 @@
     </div>
 
     <!-- フッター -->
-    {% comment %} <footer class="footer">
-	    <div class="container text-center">
-	      <p class="text-muted">©︎2022 JTnnkr</p>
-	    </div>
-    </footer> {% endcomment %}
+    <footer class="section footer-classic context-dark bg-image mt-5 pt-4 pb-5" style="background: #2d3246;">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-md-4  my-2">
+            <div class="pr-xl-4">
+              <h5><a class="link-nu" href="{% url 'nnkr:top' %}">雀魂何切る</h5>
+              <a class="mx-1 link-nu" href="{% url 'nnkr:index' %}">問題一覧</a>
+              <a class="mx-1 link-nu" href="{% url 'user:index' %}">ユーザーリスト</a>
+              <a class="mx-1 link-nu" href="{% url 'nnkr:faq' %}">FAQ</a>
+            </div>
+          </div>
+
+          <div class="col-md-4 my-2">
+            <h5>連絡先</h5>
+              twitter: https://twitter.com/3Dnnkr <br>
+              email: 3dnnkr@gmail.com
+          </div>
+
+          <div class="col-md-4 my-2">
+            <h5>外部リンク</h5>
+            <a class="mx-1 link-nu" href="https://mahjongsoul.com/">雀魂-じゃんたま-</a>
+            <a class="mx-1 link-nu" href="https://mahjongsoul-pong.jp/">雀魂 PONG</a>
+          </div>
+
+        </div>
+      </div>
+    </footer>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -114,6 +138,9 @@
       // Dismiss alert after specified amount of time in milliseconds
       window.setTimeout(() => { bsAlert.close(); }, 2000);
     </script>
+
+    <!-- Tweet embed -->
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
     <!-- JS追加部分 -->
     {% block extrajs %}{% endblock %}

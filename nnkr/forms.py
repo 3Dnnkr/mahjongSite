@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from .models import Choice, Question, Comment, Tag
+from .models import Choice, Question, Comment, Tag, Lobbychat
 
 
 class QuestionForm(forms.ModelForm):
@@ -15,15 +15,19 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['text']
 
+class LobbychatForm(forms.ModelForm):
+    class Meta:
+        model = Lobbychat
+        fields = ['text']
+
 class ChoiceForm(forms.ModelForm):
     class Meta:
         model = Choice
         fields = ['text']
 
-class TagForm(forms.ModelForm):
-    class Meta:
-        model = Tag
-        fields = ['name']
+class TagForm(forms.Form):
+    # Tag is unique so can't use ModelForm
+    name = forms.CharField()
 
 ChoiceFormset = forms.inlineformset_factory(
     Question, Choice, fields=['text'],

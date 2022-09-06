@@ -6,17 +6,58 @@
   <small>を含む問題({{tag.questions.all|length}}件)</small><hr>
 </div>
 
-
 <div class="album py-1">
-  <!-- 問題一覧 -->
-  <div class="col-lg-8 offset-lg-2">
-  {% include "nnkr/question_cards.html" with questions=questions %}
-  
-  <!-- ページング -->
-  <div class="my-2">
-    {% include "nnkr/pagination.html" with page_obj=questions %}
-  </div>
-  </div>
+  <div class="container">
+    <div class="row">
 
+      <!-- タグ一覧ページング -->
+      <div class="col-12 col-lg-9">
+
+        <!-- ソート機能 -->
+        <details class="mb-2">
+          <summary><u><b>
+            {% if r %}人気が高い順{% elif v %}投票数が多い順{% elif o %}投稿順{% else %}新着順{% endif %}
+          </b></u></summary>
+          <div class="border border-2 bg-gray mb-2">
+            <div class="bg-white p-2">
+              <a href="{% url 'nnkr:tag_question' tag.id %}?sort=n" class="link-dark-nu">新着順</a><br>
+              <a href="{% url 'nnkr:tag_question' tag.id %}?sort=o" class="link-dark-nu">投稿順</a><br>
+              <a href="{% url 'nnkr:tag_question' tag.id %}?sort=r" class="link-dark-nu">人気が高い順</a><br>
+              <a href="{% url 'nnkr:tag_question' tag.id %}?sort=v" class="link-dark-nu">投票数が多い順</a><br>
+            </div>
+          </div>
+        </details>
+        
+        <!-- 問題一覧 -->
+        <div> 
+          {% include "nnkr/question_cards.html" with questions=questions %}
+        </div>
+        <small>※画像クリックで拡大表示</small>
+
+        <!-- ページング -->
+        <div class="p-2">
+          {% include "nnkr/pagination.html" with page_obj=questions %}
+        </div>
+      
+      </div>
+
+      <!-- 人気タグ -->
+      <div class="col-12 col-lg-3">
+        <div class="border border-2 bg-gray mb-2 p-1">
+          <div class="text-center">
+            <h5 style="display:inline-block;">人気タグ</h5>
+            <small>(問題数)</small>
+          </div>
+          {% for tag in tags %}
+            <a class="tag-box link-dark-nu shadow-sm" href="{% url 'nnkr:tag_question' tag.id %}">
+              <i class="bi bi-tag" style="font-size: 1rem;"></i>
+              {{tag.name}}({{tag.questions.all|length}})
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 {% endblock %}

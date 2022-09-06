@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import slugify
 from cloudinary.models import CloudinaryField
 import cloudinary
 
@@ -45,7 +46,7 @@ class Question(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField('タグ名',max_length=32)
+    name = models.CharField('タグ名', unique=True, blank=False, max_length=32)
 
     def __str__(self):
         return self.name
@@ -78,6 +79,7 @@ class Comment(models.Model):
     commenter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, related_name='comments', verbose_name='発言者')
     posted_at = models.DateTimeField('発言日',auto_now_add=True)
     updated_at = models.DateTimeField('更新日時',auto_now=True)
+    is_updated = models.BooleanField('更新されたか',default=False)
     text = models.TextField('本文')
     likers = models.ManyToManyField(get_user_model(),through='CommentLike',blank=True,related_name='like_comments',verbose_name='いいねした人')
 
@@ -109,3 +111,11 @@ class Voting(models.Model):
     voter = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     choice = models.ForeignKey('Choice', on_delete=models.CASCADE)
     voting_datetime = models.DateTimeField()
+
+
+class Lobbychat(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True, related_name='loby_chats', verbose_name='発言者')
+    posted_at = models.DateTimeField('発言日',auto_now_add=True)
+    updated_at = models.DateTimeField('更新日時',auto_now=True)
+    is_updated = models.BooleanField('更新されたか',default=False)
+    text = models.TextField('本文')

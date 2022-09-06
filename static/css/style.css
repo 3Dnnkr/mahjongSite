@@ -37,6 +37,13 @@
 	background: white;
 }
 
+.link-nu {
+    text-decoration: none;
+}
+.link-nu:hover {
+	text-decoration: underline;
+}
+
 .link-dark-u {
 	text-decoration: underline;
 	color: black;
@@ -186,3 +193,15 @@
 /* body, input, textarea {
     font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "verdana", sans-serif;
 } */
+
+
+.float_box{ overflow: hidden;}
+.img{
+    clear: both;
+    float: right;
+}
+.space{
+    width: 1px;
+    height: 100%;
+    background: #f00;
+}

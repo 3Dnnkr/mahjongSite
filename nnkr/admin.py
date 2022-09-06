@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
-from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookmark, Voting, Liker, Disliker
+from .models import Question, Choice, Comment, CommentLike, Tag, Tagging, Bookmark, Voting, Liker, Disliker, Lobbychat
 
 
 class ChoiceInline(admin.TabularInline):
@@ -73,7 +73,12 @@ class VotingAdmin(admin.ModelAdmin):
     list_display = ('id','choice','voter',)
     list_display_links = ('id',)
 
+class LobbychatAdmin(admin.ModelAdmin):
+    list_display = ('id','user','text','posted_at')
+    list_display_links = ('id','text',)
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Choice, ChoiceAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Lobbychat, LobbychatAdmin)

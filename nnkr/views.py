@@ -10,16 +10,14 @@ from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpR
 from django.core.paginator import Paginator
 from django.db.models import Count
 
-import os
 import random
 import requests
 from PIL import Image
 from io import BytesIO
 
-from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker
-from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat
+from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm
 from . import twitter
-from django.conf import settings
 
 
 class Top(TemplateView):
@@ -27,12 +25,19 @@ class Top(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:10]
         hot_comments = list(Comment.objects.order_by('posted_at')[:10])
         random.shuffle(hot_comments)
         hot_comments = hot_comments[:1]
         hot_questions = [c.question for c in hot_comments]
         context['questions'] = hot_questions
+
+        lobby_chats = Lobbychat.objects.all()
+        paginator = Paginator(lobby_chats, 8)
+        p = self.request.GET.get('page')
+        lobby_chats = paginator.get_page(p)
+        context['chats'] = lobby_chats
+
+        context['chat_form'] = LobbychatForm
         return context
 
 class FAQ(TemplateView):
@@ -48,16 +53,44 @@ class Index(ListView):
     context_object_name = 'questions'
 
     def get_queryset(self):
-        all_questions = Question.objects.all().order_by('-created_datetime')
-        paginator = Paginator(all_questions, 6)
+        sort = self.request.GET.get('sort')
+        questions = Question.objects.all()
+        
+        if sort=="r":
+            questions = [q for q in questions]
+            questions.sort(key=lambda q: q.rating, reverse=True)
+        elif sort=="v":
+            questions = [q for q in questions]
+            questions.sort(key=lambda q: q.votes, reverse=True)
+        elif sort=="o":
+            questions = questions.order_by('created_datetime')
+        else:
+            questions = questions.order_by('-created_datetime')
+
+        paginator = Paginator(questions, 6)
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
         return questions
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:20]
+        sort = self.request.GET.get('sort')
+        context[str(sort)]=True
         return context
+
+class TagIndex(ListView):
+    template_name = 'nnkr/tag_index.html'
+    model = Tag
+    context_object_name = 'tags'
+
+    def get_queryset(self):
+        tags = Tag.objects.all()
+        paginator = Paginator(tags, 50)
+        p = self.request.GET.get('page')
+        tags = paginator.get_page(p)
+        return tags
+
 
 class TagQuestion(ListView):
     template_name = 'nnkr/tag_question.html'
@@ -65,9 +98,22 @@ class TagQuestion(ListView):
     context_object_name = 'questions'
 
     def get_queryset(self):
+        sort = self.request.GET.get('sort')
         tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
-        all_questions = Question.objects.all().filter(tags__in=[tag]).order_by('-created_datetime')
-        paginator = Paginator(all_questions, 6)
+        questions = Question.objects.all().filter(tags__in=[tag])
+        
+        if sort=="r":
+            questions = [q for q in questions]
+            questions.sort(key=lambda q: q.rating, reverse=True)
+        elif sort=="v":
+            questions = [q for q in questions]
+            questions.sort(key=lambda q: q.votes, reverse=True)
+        elif sort=="o":
+            questions = questions.order_by('created_datetime')
+        else:
+            questions = questions.order_by('-created_datetime')
+
+        paginator = Paginator(questions, 6)
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
         return questions
@@ -76,6 +122,9 @@ class TagQuestion(ListView):
         context = super().get_context_data(**kwargs)
         tag = get_object_or_404(Tag, pk=self.kwargs['pk'])
         context['tag'] = tag
+        context['tags'] = Tag.objects.annotate(Count("questions")).filter(questions__count__gt=0).order_by("-questions__count")[:20]
+        sort = self.request.GET.get('sort')
+        context[str(sort)]=True
         return context
 
 class Detail(DetailView):
@@ -158,20 +207,6 @@ def delete_question(request, pk):
     question.delete()
     return redirect('nnkr:index')
 
-class CreateChoice(CreateView):
-    model = Choice
-    form_class = ChoiceForm
-
-    def form_valid(self, form):
-        question_id = self.kwargs.get('pk')
-        question = get_object_or_404(Question, pk=question_id)
-        text = form.cleaned_data.get('text')
-        choice = Choice.objects.create(question=question, text=text)
-        if self.request.user.is_authenticated:
-            return redirect(reverse('nnkr:vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
-        else:
-            return redirect(reverse('nnkr:secret_vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
-
 class CreateComment(CreateView):
     model = Comment
     form_class = CommentForm
@@ -191,6 +226,14 @@ class UpdateComment(UpdateView):
     template_name = 'nnkr/update_comment.html'
     model = Comment
     fields = ['text',]
+
+    def form_valid(self,form):
+        redirect = super().form_valid(form)        
+        pk = self.kwargs.get('pk')
+        comment = get_object_or_404(Comment, pk=pk)
+        comment.is_updated = True
+        comment.save()
+        return redirect
  
     def get_success_url(self):
         comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
@@ -205,25 +248,28 @@ def create_comment_like(request, pk, c_pk):
     _liker = comment.likers.filter(pk=user.pk).first()
     if _liker==None and user!=comment.commenter:
         CommentLike.objects.create(liker=user, comment=comment)
+        messages.success(request, "コメントを評価しました！")
+        
     return redirect(request.META['HTTP_REFERER'])
 
 
-class CreateTag(CreateView):
-    model = Tag
+class CreateTag(FormView):
     form_class = TagForm
 
     def form_valid(self, form):
         question_id = self.kwargs.get('pk')
         question = get_object_or_404(Question, pk=question_id)
         name = form.cleaned_data.get('name')
+        # Create tag if not tag exist.
         tag = Tag.objects.filter(name=name).first()
         if tag==None:
-            tag = form.save()
+            tag = Tag.objects.create(name=name)
+        # Connect tag if not question has it.
         q_tag = question.tags.filter(name=name).first()
         if q_tag==None:
             Tagging.objects.create(question=question, tag=tag, tagging_datetime=timezone.datetime.now())
         return redirect(self.request.META['HTTP_REFERER'])
-
+    
 def delete_tag(request, pk, t_pk):
     question = get_object_or_404(Question, pk=pk)
     tag = get_object_or_404(Tag, pk=t_pk)
@@ -231,10 +277,25 @@ def delete_tag(request, pk, t_pk):
     return redirect(request.META['HTTP_REFERER'])
 
 
+class CreateChoice(CreateView):
+    model = Choice
+    form_class = ChoiceForm
+
+    def form_valid(self, form):
+        question_id = self.kwargs.get('pk')
+        question = get_object_or_404(Question, pk=question_id)
+        text = form.cleaned_data.get('text')
+        choice = Choice.objects.create(question=question, text=text)
+        if self.request.user.is_authenticated:
+            return redirect(reverse('nnkr:vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
+        else:
+            return redirect(reverse('nnkr:secret_vote',kwargs={'pk':question_id, 'c_pk':choice.id}))
+
 def vote(request, pk, c_pk):
     choice = get_object_or_404(Choice, pk=c_pk)
     if not request.user in choice.question.voters.all():
         Voting.objects.create(choice=choice, voter=request.user, voting_datetime=timezone.datetime.now())
+        messages.success(request, "投票しました！")
     # return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id})+"#image")
     return redirect(reverse('nnkr:detail',kwargs={'pk':choice.question.id}))
 
@@ -248,6 +309,7 @@ def secret_vote(request, pk, c_pk):
         response.set_cookie('voted_choice_{}'.format(choice.id),True)
         choice.secret_votes+=1
         choice.save()
+        messages.success(request, "投票しました！")
     return response
 
 
@@ -314,3 +376,15 @@ def delete_liker(request, pk):
         messages.warning(request, "ログインが必要です")
     return redirect(request.META['HTTP_REFERER'])
 
+
+class CreateLobbychat(CreateView):
+    model = Lobbychat
+    form_class = LobbychatForm
+
+    def form_valid(self, form):
+        text = form.cleaned_data.get('text')
+        if self.request.user.is_authenticated:
+            Lobbychat.objects.create(text=text, user=self.request.user)
+        else:
+            Lobbychat.objects.create(text=text)
+        return redirect(self.request.META['HTTP_REFERER'])
