@@ -30,9 +30,9 @@ django.db.utils.ProgrammingError: relation does not exist
 """
 class User(AbstractUser):
     introduction = models.TextField('紹介文',blank=True)
-    # icon = models.ForeignKey(Icon,blank=True,null=True,verbose_name="アイコン",
-    #     on_delete=models.SET(Icon.get_default),
-    #     default=Icon.get_default_pk)
-    icon = models.ForeignKey(Icon,on_delete=models.PROTECT,blank=True,null=True,verbose_name="アイコン")
+    icon = models.ForeignKey(Icon,blank=True,null=True,verbose_name="アイコン",
+        on_delete=models.SET(Icon.get_default),
+        default=Icon.get_default_pk)
+    #icon = models.ForeignKey(Icon,on_delete=models.PROTECT,blank=True,null=True,verbose_name="アイコン")
     
 
