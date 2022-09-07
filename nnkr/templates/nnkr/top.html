@@ -29,16 +29,25 @@
   <button type="button" class="btn btn-dark shadow m-1"
     onclick="location.href='{% url "user:index" %}'">
     <div class="d-flex align-items-center">
-      <div style="max-height:70px;margin:-5px;margin-right:10px">
+      <div style="max-height:70px;margin:-4px;margin-right:10px">
         <div  style="display:inline-block; vertical-align:top;">
           <div class="icon-frame shadow-sm">
             <div class="icon">
-              <img src="{% static 'img/icon/icon_chiori.png' %}">
+              <img src="{% static 'img/stamp/mikamichiori-4.png' %}">
             </div>
           </div>
         </div>
       </div> 
       <b>ユーザーリスト</b>
+    </div>
+  </button>
+
+  <!-- 上達への道 -->
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "nnkr:index" %}'">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/icon/icon.png' %}" style="max-height:70px;margin:-5px;margin-right:10px" class="p-1">  
+      <b>上達への道</b>
     </div>
   </button>
 </div>
@@ -160,12 +169,6 @@
       </div>
 
       <!-- Tweet -->
-      <div class="my-4" style="height:500px;">
-        <a class="twitter-timeline" data-lang="en" data-height="500"
-          data-theme="light"
-          href="https://twitter.com/MahjongSoul_JP?ref_src=twsrc%5Etfw">Tweets by MahjongSoul_JP</a> 
-      </div>
-
       <div class="my-4" style="height:500px;">
         <a class="twitter-timeline" data-lang="en" data-height="500"
           data-theme="light"

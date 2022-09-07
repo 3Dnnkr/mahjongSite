@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
      <!-- favicon -->
-     <link rel="icon" type="image/png" href="{% static 'img/icon/icon_chiori.png' %}">
+     <link rel="icon" type="image/png" href="{% static 'img/stamp/mikamichiori-4.png' %}">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -39,15 +39,25 @@
             <li>
               <a class="nav-item nav-link" href="{% url 'user:index' %}">ユーザーリスト</a>
             </li>
-            {% comment %} <li>
-              <a class="nav-item nav-link" href="{% url 'nnkr:faq' %}">FAQ</a>
-            </li> {% endcomment %}
           </ul>
 
           <ul class="navbar-nav">
               {% if user.is_authenticated %}
             <li>
-              <a class="nav-item nav-link" href="{% url 'user:detail' user.pk %}">ようこそ、{{user.username}}さん</a>
+              <div class="d-flex align-items-center">
+                <div style="max-height:70px;margin:-5px;margin-right:3px">
+                  <div  style="display:inline-block; vertical-align:top;">
+                    <div class="icon-frame shadow-sm" style="width:30px;height:30px;">
+                      <div class="icon">
+                        <img src="{{ user.icon.url }}">
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+                <a class="nav-item nav-link" href="{% url 'user:detail' user.pk %}">
+                  {{user.username}}さん
+                </a>
+              </div>
             </li>
             <li>
               <a class="nav-item nav-link" href="{% url 'nnkr:create_question' %}">問題作成</a>
@@ -105,6 +115,11 @@
             <h5>外部リンク</h5>
             <a class="mx-1 link-nu" href="https://mahjongsoul.com/">雀魂-じゃんたま-</a>
             <a class="mx-1 link-nu" href="https://mahjongsoul-pong.jp/">雀魂 PONG</a>
+            <div class="my-4" style="height:500px;">
+              <a class="twitter-timeline" data-lang="en" data-height="500"
+                data-theme="dark"
+                href="https://twitter.com/MahjongSoul_JP?ref_src=twsrc%5Etfw">Tweets by MahjongSoul_JP</a> 
+            </div>
           </div>
 
         </div>
