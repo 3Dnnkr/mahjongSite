@@ -16,17 +16,32 @@
 
         <!--カードの内容-->
         <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="left-aria">
-              <a  class="link-dark-u" href="{% url 'user:detail' target_user.id %}">
-                <h5>{{target_user.username}}</h5>
-              </a>
+          <div class="row">
+            <div class="col-9">
+            <div class="d-flex justify-content-start">
+              <div style="display:inline-block;" class="me-2">
+                <div class="icon-frame shadow-sm">
+                  <div class="icon">
+                    <img src="{{ target_user.icon.url }}">
+                  </div>
+                </div>
+              </div>
+              <div>
+                <a  class="link-dark-u" href="{% url 'user:detail' target_user.id %}">
+                  <h5>{{target_user.username}}</h5>
+                </a>
+                <div>
+                  {{target_user.introduction | truncatechars:100}}
+                </div>
+              </div>
             </div>
-            <div class="right-aria">
+            </div>
+
+            <div class="col-3 text-end">
               <small>{{ target_user.date_joined|date:"y年m月j日"}}</small>
             </div>
+            
           </div>
-          {{target_user.introduction | truncatechars:50}}
         </div>
         
       </div>

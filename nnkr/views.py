@@ -62,6 +62,9 @@ class Index(ListView):
         elif sort=="v":
             questions = [q for q in questions]
             questions.sort(key=lambda q: q.votes, reverse=True)
+        elif sort=="c":
+            questions = [q for q in questions if q.comments.all().count()==0]
+            questions.sort(key=lambda q: q.created_datetime, reverse=True)
         elif sort=="o":
             questions = questions.order_by('created_datetime')
         else:
@@ -108,6 +111,9 @@ class TagQuestion(ListView):
         elif sort=="v":
             questions = [q for q in questions]
             questions.sort(key=lambda q: q.votes, reverse=True)
+        elif sort=="c":
+            questions = [q for q in questions if q.comments.all().count()==0]
+            questions.sort(key=lambda q: q.created_datetime, reverse=True)
         elif sort=="o":
             questions = questions.order_by('created_datetime')
         else:

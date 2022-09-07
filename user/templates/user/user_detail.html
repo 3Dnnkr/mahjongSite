@@ -86,7 +86,8 @@
         コメント: {{ user.comments.all|length }}<br>
         コメントイイね: {{ comments_likers_num }}<br><br>
       </div>
-      <div style="font-family:'ＭＳ Ｐゴシック'; line-height:100%;">
+      <div>
+      {% comment %} <div style="font-family:'ＭＳ Ｐゴシック'; line-height:100%;"> {% endcomment %}
         {{ target_user.introduction|linebreaksbr|urlize }}
       </div>
       <br>

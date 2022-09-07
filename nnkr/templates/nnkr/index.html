@@ -14,20 +14,10 @@
       <!-- 問題一覧ページング -->
       <div class="col-12 col-lg-9"> 
 
-         <!-- ソート機能 -->
-        <details class="mb-2">
-          <summary><u><b>
-            {% if r %}評価が高い順{% elif v %}投票数が多い順{% elif o %}投稿順{% else %}新着順{% endif %}
-          </b></u></summary>
-          <div class="border border-2 bg-gray mb-2">
-            <div class="bg-white p-2">
-              <a href="{% url 'nnkr:index' %}?sort=n" class="link-dark-nu">新着順</a><br>
-              <a href="{% url 'nnkr:index' %}?sort=o" class="link-dark-nu">投稿順</a><br>
-              <a href="{% url 'nnkr:index' %}?sort=r" class="link-dark-nu">評価が高い順</a><br>
-              <a href="{% url 'nnkr:index' %}?sort=v" class="link-dark-nu">投票数が多い順</a><br>
-            </div>
-          </div>
-        </details>
+        <!-- ソート機能 -->
+        <div>
+          {% include "nnkr/sort_questions.html" with base_url_name='nnkr:index' %}
+        </div>
         
         <!-- 問題一覧 -->
         <div> 

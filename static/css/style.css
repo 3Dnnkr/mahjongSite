@@ -97,6 +97,15 @@
 .btn-icon:hover {
 	filter: brightness(120%);
 }
+.btn-sort{
+	background:white;
+	border-color: gray;
+	border-width: 3px;
+	filter: brightness(100%);
+}
+.btn-sort:hover{
+	filter: brightness(80%);
+}
 
 /* BackGround */
 .bg-img{
