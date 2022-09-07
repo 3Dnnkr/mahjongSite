@@ -7,19 +7,8 @@
 </div>
 
 
-{% comment %} <div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
-  <h4><i class="bi bi-info-circle"></i> 説明</h4>
-  <ul>
-    <li>当サイトは、雀魂段位戦を想定した立体何切るサイトです。プレイ中の画像をアップロードし、意見交換することができます。</li>
-    <li>基本は段位戦を想定していますが、場合によってはその限りではありません。問題に回答する前に出題者の説明をきちんと読みましょう。</li>
-    <li>投票・コメントは誰でも行えます(<a href="{% url 'nnkr:index' %}" class="link-dark-u">問題一覧へ</a>)。問題投稿する際は右上のナビバーから<a href="{% url 'user:login' %}" class="link-dark-u">ログイン</a>をお願いします。メールアドレスは不要です。</li>
-    <li>その他よくあるご質問には<a href="{% url 'nnkr:faq' %}" class="link-dark-u">こちら</a>で回答しています。</li>
-  </ul>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div> {% endcomment %}
-
-
 <div class="py-1">
+  <!-- 初めての方へ -->
   <button type="button" class="syncer-acdn btn btn-dark shadow m-1" data-target="syncer-acdn-05">
     <div class="d-flex align-items-center">
       <img src="{% static 'img/rank/4_1.png' %}" style="max-height:70px;height:auto;margin:-5px;margin-right:0px">  
@@ -27,6 +16,7 @@
     </div>
   </button>
 
+  <!-- 問題一覧 -->
   <button type="button" class="btn btn-dark shadow m-1"
     onclick="location.href='{% url "nnkr:index" %}'">
     <div class="d-flex align-items-center">
@@ -36,17 +26,20 @@
   </button>
 </div>
 
+<!-- 初めての方へアラート -->
 <div id="syncer-acdn-05" style="display:none;">
   <div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
     <h4><i class="bi bi-info-circle"></i> 説明</h4>
     <ul>
       <li>当サイトは、雀魂段位戦を想定した立体何切るサイトです。プレイ中の画像をアップロードし、意見交換することができます。</li>
       <li>基本は段位戦を想定していますが、場合によってはその限りではありません。問題に回答する前に出題者の説明をきちんと読みましょう。</li>
-      <li>投票・コメントは誰でも行えます(<a href="{% url 'nnkr:index' %}" class="link-dark-u">問題一覧へ</a>)。問題投稿する際は右上のナビバーから<a href="{% url 'user:login' %}" class="link-dark-u">ログイン</a>をお願いします。メールアドレスは不要です。</li>
+      <li>投票・コメントは誰でも行えます(<a href="{% url 'nnkr:index' %}" class="link-dark-u">問題一覧へ</a>)。問題投稿する際は<a href="{% url 'user:login' %}" class="link-dark-u">ログイン</a>をお願いします。メールアドレスは不要です。</li>
       <li>その他よくあるご質問には<a href="{% url 'nnkr:faq' %}" class="link-dark-u">こちら</a>で回答しています。</li>
     </ul>
+    {% comment %} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> {% endcomment %}
   </div>
 </div>
+
 
 <div>
   <div class="container">
