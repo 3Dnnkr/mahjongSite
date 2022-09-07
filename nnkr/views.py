@@ -31,7 +31,7 @@ class Top(TemplateView):
         hot_questions = [c.question for c in hot_comments]
         context['questions'] = hot_questions
 
-        lobby_chats = Lobbychat.objects.all()
+        lobby_chats = Lobbychat.objects.order_by('-posted_at')
         paginator = Paginator(lobby_chats, 8)
         p = self.request.GET.get('page')
         lobby_chats = paginator.get_page(p)

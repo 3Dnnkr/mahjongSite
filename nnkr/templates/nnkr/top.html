@@ -6,7 +6,8 @@
   <h3 class="text-center">『雀魂何切る』へようこそ！</h3><hr>
 </div>
 
-<div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
+
+{% comment %} <div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
   <h4><i class="bi bi-info-circle"></i> 説明</h4>
   <ul>
     <li>当サイトは、雀魂段位戦を想定した立体何切るサイトです。プレイ中の画像をアップロードし、意見交換することができます。</li>
@@ -15,14 +16,41 @@
     <li>その他よくあるご質問には<a href="{% url 'nnkr:faq' %}" class="link-dark-u">こちら</a>で回答しています。</li>
   </ul>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div> {% endcomment %}
+
+
+<div class="py-1">
+  <button type="button" class="syncer-acdn btn btn-dark shadow m-1" data-target="syncer-acdn-05">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/rank/4_1.png' %}" style="max-height:70px;height:auto;margin:-5px;margin-right:0px">  
+      <b>初めての方へ</b>
+    </div>
+  </button>
+
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "nnkr:index" %}'">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/pai/1m.png' %}" style="max-height:70px;margin:-5px;margin-right:10px" class="p-1">  
+      <b>問題一覧</b>
+    </div>
+  </button>
 </div>
 
-
+<div id="syncer-acdn-05" style="display:none;">
+  <div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
+    <h4><i class="bi bi-info-circle"></i> 説明</h4>
+    <ul>
+      <li>当サイトは、雀魂段位戦を想定した立体何切るサイトです。プレイ中の画像をアップロードし、意見交換することができます。</li>
+      <li>基本は段位戦を想定していますが、場合によってはその限りではありません。問題に回答する前に出題者の説明をきちんと読みましょう。</li>
+      <li>投票・コメントは誰でも行えます(<a href="{% url 'nnkr:index' %}" class="link-dark-u">問題一覧へ</a>)。問題投稿する際は右上のナビバーから<a href="{% url 'user:login' %}" class="link-dark-u">ログイン</a>をお願いします。メールアドレスは不要です。</li>
+      <li>その他よくあるご質問には<a href="{% url 'nnkr:faq' %}" class="link-dark-u">こちら</a>で回答しています。</li>
+    </ul>
+  </div>
+</div>
 
 <div>
   <div class="container">
     <div class="row">
-
 
       <!-- Lobby Chat -->
       <div class="col-lg-7 my-2">
@@ -36,7 +64,7 @@
               <div class="row">
                 <div class="col-md-10 form-group">
                   <textarea
-                    placeholder="自由に雑談しよう！"
+                    placeholder="他のユーザーに挨拶してみよう！"
                     type="{{chat_form.text.field.widget.input_type}}"
                     class="form-control"
                     {% if chat_form.text.field.required %}required{% endif %}
@@ -51,31 +79,30 @@
             </div>
             </form>
           </div>
-          
           <!-- Comments -->
           <div class="comment-box">
-            <hr style="margin:8px">
-            {% for chat in chats reversed %}
+            <hr style="margin-top:8px;margin-bottom:0px;">
+            {% for chat in chats %}
             <div class="chat-content">
-              <div class="d-flex flex-row  mb-3">
-
-                <div class="p-2">
-                  <div  style="display:inline-block; vertical-align:top;">
-                    <div class="icon-frame shadow-sm">
-                      <div class="icon">
-                        {% if chat.user %}
-                          <img src="{{ chat.user.icon.url }}">
-                        {% else %}
-                          <img src="{% static 'img/icon/icon_guest.png' %}">
-                        {% endif %}
+              <div class="mb-3">
+                <div>
+                  <!-- Icon -->
+                  <div class="p-2" style="float:left; margin-bottom:-8px">
+                    <div  style="display:inline-block; vertical-align:top;">
+                      <div class="icon-frame shadow-sm">
+                        <div class="icon">
+                          {% if chat.user %}
+                            <img src="{{ chat.user.icon.url }}">
+                          {% else %}
+                            <img src="{% static 'img/icon/icon_guest.png' %}">
+                          {% endif %}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div class="p-2">
+                  <!-- Info -->
                   <div>
-
                     {% if chat.user %}
                       <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
                     {% else %}
@@ -84,21 +111,23 @@
                     <small>
                     {{chat.posted_at|date:"y年m月j日 H:i"}}
                     </small>
-                    <br>
+                  </div>
 
-                    <div style="font-size:18px;">
-                      {{chat.text | linebreaksbr}}
-                      {% if chat.is_updated %}
-                        <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
-                      {% endif %}
-                    </div>
+                  <!-- Content -->
+                  <div style="font-size:17px;">
+                    {{chat.text | linebreaksbr}}
+                    {% if chat.is_updated %}
+                      <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                    {% endif %}
+                  </div>
 
+                  <!-- Clear float -->
+                  <div style="clear:left;">
                   </div>
                 </div>
-
               </div>
             </div>
-            <hr style="margin-top:-20px;margin-bottom:0px;">
+            <hr style="margin-top:-10px;margin-bottom:0px;">
             {% endfor %}
           </div>
 
@@ -110,7 +139,7 @@
         </div>
       </div>
 
-
+      <!-- Right Area -->
       <div class="col-lg-5 my-2">
 
         <!-- Hot Question -->
@@ -134,3 +163,4 @@
   </div>
 </div>
 {% endblock %}
+

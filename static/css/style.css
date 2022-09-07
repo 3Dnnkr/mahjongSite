@@ -1,3 +1,4 @@
+/* Image */
 .as-outer {
 	position: relative;
 	width: 100%;
@@ -16,13 +17,13 @@
     background: black;
 }
 
+/* Box */
 .modal-dialog-fluid {
 	max-width: inherit;
 	max-height: 82%;
 	width: 82%;
 	height:82%;
-  }
-
+}
 .tag-box {
 	display:inline-block;
 	padding-left   : 10px;
@@ -37,6 +38,7 @@
 	background: white;
 }
 
+/* Link */
 .link-nu {
     text-decoration: none;
 }
@@ -71,24 +73,8 @@
 	color: white;
 }
 
-.btn-twitter{
-	display:inline-block;
-	padding-left   : 10px;
-	padding-right  : 10px;
-	padding-top    : 5px;
-	padding-bottom : 5px;
-	margin-left    : 5px;
-	margin-right   : 5px;
-	margin-bottom  : 5px;
-	border-radius: 10px;
-	border: 0px solid #333333;
-	background: #2bc4ff;
-	color: white;
-}
-.btn-twitter:hover {
-	filter: brightness(80%);
-}
 
+/* Button */
 .box-twitter{
 	display:inline-block;
 	padding-left   : 10px;
@@ -103,7 +89,6 @@
 	background: #2bc4ff;
 	color: white;
 }
-
 .btn-icon{
 	background:transparent;
 	border:transparent;
@@ -113,6 +98,7 @@
 	filter: brightness(120%);
 }
 
+/* BackGround */
 .bg-img{
 	background: right;
 	background: bottom;
@@ -124,12 +110,13 @@
     background-blend-mode:lighten; 
 }
 
+/* Icon */
 .icon-frame{
 	display:inline-block;
 	vertical-align: middle;
 	position:relative;
-	width:70px;
-	height:70px;
+	width:67px;
+	height:67px;
 	border-radius:50%;
 	background:black;
 	border-color: black;
@@ -157,6 +144,25 @@
 	height:100%;
 }
 
+
+/* Twitter */
+.btn-twitter{
+	display:inline-block;
+	padding-left   : 10px;
+	padding-right  : 10px;
+	padding-top    : 5px;
+	padding-bottom : 5px;
+	margin-left    : 5px;
+	margin-right   : 5px;
+	margin-bottom  : 5px;
+	border-radius: 10px;
+	border: 0px solid #333333;
+	background: #2bc4ff;
+	color: white;
+}
+.btn-twitter:hover {
+	filter: brightness(80%);
+}
 .twitter-icon-frame{
 	display:inline-block;
 	vertical-align: middle;
@@ -190,12 +196,9 @@
 	height:100%;
 }
 
-/* body, input, textarea {
-    font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "メイリオ", "Meiryo", "verdana", sans-serif;
-} */
 
-
-.float_box{ overflow: hidden;}
+/* 
+.float_box{overflow: hidden;}
 .img{
     clear: both;
     float: right;
@@ -204,4 +207,4 @@
     width: 1px;
     height: 100%;
     background: #f00;
-}
+} */

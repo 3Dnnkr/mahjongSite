@@ -307,46 +307,50 @@
           
           <div class="comment-box" style="height:500px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
             <b>コメントチャットです。質問に関することを書きましょう。</b>
-            <hr style="margin:8px">
+            <hr style="margin-top:8px;margin-bottom:4px">
             {% for comment in question.comments.all reversed %}
             <div class="comment-content">
-              {{comment.comment_id}}
-              {% if comment.commenter %}
-                <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
-                  {{comment.commenter}}
-                </a>
-              {% else %}
-                名無しさん
-              {% endif %}
-              <small>
-              {{comment.posted_at|date:"y年m月j日 H:i"}}
-              </small>
 
-              <!-- イイねボタン -->
-              {% if user in comment.likers.all %}
-                <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
-              {% else %}
-                <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                  <button type="submit" class="btn-icon">
-                    <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
-                      <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
-                    </div>
-                  </button>
-                </form>
-              {% endif %}
-
-              {% with comment.likers.all|length as likers_num %}
-                {% if likers_num > 0 %}
-                  +{{likers_num}}
+              <!-- Info -->
+              <div>
+                {{comment.comment_id}}
+                {% if comment.commenter %}
+                  <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                    {{comment.commenter}}
+                  </a>
+                {% else %}
+                  名無しさん
                 {% endif %}
-              {% endwith %}
-
-              <br>
+                <small>
+                {{comment.posted_at|date:"y年m月j日 H:i"}}
+                </small>
               
-              <!-- 本文 -->
-              <div class="d-flex flex-row  mb-3">
+                <!-- イイねボタン -->
+                {% if user in comment.likers.all %}
+                  <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
+                {% else %}
+                  <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                    <button type="submit" class="btn-icon">
+                      <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                        <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                      </div>
+                    </button>
+                  </form>
+                {% endif %}
 
-                <div class="p-2">
+                {% with comment.likers.all|length as likers_num %}
+                  {% if likers_num > 0 %}
+                    +{{likers_num}}
+                  {% endif %}
+                {% endwith %}
+
+              </div>
+              
+              <!-- Icon and Content -->
+              <div class="mb-3">
+
+                <!-- Icon -->
+                <div class="p-2" style="float:left; margin-bottom:-8px">
                   <div  style="display:inline-block; vertical-align:top;">
                     <div class="icon-frame shadow-sm">
                       <div class="icon">
@@ -360,6 +364,7 @@
                   </div>
                 </div>
 
+                <!-- Content -->
                 <div class="p-2">
                   <div style="font-size:18px;">
                     {{comment.text | linebreaksbr}}
@@ -368,7 +373,7 @@
                       <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
                     {% endif %}
 
-                    {% if user == comment.commenter %}
+                    {% if user.is_authenticated and user == comment.commenter %}
                       <a href="{% url 'nnkr:update_comment' question.pk comment.pk %}"
                         class="link-dark-u"><small>編集</small>
                       </a>
@@ -376,10 +381,14 @@
                   </div>
                 </div>
 
+                <!-- Clear float -->
+                <div style="clear:left;">
+                </div>
+
               </div>
 
             </div>
-            <hr style="margin-top:-5px;margin-bottom:8px;">
+            <hr style="margin-top:-8px;margin-bottom:4px;">
             {% endfor %}
           </div>
 
