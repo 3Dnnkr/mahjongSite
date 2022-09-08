@@ -134,9 +134,8 @@
                   <div class="btn-group" role="group">
                     
                     <div class="input-group-text">
-                      <b>Intresting
-                      {% if question.rating >= 0 %}+{% endif %} 
-                      {{ question.rating }}</b>
+                      <b>rating
+                      {% if question.rating >= 0 %}+{% endif %}{{ question.rating }}</b>
                     </div>
                       
                     <button type="submit" class="btn btn-secondary"
@@ -311,39 +310,42 @@
             {% for comment in question.comments.all reversed %}
             <div class="comment-content">
 
-              <!-- Info -->
-              <div>
-                {{comment.comment_id}}
-                {% if comment.commenter %}
-                  <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
-                    {{comment.commenter}}
-                  </a>
-                {% else %}
-                  名無しさん
-                {% endif %}
-                <small>
-                {{comment.posted_at|date:"y年m月j日 H:i"}}
-                </small>
-              
-                <!-- イイねボタン -->
-                {% if user in comment.likers.all %}
-                  <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
-                {% else %}
-                  <form action="{% url 'nnkr:create_comment_like' question.id comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                    <button type="submit" class="btn-icon">
-                      <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
-                        <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
-                      </div>
-                    </button>
-                  </form>
-                {% endif %}
-
-                {% with comment.likers.all|length as likers_num %}
-                  {% if likers_num > 0 %}
-                    +{{likers_num}}
+              <!-- Info and Like -->
+              <div class="d-flex justify-content-between align-items-center">
+                <!-- Info -->
+                <div>
+                  {{comment.comment_id}}
+                  {% if comment.commenter %}
+                    <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                      {{comment.commenter}}
+                    </a>
+                  {% else %}
+                    名無しさん
                   {% endif %}
-                {% endwith %}
-
+                  <small>
+                  {{comment.posted_at|date:"y年m月j日 H:i"}}
+                  </small>
+                </div>
+                <!-- Like -->
+                <div class="d-flex align-items-center me-2">
+                  {% with comment.likers.all|length as likers_num %}
+                    {% if user in comment.likers.all %}
+                        <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
+                        +{{likers_num}}
+                    {% else %}
+                      <form action="{% url 'nnkr:create_comment_like' comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                        <button type="submit" class="btn-icon">
+                          <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                            <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                          </div>
+                        </button>
+                      </form>
+                      {% if likers_num > 0 %}
+                        +{{likers_num}}
+                      {% endif %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
               </div>
               
               <!-- Icon and Content -->

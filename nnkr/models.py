@@ -12,8 +12,8 @@ class Question(models.Model):
     created_datetime = models.DateTimeField('作成日',auto_now_add=True)
     updated_datetime = models.DateTimeField('最終更新日',auto_now=True)
     title = models.CharField('タイトル',max_length=100)
-    description = models.TextField('説明文',blank=True)
-    tags = models.ManyToManyField('Tag', through='Tagging',blank=True, verbose_name='タグ',related_name='questions')
+    description = models.TextField('説明文')
+    tags = models.ManyToManyField('Tag', through='Tagging',verbose_name='タグ',related_name='questions')
     tweet_id = models.CharField('TweetID', max_length=200, blank=True, null=True)
     no_vote = models.BooleanField('投票機能を使わない', default=False)
 
@@ -119,3 +119,9 @@ class Lobbychat(models.Model):
     updated_at = models.DateTimeField('更新日時',auto_now=True)
     is_updated = models.BooleanField('更新されたか',default=False)
     text = models.TextField('本文')
+    likers = models.ManyToManyField(get_user_model(),through='LobbychatLike',blank=True,related_name='like_lobbycahts',verbose_name='いいねした人')
+
+class LobbychatLike(models.Model):
+    """ use for order of likers. """
+    liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    lobbychat = models.ForeignKey('Lobbychat', on_delete=models.CASCADE)

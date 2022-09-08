@@ -15,7 +15,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat, LobbychatLike
 from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm
 from . import twitter
 
@@ -245,10 +245,11 @@ class UpdateComment(UpdateView):
         comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
         return resolve_url('nnkr:detail',pk=comment.question.pk)
  
-def create_comment_like(request, pk, c_pk):
-    comment = get_object_or_404(Comment, pk=c_pk)
+def create_comment_like(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
     user = request.user
     if user.is_anonymous:
+        messages.warning(request, "ログインが必要です")
         return redirect(request.META['HTTP_REFERER'])
      # check if commnet.likers contain user.
     _liker = comment.likers.filter(pk=user.pk).first()
@@ -394,3 +395,17 @@ class CreateLobbychat(CreateView):
         else:
             Lobbychat.objects.create(text=text)
         return redirect(self.request.META['HTTP_REFERER'])
+
+def create_lobbychat_like(request, pk):
+    lobbychat = get_object_or_404(Lobbychat, pk=pk)
+    user = request.user
+    if user.is_anonymous:
+        messages.warning(request, "ログインが必要です")
+        return redirect(request.META['HTTP_REFERER'])
+     # check if commnet.likers contain user.
+    _liker = lobbychat.likers.filter(pk=user.pk).first()
+    if _liker==None and user!=lobbychat.user:
+        LobbychatLike.objects.create(liker=user, lobbychat=lobbychat)
+        messages.success(request, "イイねしました！")
+        
+    return redirect(request.META['HTTP_REFERER'])

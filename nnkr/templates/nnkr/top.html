@@ -21,7 +21,7 @@
     onclick="location.href='{% url "nnkr:index" %}'">
     <div class="d-flex align-items-center">
       <img src="{% static 'img/pai/1m.png' %}" style="max-height:70px;margin:-5px;margin-right:10px" class="p-1">  
-      <b>問題一覧</b>
+      <a href="{% url 'nnkr:index' %}" class="link-white-nu"><b>問題一覧</b></a>
     </div>
   </button>
 
@@ -38,18 +38,17 @@
           </div>
         </div>
       </div> 
-      <b>ユーザー</b>
+      <a href="{% url 'user:index' %}" class="link-white-nu"><b>ユーザー</b></a>
     </div>
   </button>
 
   <!-- 上達への道 -->
-  <button type="button" class="btn btn-dark shadow m-1"
-    onclick="location.href='{% url "wiki:index" %}'">
+  {% comment %} <button type="button" class="btn btn-dark shadow m-1">
     <div class="d-flex align-items-center">
       <img src="{% static 'img/icon/icon.png' %}" style="max-height:70px;margin:-5px;margin-right:10px" class="p-1">  
-      <b>上達Wiki</b>
+      <b>上達への道</b>
     </div>
-  </button>
+  </button> {% endcomment %}
 </div>
 
 <!-- 初めての方へアラート -->
@@ -119,16 +118,39 @@
                   </div>
                 </div>
 
-                <!-- Info -->
-                <div>
-                  {% if chat.user %}
-                    <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                  {% else %}
-                    [名無しさん]
-                  {% endif %}
-                  <small>
-                  {{chat.posted_at|date:"y年m月j日 H:i"}}
-                  </small>
+                <!-- Info and Like -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <!-- Info -->
+                  <div>
+                    {% if chat.user %}
+                      <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
+                    {% else %}
+                      [名無しさん]
+                    {% endif %}
+                    <small>
+                    {{chat.posted_at|date:"y年m月j日 H:i"}}
+                    </small>
+                  </div>
+                  <!-- Like -->
+                  <div class="d-flex align-items-center ms-2">
+                    {% with chat.likers.all|length as likers_num %}
+                      {% if user in chat.likers.all %}
+                        <i class="bi bi-heart-fill" style="color:crimson;"></i>
+                        +{{likers_num}}
+                      {% else %}
+                        <form action="{% url 'nnkr:create_lobbychat_like' chat.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                          <button type="submit" class="btn-icon">
+                            <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                              <i class="bi bi-heart" style="color:gray;"></i>
+                            </div>
+                          </button>
+                        </form>
+                        {% if likers_num > 0 %}
+                          +{{likers_num}}
+                        {% endif %}
+                      {% endif %}
+                    {% endwith %}
+                  </div>
                 </div>
 
                 <!-- Content -->
@@ -169,7 +191,8 @@
       </div>
 
       <!-- Tweet -->
-      <div class="my-4" style="height:500px;">
+      <h5>新着問題をお知らせにゃ！</h5><hr style="margin-top:0px;">
+      <div style="height:500px;">
         <a class="twitter-timeline" data-lang="en" data-height="500"
           data-theme="light"
           href="https://twitter.com/3Dnnkr?ref_src=twsrc%5Etfw">Tweets by 3Dnnkr</a>
