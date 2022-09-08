@@ -23,7 +23,9 @@ urlpatterns = [
     path('',include('social_django.urls', namespace='social')),
     path('', include('nnkr.urls')),
     path('user/',include('user.urls')),
+    path('wiki/',include('wiki.urls')),
     path('admin/', admin.site.urls),
+    path(r'mdeditor/',include('mdeditor.urls')),
 ]
 
 if settings.DEBUG:

@@ -25,7 +25,7 @@
     </div>
   </button>
 
-  <!-- ユーザーリスト -->
+  <!-- ユーザー -->
   <button type="button" class="btn btn-dark shadow m-1"
     onclick="location.href='{% url "user:index" %}'">
     <div class="d-flex align-items-center">
@@ -38,16 +38,16 @@
           </div>
         </div>
       </div> 
-      <b>ユーザーリスト</b>
+      <b>ユーザー</b>
     </div>
   </button>
 
   <!-- 上達への道 -->
   <button type="button" class="btn btn-dark shadow m-1"
-    onclick="location.href='{% url "nnkr:index" %}'">
+    onclick="location.href='{% url "wiki:index" %}'">
     <div class="d-flex align-items-center">
       <img src="{% static 'img/icon/icon.png' %}" style="max-height:70px;margin:-5px;margin-right:10px" class="p-1">  
-      <b>上達への道</b>
+      <b>上達Wiki</b>
     </div>
   </button>
 </div>

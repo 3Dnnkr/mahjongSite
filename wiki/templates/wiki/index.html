@@ -1,0 +1,18 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+<div class="pt-3 text-center">
+  <h3>記事一覧</h3>
+</div><hr>
+
+{% for article in articles %}
+  <a href="{% url 'wiki:detail' article.id %}">
+    {{ article.title }}<hr>
+  </a>
+{% endfor %}
+
+<a href="{% url 'wiki:create_article' %}">
+  記事作成
+</a>
+
+{% endblock %}

@@ -15,9 +15,10 @@
 
         <!-- ソート機能 -->
         <div>
-          {% include "nnkr/sort_questions.html" with base_url_name='nnkr:index' %}
+          {% url 'nnkr:tag_question' tag.id as base_url %}
+          {% include "nnkr/sort_questions.html" with base_url=base_url %}
         </div>
-        
+
         <!-- 問題一覧 -->
         <div> 
           {% include "nnkr/question_cards.html" with questions=questions %}

@@ -1,4 +1,4 @@
 /staticfiles
 /.env
 /mahjongSite/local_settings.py
-/media_local/
+/media/

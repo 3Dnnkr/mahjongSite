@@ -16,7 +16,8 @@
 
         <!-- ソート機能 -->
         <div>
-          {% include "nnkr/sort_questions.html" with base_url_name='nnkr:index' %}
+          {% url 'nnkr:index' as base_url %}
+          {% include "nnkr/sort_questions.html" with base_url=base_url %}
         </div>
         
         <!-- 問題一覧 -->
