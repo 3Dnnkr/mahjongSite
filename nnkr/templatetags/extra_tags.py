@@ -1,4 +1,7 @@
 from django import template
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
+import re
 
 register = template.Library()
 
@@ -12,3 +15,33 @@ def cookie(context, cookie_name): # could feed in additional argument to use as 
 @register.filter
 def addstr(arg1, arg2):
     return str(arg1) + str(arg2)
+
+
+@register.filter(needs_autoescape=True)
+def initial_letter_filter(text, autoescape=True):
+    first, other = text[0], text[1:]
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda x: x
+    result = '<b>%s</b>%s' % (esc(first), esc(other))
+    return mark_safe(result)
+
+@register.filter(needs_autoescape=True)
+def anchor_filter(_text, autoescape=True):
+    text = _text[:] # copy to avoid escape.
+    if autoescape:
+        esc = conditional_escape
+    else:
+        esc = lambda x: x
+    
+    result = ""
+    items = re.split('(>>[0-9]+)', text)
+    for item in items:
+        if re.search('>>[0-9]+', item):
+            num = re.search('[0-9]+', item).group()
+            result += '<a href="#comment-%s" class="onMouse" name="%s">%s</a>' % (num,num,esc(item))
+        else:
+            result += '%s' % esc(item)
+
+    return mark_safe(result)
