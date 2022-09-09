@@ -15,7 +15,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat, LobbychatLike
+from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat, LobbychatLike, FAQ
 from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm
 from . import twitter
 
@@ -25,7 +25,7 @@ class Top(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        hot_comments = list(Comment.objects.order_by('posted_at')[:10])
+        hot_comments = list(Comment.objects.order_by('posted_at')[:3])
         random.shuffle(hot_comments)
         hot_comments = hot_comments[:1]
         hot_questions = [c.question for c in hot_comments]
@@ -40,8 +40,14 @@ class Top(TemplateView):
         context['chat_form'] = LobbychatForm
         return context
 
-class FAQ(TemplateView):
+class FAQIndex(ListView):
     template_name = 'nnkr/faq.html'
+    model = FAQ
+    context_object_name = 'faqs'
+
+    def get_queryset(self):
+        faqs = FAQ.objects.all().order_by('order')
+        return faqs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

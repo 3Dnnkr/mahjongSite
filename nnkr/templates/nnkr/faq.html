@@ -11,83 +11,24 @@
     <div class="row">
       <div class="col-12">
 
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-01">
-              Q.画像が小さくて見づらい
-            </h5>
-            <div id="syncer-acdn-01" style="display:none">
-              画像をクリックすることで拡大表示できます。
-              また複数の問題があるとき、左下にある矢印で表示する画像を切り替えることができます。
+        <div class="accordion" id="accordionExample">
+          {% for faq in faqs %}
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="{{ 'heading'|addstr:faq.id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="{{ '#collapse'|addstr:faq.id }}" aria-expanded="false" aria-controls="{{ 'collapse'|addstr:faq.id }}">
+                  <h5>Q.{{faq.question}}</h5>
+                </button>
+              </h2>
+              <div id="{{ 'collapse'|addstr:faq.id }}" class="accordion-collapse collapse" aria-labelledby="{{ 'heading'|addstr:faq.id }}" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  {{ faq.answer|safe }}
+                </div>
+              </div>
             </div>
-          </div>
+          {% endfor %}
         </div>
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-02-0">
-              Q.問題投稿はどうやってするの？
-            </h5>
-            <div id="syncer-acdn-02-0" style="display:none">
-              ログインした後に、ナビバーにある問題投稿から行えます。
-              何切る画像、タイトル、説明文(空欄可)、選択肢(空欄可)を入力し投稿してください。
-              投票機能を使いたくない場合は投票機能を使わないにチェックを入れてください。
-            </div>
-          </div>
-        </div>
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-02">
-              Q.問題の削除はできるの？
-            </h5>
-            <div id="syncer-acdn-02" style="display:none">
-              投稿者に限り、問題画面最下部の問題設定画面から行えます。
-              アップロードした画像に問題があった場合などにご利用下さい。
-            </div>
-          </div>
-        </div>
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-03">
-              Q.スクリーンショットの撮り方が分からない。
-            </h5>
-            <div id="syncer-acdn-03" style="display:none">
-              初めに雀魂の牌譜を開き左側の設定からプレイヤー名を非表示にします。
-              次にF11キーで全画面表示に切り替え、
-              WindowsキーとPrt Scキーを同時に押すことで
-              C:\Users\ユーザー名\Pictures\Screenshots\ に保存されます。
-              (OneDriveへ保存機能を有効にしている場合はOneDrive下に保存されます。)
-            </div>
-          </div>
-        </div>
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-03-2">
-              Q.アイコンってどうやって変えるの？
-            </h5>
-            <div id="syncer-acdn-03-2" style="display:none">
-              ログイン後、ナビバー右上からマイページに行きます。
-              その後ユーザー設定画面を開きアイコンの設定を行ってください。
-            </div>
-          </div>
-        </div>
-
-        <div class="card my-2 shadow-sm">
-          <div class="card-body">
-            <h5 class="syncer-acdn" data-target="syncer-acdn-04">
-              Q.ここに載ってないことで困っている
-            </h5>
-            <div id="syncer-acdn-04" style="display:none">
-              お手数ですがロビーチャットや<a href="https://twitter.com/3Dnnkr">Twitter</a>でご質問していただければ回答致します。
-            </div>
-          </div>
-        </div>
-
-
+        
       </div>
     </div>
   </div>

@@ -125,3 +125,8 @@ class LobbychatLike(models.Model):
     """ use for order of likers. """
     liker = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     lobbychat = models.ForeignKey('Lobbychat', on_delete=models.CASCADE)
+
+class FAQ(models.Model):
+    question = models.CharField('タイトル',max_length=100)
+    answer = models.TextField('本文')
+    order = models.IntegerField('順番',default=0) 
