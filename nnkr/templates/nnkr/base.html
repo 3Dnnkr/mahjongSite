@@ -4,14 +4,9 @@
 <html lang="ja">
 <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GTTB5CT39S"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-GTTB5CT39S');
-    </script>
+    {% if GOOGLE_ANALYTICS_TRACKING_ID %}
+      {% include 'nnkr/ga.html' %}
+    {% endif %}
 
     <!-- Required meta tags -->
     <meta charset="utf-8">

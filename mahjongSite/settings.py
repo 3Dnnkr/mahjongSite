@@ -76,6 +76,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'social_django.context_processors.backends', 
                 'social_django.context_processors.login_redirect',
+                'mahjongSite.context_processors.google_analytics',
             ],
             'builtins':[
                 'nnkr.templatetags.extra_tags'
@@ -208,6 +209,5 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert alert-danger',
 }
 
-
-# GA_Tracking_ID
-GOOGLE_ANALYTICS_PROPERTY_ID = 'G-GTTB5CT39S'
+# Google Analytics
+GOOGLE_ANALYTICS_TRACKING_ID ='G-GTTB5CT39S'
