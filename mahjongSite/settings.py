@@ -207,3 +207,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert alert-warning',
     messages.ERROR: 'alert alert-danger',
 }
+
+
+# GA_Tracking_ID
+GOOGLE_ANALYTICS_PROPERTY_ID = 'G-GTTB5CT39S'
