@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import cloudinary
 from django.contrib import messages
+from django.templatetags.static import static
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -213,3 +214,4 @@ MESSAGE_TAGS = {
 # Google Analytics
 GOOGLE_ANALYTICS_TRACKING_ID ='G-JZRES8R7S7'
 #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + '/ga4/client_secrets.json'
+os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', BASE_DIR + static('json/client_secrets.json'))
