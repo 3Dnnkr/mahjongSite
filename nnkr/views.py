@@ -54,7 +54,7 @@ class Top(TemplateView):
             property=f"properties/{property_id}",
             metrics=[Metric(name="activeUsers")],
         )
-        response = client.run_realtime_report(req)
+
         return context
 
 class FAQIndex(ListView):
