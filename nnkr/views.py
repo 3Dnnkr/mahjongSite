@@ -48,7 +48,6 @@ class Top(TemplateView):
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + static('json/client_secrets.json')
         property_id = "331574379"
-        client = BetaAnalyticsDataClient()
 
         req = RunRealtimeReportRequest(
             property=f"properties/{property_id}",
