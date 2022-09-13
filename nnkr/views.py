@@ -21,6 +21,7 @@ from . import twitter
 
 import os
 from django.conf import settings
+from mahjongSite.settings import BASE_DIR
 from django.templatetags.static import static
 
 class Top(TemplateView):
@@ -43,7 +44,7 @@ class Top(TemplateView):
         context['chat_form'] = LobbychatForm
 
         os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(settings.BASE_DIR, static('json/client_secrets.json')))
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = static('json/client_secrets.json')
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + static('json/client_secrets.json')
         return context
 
 class FAQIndex(ListView):
