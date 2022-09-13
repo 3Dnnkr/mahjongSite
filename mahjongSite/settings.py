@@ -213,4 +213,4 @@ MESSAGE_TAGS = {
 # Google Analytics
 GOOGLE_ANALYTICS_TRACKING_ID ='G-JZRES8R7S7'
 #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + '/ga4/client_secrets.json'
-os.environ.setdefault('TEST', 'test_value')
+os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', BASE_DIR + '/ga4/client_secrets.json')
