@@ -77,6 +77,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends', 
                 'social_django.context_processors.login_redirect',
                 'mahjongSite.context_processors.google_analytics',
+                'mahjongSite.context_processors.active_user_num',
             ],
             'builtins':[
                 'nnkr.templatetags.extra_tags'

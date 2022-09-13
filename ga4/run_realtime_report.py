@@ -28,6 +28,7 @@ def run_realtime_report(property_id="YOUR-GA4-PROPERTY-ID"):
     )
     response = client.run_realtime_report(request)
     print_run_report_response(response)
+    
 
 
 if __name__ == '__main__':

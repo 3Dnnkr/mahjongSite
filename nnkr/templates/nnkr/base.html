@@ -83,6 +83,10 @@
       </div>
     </nav>
 
+    現在ユーザー数:
+      {{ active_user_num }}
+
+
     <!-- メッセージ -->
     {% for message in messages %}
       <div id="alertID" {% if message.tags %}class="{{ message.tags }} alert-dismissible shadow fade show fixed-top alert-fade"{% endif %}>
