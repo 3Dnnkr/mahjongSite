@@ -11,15 +11,17 @@ def get_active_user_num():
     os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(settings.BASE_DIR, static('json/client_secrets.json')))
     #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.BASE_DIR + static('json/client_secrets.json')
     property_id = "331574379"
-    client = BetaAnalyticsDataClient()
+    # client = BetaAnalyticsDataClient()
 
-    request = RunRealtimeReportRequest(
-        property=f"properties/{property_id}",
-        metrics=[Metric(name="activeUsers")],
-    )
-    response = client.run_realtime_report(request)
+    # request = RunRealtimeReportRequest(
+    #     property=f"properties/{property_id}",
+    #     metrics=[Metric(name="activeUsers")],
+    # )
+    # response = client.run_realtime_report(request)
+    # return response
     #return sum([v for row in response.rows for v in row.metric_values])
-    return response
+
+    return 0
 
 
 
