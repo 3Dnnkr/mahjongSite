@@ -4,9 +4,9 @@
 <html lang="ja">
 <head>
     <!-- Google tag (gtag.js) -->
-    {% if GOOGLE_ANALYTICS_TRACKING_ID %}
+    {% comment %} {% if GOOGLE_ANALYTICS_TRACKING_ID %}
       {% include 'nnkr/ga.html' with ga_tracking_id = GOOGLE_ANALYTICS_TRACKING_ID %}
-    {% endif %}
+    {% endif %} {% endcomment %}
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
