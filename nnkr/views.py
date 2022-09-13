@@ -44,7 +44,6 @@ class Top(TemplateView):
         context['chat_form'] = LobbychatForm
 
         os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(settings.BASE_DIR, static('json/client_secrets.json')))
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + static('json/client_secrets.json')
         return context
 
 class FAQIndex(ListView):
