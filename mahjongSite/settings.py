@@ -215,5 +215,3 @@ GOOGLE_ANALYTICS_TRACKING_ID ='G-JZRES8R7S7'
 #os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + '/ga4/client_secrets.json'
 if DEBUG:
     os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', BASE_DIR + '/static/json/client_secrets.json')
-else:
-    os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(BASE_DIR, 'staticfiles'))

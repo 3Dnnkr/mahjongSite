@@ -21,7 +21,7 @@ def get_active_user_num():
     # return response
     #return sum([v for row in response.rows for v in row.metric_values])
 
-    return 0
+    return os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 
 
