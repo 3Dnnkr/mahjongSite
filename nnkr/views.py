@@ -23,6 +23,9 @@ import os
 from django.conf import settings
 from mahjongSite.settings import BASE_DIR
 from django.templatetags.static import static
+from google.analytics.data_v1beta import BetaAnalyticsDataClient
+from google.analytics.data_v1beta.types import Dimension, Metric, RunRealtimeReportRequest
+
 
 class Top(TemplateView):
     template_name = 'nnkr/top.html'
@@ -43,8 +46,15 @@ class Top(TemplateView):
 
         context['chat_form'] = LobbychatForm
 
-        os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(settings.BASE_DIR, static('json/client_secrets.json')))
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + static('json/client_secrets.json')
+        property_id = "331574379"
+        client = BetaAnalyticsDataClient()
+
+        req = RunRealtimeReportRequest(
+            property=f"properties/{property_id}",
+            metrics=[Metric(name="activeUsers")],
+        )
+        response = client.run_realtime_report(req)
         return context
 
 class FAQIndex(ListView):
