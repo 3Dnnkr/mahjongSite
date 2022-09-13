@@ -19,7 +19,9 @@ from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting
 from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm
 from . import twitter
 
-
+import os
+from django.conf import settings
+from django.templatetags.static import static
 
 class Top(TemplateView):
     template_name = 'nnkr/top.html'
@@ -39,6 +41,8 @@ class Top(TemplateView):
         context['chats'] = lobby_chats
 
         context['chat_form'] = LobbychatForm
+
+        os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', os.path.join(settings.BASE_DIR, static('json/client_secrets.json')))
         return context
 
 class FAQIndex(ListView):
