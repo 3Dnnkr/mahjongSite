@@ -2,3 +2,4 @@
 /.env
 /mahjongSite/local_settings.py
 /media/
+/ga4/client_secrets.json

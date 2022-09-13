@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["still-ravine-13029.herokuapp.com"]
+ALLOWED_HOSTS = ["jtnnkr.herokuapp.com"]
 
 
 # Application definition
@@ -211,3 +211,4 @@ MESSAGE_TAGS = {
 
 # Google Analytics
 GOOGLE_ANALYTICS_TRACKING_ID ='G-JZRES8R7S7'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = BASE_DIR + '/ga4/client_secrets.json'

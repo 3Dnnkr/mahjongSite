@@ -5,7 +5,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 KEY_FILE_LOCATION = 'client_secrets.json'
-VIEW_ID = '331515916'
+#VIEW_ID = '331574379' # property ID
+#VIEW_ID = '4056832437' # stream ID
+VIEW_ID = '275162628' # VIEW ID(UA)
 
 def initialize_analyticsreporting():
     """Initializes an Analytics Reporting API V4 service object.
