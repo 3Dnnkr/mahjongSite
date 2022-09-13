@@ -20,6 +20,7 @@ from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset
 from . import twitter
 
 from django.templatetags.static import static
+from django.conf import settings
 
 class Top(TemplateView):
     template_name = 'nnkr/top.html'
@@ -40,7 +41,7 @@ class Top(TemplateView):
 
         context['chat_form'] = LobbychatForm
 
-        context['test_root'] = static('json/client_secrets.json')
+        context['test_root'] = settings.BASE_DIR + static('json/client_secrets.json')
         return context
 
 class FAQIndex(ListView):
