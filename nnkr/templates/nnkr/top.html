@@ -42,6 +42,24 @@
     </div>
   </button>
 
+  <!-- FAQ -->
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "nnkr:faq" %}'">
+    <div class="d-flex align-items-center">
+      <div style="max-height:70px;margin:-4px;margin-right:10px">
+        <div  style="display:inline-block; vertical-align:top;">
+          <div class="icon-frame shadow-sm">
+            <div class="icon">
+              <img src="{% static 'img/stamp/keikumusume-1.png' %}">
+            </div>
+          </div>
+        </div>
+      </div> 
+      <a href="{% url 'nnkr:faq' %}" class="link-white-nu"><b>FAQ</b></a>
+    </div>
+  </button>
+
+
   <!-- 上達への道 -->
   {% comment %} <button type="button" class="btn btn-dark shadow m-1">
     <div class="d-flex align-items-center">
