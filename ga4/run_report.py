@@ -6,7 +6,7 @@ from google.analytics.data_v1beta.types import MetricType
 from google.analytics.data_v1beta.types import RunReportRequest
 import os
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'client_secrets.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google-credentials.json'
 
 def run_sample():
     """Runs the sample."""

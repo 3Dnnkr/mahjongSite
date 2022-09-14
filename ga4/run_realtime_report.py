@@ -5,7 +5,7 @@ from google.analytics.data_v1beta.types import RunRealtimeReportRequest
 from run_report import print_run_report_response
 import os
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'client_secrets.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google-credentials.json'
 
 
 

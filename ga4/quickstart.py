@@ -5,7 +5,7 @@ from google.analytics.data_v1beta.types import Metric
 from google.analytics.data_v1beta.types import RunReportRequest
 import os
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'client_secrets.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'google-credentials.json'
 
 def sample_run_report(property_id="331574379"):
     """Runs a simple report on a Google Analytics 4 property."""
