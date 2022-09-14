@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
 
-現在ユーザー数:{{ active_user_num }}
-
 <div class="pt-3">
   <h3 class="text-center">『雀魂何切る』へようこそ！</h3><hr>
 </div>
@@ -11,7 +9,7 @@
 <!-- リンク -->
 <div class="py-1">
   <!-- 初めての方へ -->
-  <button type="button" class="syncer-acdn btn btn-dark shadow m-1" data-target="syncer-acdn-05">
+  <button type="button" class="syncer-acdn btn btn-dark shadow m-1" data-bs-toggle="collapse" data-bs-target="#collapseBiginner" aria-expanded="false" aria-controls="collapseBiginner">
     <div class="d-flex align-items-center">
       <img src="{% static 'img/rank/4_1.png' %}" style="max-height:70px;height:auto;margin:-5px;margin-right:0px">  
       <b>初めての方へ</b>
@@ -54,7 +52,7 @@
 </div>
 
 <!-- 初めての方へアラート -->
-<div id="syncer-acdn-05" style="display:none;">
+<div class="collapse" id="collapseBiginner">
   <div class="alert alert-warning alert-dismissible shadow-sm" role="alert">
     <h4><i class="bi bi-info-circle"></i> 説明</h4>
     <ul>
@@ -63,7 +61,6 @@
       <li>投票・コメントは誰でも行えます(<a href="{% url 'nnkr:index' %}" class="link-dark-u">問題一覧へ</a>)。問題投稿する際は<a href="{% url 'user:login' %}" class="link-dark-u">ログイン</a>をお願いします。メールアドレスは不要です。</li>
       <li>その他よくあるご質問には<a href="{% url 'nnkr:faq' %}" class="link-dark-u">こちら</a>で回答しています。</li>
     </ul>
-    {% comment %} <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> {% endcomment %}
   </div>
 </div>
 

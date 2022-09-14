@@ -20,12 +20,12 @@ $(function(){
 })();
 
 // アコーディオン用
-$(function()
-{
-	$( '.syncer-acdn' ).click( function()
-	{
-		var target = $( this ).data( 'target' ) ;
-		$( '#' + target ).slideToggle() ;
-		return false ;
-	} ) ;
-}) ;
+// $(function()
+// {
+// 	$( '.syncer-acdn' ).click( function()
+// 	{
+// 		var target = $( this ).data( 'target' ) ;
+// 		$( '#' + target ).slideToggle() ;
+// 		return false ;
+// 	} ) ;
+// }) ;

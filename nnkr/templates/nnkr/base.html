@@ -31,7 +31,7 @@
 
 <body class="bg-img">
     <!-- ナビバー -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" style="opacity: 0.8;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow" style="opacity: 1.0;">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'nnkr:top' %}">雀魂何切る</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,25 +45,26 @@
             <li>
               <a class="nav-item nav-link" href="{% url 'user:index' %}">ユーザーリスト</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">
+                {% if active_user_num == 0 %}1{% else %}{{ active_user_num }}{% endif %}人閲覧中
+              </a>
+            </li>
           </ul>
 
           <ul class="navbar-nav">
-              {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
             <li>
-              <div class="d-flex align-items-center">
-                <div style="max-height:70px;margin:-5px;margin-right:3px">
-                  <div  style="display:inline-block; vertical-align:top;">
-                    <div class="icon-frame shadow-sm" style="width:30px;height:30px;">
-                      <div class="icon">
-                        <img src="{{ user.icon.url }}">
-                      </div>
+              <a class="nav-item nav-link" href="{% url 'user:detail' user.pk %}">
+                <div style="display:inline-block; vertical-align:top;">
+                  <div class="icon-frame shadow-sm" style="width:26px;height:26px;">
+                    <div class="icon">
+                      <img src="{{ user.icon.url }}">
                     </div>
                   </div>
-                </div> 
-                <a class="nav-item nav-link" href="{% url 'user:detail' user.pk %}">
-                  {{user.username}}さん
-                </a>
-              </div>
+                </div>
+                {{user.username}}さん
+              </a>
             </li>
             <li>
               <a class="nav-item nav-link" href="{% url 'nnkr:create_question' %}">問題作成</a>
