@@ -213,5 +213,3 @@ MESSAGE_TAGS = {
 
 # Google Analytics
 GOOGLE_ANALYTICS_TRACKING_ID ='G-JZRES8R7S7'
-if DEBUG:
-     os.environ.setdefault('GOOGLE_APPLICATION_CREDENTIALS', BASE_DIR + '/static/json/client_secrets.json')
