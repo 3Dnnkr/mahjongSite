@@ -109,14 +109,24 @@
 
 /* BackGround */
 .bg-img{
-	background: right;
-	background: bottom;
+	background-position: center center;
 	background-image: url("/static/img/background/umi.jpg");
 	background-size: cover;
 	background-repeat: no-repeat;
     background-attachment: fixed;
 	background-color:rgba(255, 255, 255, 0.9);
-    background-blend-mode:lighten; 
+    background-blend-mode:lighten;
+}
+/* .modal-open{
+	padding:0 !important;
+} */
+body{
+	/* Stop padding when show and toggle modal. */
+	padding:0 !important;
+}
+html {
+	/* Show scroll bar when modal open. */
+	overflow-y: scroll !important;
 }
 
 /* Icon */
