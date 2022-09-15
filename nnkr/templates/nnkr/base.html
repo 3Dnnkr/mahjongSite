@@ -26,7 +26,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/footer.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     
-    <title>雀魂何切る</title>
+    <title>{% block title %}雀魂何切るタイトル{% endblock %}</title>
 </head>
 
 <body class="bg-img">
@@ -112,8 +112,12 @@
               <a class="mx-1 link-nu" href="{% url 'user:index' %}">ユーザーリスト</a>
               <a class="mx-1 link-nu" href="{% url 'nnkr:faq' %}">FAQ</a>
               <br>
+              <h5 class="mt-3">閲覧者</h5>
+              現在{% if active_user_num == 0 %}1{% else %}{{ active_user_num }}{% endif %}人閲覧中<br>
+              今日 {{ today_user_num }}人<br>
+              昨日 {{ yesterday_user_num }}人<br>
               <h5 class="mt-3">連絡先</h5>
-              twitter: https://twitter.com/3Dnnkr <br>
+              twitter: https://twitter.com/3Dnnkr<br>
               email: 3dnnkr@gmail.com<br>
             </div>
           </div>
@@ -134,11 +138,12 @@
               <li><a class="link-nu" href="https://wikiwiki.jp/nya/">偉大なる打ち手はカンをするものだヨ Wiki</a></li>
             </ul>
 
-            <h5>牌譜検討サイト</h5>
+            <h5>牌譜検討</h5>
             <ul>
               <li><a class="link-nu" href="https://mjai.ekyu.moe/ja.html">mjai-reviewer（一時停止中）</a></li>
               <li><a class="link-nu" href="https://naga.dmv.nico/naga_report/top/">NAGA</a></li>
-              <li><a class="link-nu" href="https://note.com/worldofaramaki/n/n998cc379fe14">Akochan導入note</a></li>
+              <li><a class="link-nu" href="https://mahjongsoul.club/content/akochan-reviewer-%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%A6%E3%80%81%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%ABwindowspc%E3%81%A7%E9%9B%80%E9%AD%82%E7%89%8C%E8%AD%9C%E8%A7%A3%E6%9E%90%E3%81%99%E3%82%8B%E6%89%8B%E9%A0%86">Akochan導入法</a></li>
+              <li><a class="link-nu" href="https://pystyle.info/apps/mahjong-nanikiru-simulator/">麻雀何切るシミュレーター</a></li>
             </ul>
           </div>
 

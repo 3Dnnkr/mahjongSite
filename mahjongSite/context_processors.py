@@ -1,5 +1,5 @@
 from django.conf import settings
-from ga4.ga4_api import get_active_user_num
+from ga4 import ga4_api
 
 def google_analytics(request):
     """
@@ -16,6 +16,8 @@ def google_analytics(request):
         }
     return {}
 
-def active_user_num(request):
-    active_user_num = get_active_user_num()
-    return {'active_user_num': active_user_num}
+def user_num(request):
+    return {'active_user_num': ga4_api.get_active_user_num(),
+            'today_user_num': ga4_api.get_today_user_num(),
+            'yesterday_user_num': ga4_api.get_yesterday_user_num(),}
+
