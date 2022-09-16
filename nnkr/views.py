@@ -185,7 +185,7 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
         txts.append(question.author.username + "さんの出題")
         txts.append("『"+question.title+"』")
         txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
-        txts.append("#雀魂何切る")
+        txts.append("#雀魂 #何切る #雀魂何切る")
         status = '\n'.join(txts)
 
         # # if image is ImageField
