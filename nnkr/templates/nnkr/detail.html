@@ -35,7 +35,7 @@
         </div>
         <!-- タグ -->
         <div class="pt-1">
-          {% for tag in question.tags.all %}
+          {% for tag in question.get_tags.all %}
             <a class="tag-box link-dark-nu shadow-sm" href="{% url 'nnkr:tag_question' tag.id %}">
               <i class="bi bi-tag" style="font-size: 1rem;"></i>
               {{tag.name}}

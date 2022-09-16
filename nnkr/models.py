@@ -29,6 +29,10 @@ class Question(models.Model):
         cloudinary.uploader.destroy(self.image.public_id) # if image is CloudinaryField
         super(Question, self).delete(*args, **kwargs)
 
+    def get_tags(self):
+        """ return tags ordered by tagging """
+        return self.tags.order_by('tagging')
+
     @property
     def votes(self):
         return sum( [c.votes for c in self.choice_set.all()] )
@@ -53,9 +57,11 @@ class Tag(models.Model):
 
 class Tagging(models.Model):
     """ use for order of tags. """
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='tagging')
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     tagging_datetime = models.DateTimeField()
+
+
 
 class Bookmark(models.Model):
     """ use for order of bookmarks. """
