@@ -59,7 +59,7 @@
 
             <div class="modal-body">
               <div class="pb-3">
-                {% for tag in question.tags.all %}
+                {% for tag in question.get_tags.all %}
                   <div class="tag-box shadow-sm">
                     <form action="{% url 'nnkr:delete_tag' question.pk tag.pk %}" method="post">{% csrf_token %}
                       {{tag.name}}
