@@ -23,8 +23,8 @@ def run_report(property_id="YOUR-GA4-PROPERTY-ID"):
     request = RunReportRequest(
         property=f"properties/{property_id}",
         # dimensions=[Dimension(name="city")],
-        metrics=[Metric(name="totalUsers")],
-        date_ranges=[DateRange(start_date="yesterday", end_date="today")],
+        metrics=[Metric(name="active1DayUsers")],
+        date_ranges=[DateRange(start_date="2022-09-01", end_date="today")],
     )
     response = client.run_report(request)
     print_run_report_response(response)
