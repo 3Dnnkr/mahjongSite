@@ -5,7 +5,7 @@
 
 
 <div class="py-3">
-  <div class="container">
+  <div class="">
     <div class="row">
 
       <!-- 問題情報 -->
@@ -426,11 +426,11 @@
 
       <!-- コメントボックスとフォーム -->
       <div class="col-md-12 offset-md-0 py-3">
-        <div class="p-3 shadow-lg border border-3" style="background:#f5f5f5;">
+        <div class="py-3 ps-2 shadow-lg border border-3" style="background:#f5f5f5;">
 
           <!-- Content -->
           <div class="comment-box" style="height:500px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
-            <b>コメントチャットです。質問に関することを書きましょう。</b>            
+            <b>質問に関することをコメントしよう！</b>            
             <hr style="margin-top:8px;margin-bottom:4px">
             {% for comment in question.comments.all reversed %}
             <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 shadow" style="display:inline-block;">
@@ -438,7 +438,7 @@
               <!-- Info and Like -->
               <div class="d-flex align-items-center">
                 <!-- Info -->
-                <div>
+                <div class="d-none d-sm-block">
                   {{comment.comment_id}}
                   {% if comment.commenter %}
                     <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
@@ -451,8 +451,21 @@
                   {{comment.posted_at|date:"y年m月j日 H:i"}}
                   </small>
                 </div>
+                <div class="d-sm-none">
+                  {{comment.comment_id}}
+                  {% if comment.commenter %}
+                    <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                      {{comment.commenter}}
+                    </a>
+                  {% else %}
+                    名無しさん
+                  {% endif %}
+                  <small>
+                  {{comment.posted_at|date:"y/m/j H:i"}}
+                  </small>            
+                </div>
                 <!-- Like -->
-                <div class="d-flex align-items-center ms-1 me-2">
+                <div class="d-flex align-items-center ms-1">
                   {% with comment.likers.all|length as likers_num %}
                     {% if user in comment.likers.all %}
                         <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
@@ -474,44 +487,87 @@
               </div>
               
               <!-- Icon and Content -->
-              <div class="d-flex justify-content-start mb-1">
+              <div class="d-none d-sm-block">
+                <div class="d-flex justify-content-start mb-1">
 
-                <!-- Icon -->
-                <div class="p-2" style="float:left; margin-bottom:-8px">
-                  <div  style="display:inline-block; vertical-align:top;">
-                    <div class="icon-frame shadow-sm">
-                      <div class="icon">
-                        {% if comment.commenter %}
-                          <img src="{{ comment.commenter.icon.url }}">
-                        {% else %}
-                          <img src="{% static 'img/icon/icon_guest.png' %}">
-                        {% endif %}
+                  <!-- Icon -->
+                  <div class="my-2" style="float:left; margin-bottom:-8px">
+                    <div  style="display:inline-block; vertical-align:top;">
+                      <div class="icon-frame shadow-sm">
+                        <div class="icon">
+                          {% if comment.commenter %}
+                            <img src="{{ comment.commenter.icon.url }}">
+                          {% else %}
+                            <img src="{% static 'img/icon/icon_guest.png' %}">
+                          {% endif %}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Content -->
-                <div class="p-2">
-                  <div style="font-size:16px; display:inline-block;">
-                    {{comment.text | anchor_filter | linebreaksbr }}
+                  <!-- Content -->
+                  <div class="px-2">
+                    <div style="font-size:16px; display:inline-block;">
+                      {{comment.text | anchor_filter | linebreaksbr }}
 
-                    {% if comment.is_updated %}
-                      <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
-                    {% endif %}
+                      {% if comment.is_updated %}
+                        <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                      {% endif %}
 
-                    {% if user.is_authenticated and user == comment.commenter %}
-                      <a href="{% url 'nnkr:update_comment' question.pk comment.pk %}"
-                        class="link-dark-u"><small>編集</small>
-                      </a>
-                    {% endif %}
+                      {% if user.is_authenticated and user == comment.commenter %}
+                        <a href="{% url 'nnkr:update_comment' question.pk comment.pk %}"
+                          class="link-dark-u"><small>編集</small>
+                        </a>
+                      {% endif %}
+                    </div>
                   </div>
-                </div>
 
-                <!-- Clear float -->
-                <div style="clear:left; width:fit-content">
-                </div>
+                  <!-- Clear float -->
+                  <div style="clear:left; width:fit-content">
+                  </div>
 
+                </div>
+              </div>
+              <div class="d-sm-none">
+                <div class="d-flex justify-content-start mb-1">
+
+                  <!-- Icon -->
+                  <div class="my-2" style="float:left; margin-bottom:-8px">
+                    <div  style="display:inline-block; vertical-align:top;">
+                      <div class="icon-frame shadow-sm">
+                        <div class="icon">
+                          {% if comment.commenter %}
+                            <img src="{{ comment.commenter.icon.url }}">
+                          {% else %}
+                            <img src="{% static 'img/icon/icon_guest.png' %}">
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Content -->
+                  <div class="px-2">
+                    <div style="font-size:16px; display:inline-block;">
+                      {{comment.text | anchor_filter | linebreaksbr }}
+
+                      {% if comment.is_updated %}
+                        <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                      {% endif %}
+
+                      {% if user.is_authenticated and user == comment.commenter %}
+                        <a href="{% url 'nnkr:update_comment' question.pk comment.pk %}"
+                          class="link-dark-u"><small>編集</small>
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  <!-- Clear float -->
+                  <div style="clear:left; width:fit-content">
+                  </div>
+
+                </div>
               </div>
 
             </div><br>
