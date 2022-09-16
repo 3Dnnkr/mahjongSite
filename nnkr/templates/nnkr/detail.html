@@ -432,7 +432,7 @@
             <b>質問に関することをコメントしよう！</b>            
             <hr style="margin-top:8px;margin-bottom:4px">
             {% for comment in question.comments.all reversed %}
-            <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 shadow" style="">
+            <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 pb-1 shadow" style="">
 
               <!-- Info and Like -->
               <div class="d-flex align-items-center">
@@ -487,10 +487,10 @@
               
               <!-- Icon and Content -->
               <div class="d-none d-sm-block">
-                <div class="d-flex justify-content-start mb-1">
+                <div class="d-flex justify-content-start">
 
                   <!-- Icon -->
-                  <div class="my-2" style="float:left; margin-bottom:-8px">
+                  <div class="my-1" style="float:left; margin-bottom:-8px">
                     <div  style="display:inline-block; vertical-align:top;">
                       <div class="icon-frame shadow-sm">
                         <div class="icon">
@@ -531,7 +531,7 @@
                 <div class="mb-1">
 
                   <!-- Icon -->
-                  <div class="my-2 me-2" style="float:left;">
+                  <div class="me-2 mt-1" style="float:left;">
                     <div  style="display:inline-block; vertical-align:top;">
                       <div class="icon-frame shadow-sm">
                         <div class="icon">
