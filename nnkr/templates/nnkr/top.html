@@ -140,14 +140,25 @@
                 <div class="d-flex justify-content-between align-items-center">
                   <!-- Info -->
                   <div>
-                    {% if chat.user %}
-                      <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                    {% else %}
-                      [名無しさん]
-                    {% endif %}
-                    <small>
-                    {{chat.posted_at|date:"y年m月j日 H:i"}}
-                    </small>
+                    <div class="d-none d-sm-block">
+                      {% if chat.user %}
+                        <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
+                      {% else %}
+                        [名無しさん]
+                      {% endif %}
+                      <small>
+                      {{chat.posted_at|date:"y年m月j日 H:i"}}
+                      </small>
+                    </div>
+                    <div class="d-sm-none">
+                      {% if chat.user %}
+                        <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
+                      {% else %}
+                        [名無しさん]
+                      {% endif %}
+                      <small>{{chat.posted_at|date:"m月j日"}}</small>              
+                    </div>
+                    
                   </div>
                   <!-- Like -->
                   <div class="d-flex align-items-center ms-2">
