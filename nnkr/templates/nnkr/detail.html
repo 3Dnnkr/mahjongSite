@@ -302,7 +302,6 @@
       </div>
 
 
-
       {% comment %} <!-- コメントボックスとフォーム -->
       <div class="col-md-12 offset-md-0 py-3">
         <div class="p-3 shadow-lg border border-3" style="background:#f5f5f5;">
@@ -426,14 +425,14 @@
 
       <!-- コメントボックスとフォーム -->
       <div class="col-md-12 offset-md-0 py-3">
-        <div class="py-3 px-2 shadow-lg border border-3" style="background:#f5f5f5;">
+        <div class="py-2 px-2 shadow-lg border border-3" style="background:#f5f5f5;">
 
           <!-- Content -->
           <div class="comment-box" style="height:500px;overflow-y:scroll;">{% comment %} <div class="comment-box" style="height:400px;overflow-y:scroll;"> {% endcomment %}
             <b>質問に関することをコメントしよう！</b>            
             <hr style="margin-top:8px;margin-bottom:4px">
             {% for comment in question.comments.all reversed %}
-            <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 shadow" style="display:inline-block;">
+            <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 shadow" style="">
 
               <!-- Info and Like -->
               <div class="d-flex align-items-center">
@@ -529,10 +528,10 @@
                 </div>
               </div>
               <div class="d-sm-none">
-                <div class="d-flex justify-content-start mb-1">
+                <div class="mb-1">
 
                   <!-- Icon -->
-                  <div class="my-2" style="float:left; margin-bottom:-8px">
+                  <div class="my-2 me-2" style="float:left;">
                     <div  style="display:inline-block; vertical-align:top;">
                       <div class="icon-frame shadow-sm">
                         <div class="icon">
@@ -548,7 +547,7 @@
 
                   <!-- Content -->
                   <div class="px-2">
-                    <div style="font-size:16px; display:inline-block;">
+                    <div style="font-size:16px;">
                       {{comment.text | anchor_filter | linebreaksbr }}
 
                       {% if comment.is_updated %}
@@ -564,13 +563,13 @@
                   </div>
 
                   <!-- Clear float -->
-                  <div style="clear:left; width:fit-content">
+                  <div style="clear:left">
                   </div>
 
                 </div>
               </div>
 
-            </div><br>
+            </div>
             {% comment %} <hr style="margin-top:-8px;margin-bottom:4px;"> {% endcomment %}
             {% endfor %}
           </div>
