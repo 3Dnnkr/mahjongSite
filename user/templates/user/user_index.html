@@ -18,8 +18,9 @@
         <!--カードの内容-->
         <div class="card-body">
           <div class="row">
-            <div class="col-9">
+
             <div class="d-flex justify-content-start">
+              <!-- Icon -->
               <div style="display:inline-block;" class="me-2">
                 <div class="icon-frame shadow-sm">
                   <div class="icon">
@@ -27,21 +28,29 @@
                   </div>
                 </div>
               </div>
-              <div>
-                <a  class="link-dark-u" href="{% url 'user:detail' target_user.id %}">
-                  <h5>{{target_user.username}}</h5>
-                </a>
+
+              <!-- Info and Text -->
+              <div style="width: 100%">
+                <!-- Info -->
+                <div class="d-flex justify-content-between" style="width: 100%">
+                  <a class="link-dark-u" href="{% url 'user:detail' target_user.id %}">
+                    <h5 style="display:inline">{{target_user.username}}</h5>
+                  </a>
+                  <div class="text-end" style="width: 100%">
+                    <small>{{ target_user.date_joined|date:"y年m月j日"}}</small>
+                  </div>
+                </div>
+
+                <!-- Text -->
                 <div>
                   {{target_user.introduction | truncatechars:100}}
                 </div>
               </div>
             </div>
-            </div>
 
-            <div class="col-3 text-end">
-              <small>{{ target_user.date_joined|date:"y年m月j日"}}</small>
-            </div>
             
+
+
           </div>
         </div>
         
