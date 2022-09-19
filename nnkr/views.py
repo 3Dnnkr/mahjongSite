@@ -184,7 +184,7 @@ class CreateQuestion(LoginRequiredMixin, CreateView):
         txts = []
         txts.append(question.author.username + "さんの出題")
         txts.append("『"+question.title+"』")
-        txts.append(question.description)
+        #txts.append(question.description) # too long to tweet
         txts.append(self.request.build_absolute_uri(reverse('nnkr:detail', args=(question.id,))))
         txts.append("#雀魂 #何切る #雀魂何切る")
         status = '\n'.join(txts)
