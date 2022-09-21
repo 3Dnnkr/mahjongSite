@@ -12,6 +12,7 @@ from django.db.models import Count
 
 from .models import Article
 from .forms import ArticleForm
+from ms import ms_api
 
 
 class Index(ListView):
@@ -29,3 +30,8 @@ class CreateArticle(CreateView):
     model = Article
     form_class = ArticleForm
     success_url = reverse_lazy('wiki:index')
+
+async def load_paifu(request):
+    paifu = await ms_api.load_paifu()
+    messages.success(request, "牌譜{}を読み込みました！".format(paifu["head"]["uuid"]))
+    return redirect(request.META['HTTP_REFERER'])

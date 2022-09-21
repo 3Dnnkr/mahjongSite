@@ -11,8 +11,12 @@
   </a>
 {% endfor %}
 
-<a href="{% url 'wiki:create_article' %}">
+{% comment %} <a href="{% url 'wiki:create_article' %}">
   記事作成
+</a> {% endcomment %}
+
+<a href="{% url 'wiki:load_paifu' %}">
+  牌譜読み込み
 </a>
 
 {% endblock %}

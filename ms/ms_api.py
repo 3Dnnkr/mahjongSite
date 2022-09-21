@@ -10,7 +10,7 @@ import aiohttp
 
 from ms.base import MSRPCChannel
 from ms.rpc import Lobby
-import ms.protocol_pb2 as pb
+from ms import protocol_pb2 as pb
 from google.protobuf.json_format import MessageToJson
 
 logging.basicConfig(
@@ -23,30 +23,14 @@ MS_HOST = "https://game.maj-soul.com"
 async def load_paifu():
     username = "3dnnkr@gmail.com"
     password = "ramanujan1729Ac"
-    uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
+    #uuid = "191117-5c090817-4837-4760-8c3e-420af823832a" # ～2019/12/31
+    #uuid = "210716-8c69db69-0ce0-4a93-b263-441335581091" # 2020/01/01～2021/07/28
+    uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"  # 2021/07/28～
     lobby, channel, version_to_force = await connect()
     await login(lobby, username, password, version_to_force)
-    result = await load_and_process_game_log(lobby, uuid)
+    paifu = await load_and_process_game_log(lobby, uuid)
     await channel.close()
-    return
-
-async def main():
-
-    username = "3dnnkr@gmail.com"
-    password = "ramanujan1729Ac"
-    #uuid = "191117-5c090817-4837-4760-8c3e-420af823832a_a454471004" # ～2019/12/31
-    #uuid = "191117-5c090817-4837-4760-8c3e-420af823832a"
-    #uuid = "210716-8c69db69-0ce0-4a93-b263-441335581091_a878966783" # 2020/01/01～2021/07/28
-    #uuid = "210716-8c69db69-0ce0-4a93-b263-441335581091"
-    #uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067" # 2021/07/28～
-    uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
-    
-    lobby, channel, version_to_force = await connect()
-    await login(lobby, username, password, version_to_force)
-
-    result = await load_and_process_game_log(lobby, uuid)
-
-    await channel.close()
+    return paifu
 
 async def connect():
     async with aiohttp.ClientSession() as session:
@@ -102,15 +86,6 @@ async def login(lobby, username, password, version_to_force):
         return False
 
     return True
-
-async def load_revive_coin_info(lobby):
-    logging.info("Loading revive coin info")
-
-    req = pb.ReqCommon()
-    res = await lobby.fetch_revive_coin_info(req)
-    result = res.has_gained
-   
-    return result
 
 async def load_and_process_game_log(lobby, uuid):
     logging.info("Loading game log")
@@ -187,4 +162,4 @@ async def load_and_process_game_log(lobby, uuid):
     fw = codecs.open('paifu.json', 'w', 'utf-8')
     json.dump(paifu, fw, indent=2, ensure_ascii=False)
     fw.close()
-    return res
+    return paifu
