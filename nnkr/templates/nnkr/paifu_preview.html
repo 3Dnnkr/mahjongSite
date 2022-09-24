@@ -1,0 +1,23 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+<div class="pt-3 text-center">
+  <h3>牌譜プレビュー</h3>
+</div><hr>
+
+<form action="{% url 'nnkr:paifu_preview' %}" method="POST" class="submit-only-one">{% csrf_token %}
+  {{ form }}
+  <button type="submit" class="btn btn-primary">再生</button>
+</form>
+
+
+{% if paifudata %}
+<iframe src="{{ 'http://tenhou.net/5/#json='|add:paifudata }}"
+  style="width:480px;height:320px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+{% else %}
+<iframe src=""
+  style="width:480px;height:320px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+{% endif %}
+
+
+{% endblock %}

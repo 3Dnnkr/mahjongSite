@@ -28,6 +28,9 @@ class TagForm(forms.Form):
     # Tag is unique so can't use ModelForm
     name = forms.CharField()
 
+class PaifuForm(forms.Form):
+    url = forms.CharField()
+
 ChoiceFormset = forms.inlineformset_factory(
     Question, Choice, fields=['text'],
     extra=2, max_num=9, can_delete=False,

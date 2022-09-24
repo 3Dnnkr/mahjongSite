@@ -10,14 +10,18 @@ from django.shortcuts import resolve_url,render,get_object_or_404,redirect,HttpR
 from django.core.paginator import Paginator
 from django.db.models import Count
 
+from asgiref.sync import sync_to_async
 import random
 import requests
 from PIL import Image
 from io import BytesIO
+import json, urllib
 
 from .models import Question, Comment, CommentLike, Choice, Tag, Tagging, Voting, Bookmark, Liker, Disliker, Lobbychat, LobbychatLike, FAQ
-from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm
+from .forms import ChoiceForm, QuestionForm, CommentForm, TagForm, ChoiceFormset, LobbychatForm, PaifuForm
 from . import twitter
+from ms import ms_api
+
 
 
 class Top(TemplateView):
@@ -416,3 +420,39 @@ def create_lobbychat_like(request, pk):
         messages.success(request, "イイねしました！")
         
     return redirect(request.META['HTTP_REFERER'])
+
+
+
+async def paifu_preview(request):
+    username = "3dnnkr@gmail.com"
+    password = "ramanujan1729Ac"
+    async_render = sync_to_async(render, thread_sensitive=False)
+
+    if request.method == "POST":
+        form = PaifuForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data.get('url')
+            paifu = await ms_api.load_paifu(username, password, url)
+            if paifu.get("error"):
+                messages.warning(request, "牌譜の読み込みに失敗しました...")
+                return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
+            # url encode
+            ju    = 0 # 局
+            chang = 0 # 場
+            seat  = 0 # 席
+            round = 0 # 巡
+            paifudata = {}
+            paifudata["title"] = paifu["title"]
+            paifudata["name"]  = paifu["name"]
+            paifudata["rule"]  = paifu["rule"]
+            paifudata["log"]   = [kyoku for kyoku in paifu["log"] if kyoku[0][0]==ju and kyoku[0][1]==chang]
+
+            paifudata = json.dumps(paifudata)
+            paifudata = urllib.parse.quote(paifudata)
+            messages.success(request, "牌譜{}を読み込みました！".format(paifu["ref"]))
+            return await async_render(request, 'nnkr/paifu_preview.html', {'form':form,'paifudata':paifudata})
+
+    else:
+        form = PaifuForm
+
+    return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})

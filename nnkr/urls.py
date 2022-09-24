@@ -27,4 +27,5 @@ urlpatterns = [
     path('question/<int:pk>/create_liker/', views.CreateLiker.as_view(), name='create_liker'),
     path('question/<int:pk>/delete_liker/', views.delete_liker, name='delete_liker'),
     path('question/<int:pk>/create_disliker/', views.CreateDisliker.as_view(), name='create_disliker'),
+    path('paifu_preview/', views.paifu_preview,name='paifu_preview'),
 ]

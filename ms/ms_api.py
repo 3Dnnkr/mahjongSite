@@ -4,10 +4,11 @@ import hmac
 import logging
 import random
 import uuid
-import urllib.request, json, codecs
+import urllib.request, json
 
 import aiohttp
 
+from ms.convert import convert
 from ms.base import MSRPCChannel
 from ms.rpc import Lobby
 from ms import protocol_pb2 as pb
@@ -20,16 +21,29 @@ logging.basicConfig(
 MS_HOST = "https://game.maj-soul.com"
 
 
-async def load_paifu():
-    username = "3dnnkr@gmail.com"
-    password = "ramanujan1729Ac"
-    #uuid = "191117-5c090817-4837-4760-8c3e-420af823832a" # ～2019/12/31
-    #uuid = "210716-8c69db69-0ce0-4a93-b263-441335581091" # 2020/01/01～2021/07/28
-    uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"  # 2021/07/28～
+async def load_paifu(username, password, url):
+    
+    # login to Mahjong Soul
     lobby, channel, version_to_force = await connect()
     await login(lobby, username, password, version_to_force)
+    
+    # get ms paifu (Dict)
+    uuid = url_to_uuid(url)
     paifu = await load_and_process_game_log(lobby, uuid)
     await channel.close()
+    
+    # # save as json
+    # fw = codecs.open('paifu.json', 'w', 'utf-8')
+    # json.dump(paifu, fw, indent=2, ensure_ascii=False)
+    # fw.close()
+    
+    # return paifu if error
+    if paifu.get("error"):
+        print("Error Code: " + str(paifu.get("error").get("code")))
+        return paifu
+    
+    # convert ms to tenhou (Dict)
+    paifu = convert(paifu)
     return paifu
 
 async def connect():
@@ -95,7 +109,7 @@ async def load_and_process_game_log(lobby, uuid):
     req.game_uuid = uuid
     req.client_version_string = 'web-0.10.154' # update from 'web-0.9.333'
     res = await lobby.fetch_game_record(req)
-    paifu = json.loads(MessageToJson(res, preserving_proto_field_name=True, including_default_value_fields=False)) # ResGameRecord => JSON => Dict
+    paifu = json.loads(MessageToJson(res, preserving_proto_field_name=True, including_default_value_fields=True)) # ResGameRecord => JSON => Dict
 
     # get res.data from data_url
     if not res.data and res.data_url:
@@ -107,12 +121,12 @@ async def load_and_process_game_log(lobby, uuid):
     # decode res.data(Byte => Wrapper)
     wrapper = pb.Wrapper()
     wrapper.ParseFromString(res.data)
-    paifu["data"] = json.loads(MessageToJson(wrapper, preserving_proto_field_name=True))
+    paifu["data"] = json.loads(MessageToJson(wrapper, preserving_proto_field_name=True, including_default_value_fields=True))
 
     # decode wrapper.data(Byte => GameDetailRecords)
     details = pb.GameDetailRecords()
     details.ParseFromString(wrapper.data)
-    paifu["data"]["data"] = json.loads(MessageToJson(details, preserving_proto_field_name=True))
+    paifu["data"]["data"] = json.loads(MessageToJson(details, preserving_proto_field_name=True, including_default_value_fields=True))
 
     # prepare record_dic
     record_dic = {
@@ -132,13 +146,13 @@ async def load_and_process_game_log(lobby, uuid):
             # decode record(Byte => Wrapper)
             record = pb.Wrapper()
             record.ParseFromString(rec)
-            paifu["data"]["data"]["records"][i] = json.loads(MessageToJson(record, preserving_proto_field_name=True))
+            paifu["data"]["data"]["records"][i] = json.loads(MessageToJson(record, preserving_proto_field_name=True, including_default_value_fields=True))
 
             # decode record.data(Byte => SomeRecord)
             if record.name in record_dic:
                 record_data = record_dic[record.name]()
                 record_data.ParseFromString(record.data)
-                paifu["data"]["data"]["records"][i]["data"] = json.loads(MessageToJson(record_data, preserving_proto_field_name=True))
+                paifu["data"]["data"]["records"][i]["data"] = json.loads(MessageToJson(record_data, preserving_proto_field_name=True, including_default_value_fields=True))
 
     elif details.version == 210715:
         # decode details.actions
@@ -147,19 +161,33 @@ async def load_and_process_game_log(lobby, uuid):
                 # decode action.result(Byte => Wrapper)
                 result = pb.Wrapper()
                 result.ParseFromString(action.result)
-                paifu["data"]["data"]["actions"][i]["result"] = json.loads(MessageToJson(result, preserving_proto_field_name=True))
+                paifu["data"]["data"]["actions"][i]["result"] = json.loads(MessageToJson(result, preserving_proto_field_name=True, including_default_value_fields=True))
 
                 # decode action.result.data(Byte => SomeRecord)
                 if result.name in record_dic:
                     result_data = record_dic[result.name]()
                     result_data.ParseFromString(result.data)
-                    paifu["data"]["data"]["actions"][i]["result"]["data"] = json.loads(MessageToJson(result_data, preserving_proto_field_name=True))
+                    paifu["data"]["data"]["actions"][i]["result"]["data"] = json.loads(MessageToJson(result_data, preserving_proto_field_name=True, including_default_value_fields=True))
 
     else:
         print("Unknown version: {}".format(details.version))
 
-    # save as json
-    fw = codecs.open('paifu.json', 'w', 'utf-8')
-    json.dump(paifu, fw, indent=2, ensure_ascii=False)
-    fw.close()
+    logging.info("Loaded game log")
     return paifu
+
+def url_to_uuid(url):
+    # url has 4 patterns
+    #uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
+    #uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
+    #uuid = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704"
+    #uuid = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
+    sp1 = url.split('=')
+    sp2 = url.split('_') 
+    if len(sp1)==2 and len(sp2)==2:
+        return sp1[1].split('_')[0]
+    elif len(sp1)==2 and len(sp2)==1:
+        return sp1[1]
+    elif len(sp1)==1 and len(sp2)==2:
+        return sp2[0]
+    else:
+        return url

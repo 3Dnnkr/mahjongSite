@@ -32,6 +32,19 @@ class CreateArticle(CreateView):
     success_url = reverse_lazy('wiki:index')
 
 async def load_paifu(request):
-    paifu = await ms_api.load_paifu()
-    messages.success(request, "牌譜{}を読み込みました！".format(paifu["head"]["uuid"]))
+    username = "3dnnkr@gmail.com"
+    password = "ramanujan1729Ac"
+    #uuid = "191117-5c090817-4837-4760-8c3e-420af823832a" # ～2019/12/31
+    #uuid = "210716-8c69db69-0ce0-4a93-b263-441335581091" # 2020/01/01～2021/07/28
+    uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"  # 2021/07/28～
+    paifu = await ms_api.load_paifu(username, password, uuid)
+
+
+    # url encode
+    # paifudata = json.dumps(paifu)
+    # paifudata = urllib.parse.quote(paifudata)
+    # fw = codecs.open('tensoul.txt', 'w', 'utf-8')
+    # fw.write(paifudata)
+    # fw.close()
+    messages.success(request, "牌譜{}を読み込みました！".format(paifu["ref"]))
     return redirect(request.META['HTTP_REFERER'])
