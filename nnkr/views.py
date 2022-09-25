@@ -429,30 +429,41 @@ async def paifu_preview(request):
     async_render = sync_to_async(render, thread_sensitive=False)
 
     if request.method == "POST":
-        form = PaifuForm(request.POST)
-        if form.is_valid():
-            url = form.cleaned_data.get('url')
-            paifu = await ms_api.load_paifu(username, password, url)
-            if paifu.get("error"):
+        form_paifu = PaifuForm(request.POST)
+        if form_paifu.is_valid():
+            url = form_paifu.cleaned_data.get('url')
+            seat = form_paifu.cleaned_data.get('seat')
+            paifudata = await ms_api.load_paifu(username, password, url)
+            if paifudata.get("error"):
                 messages.warning(request, "牌譜の読み込みに失敗しました...")
-                return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
+                return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu})
+            
             # url encode
-            ju    = 0 # 局
-            chang = 0 # 場
-            seat  = 0 # 席
-            round = 0 # 巡
-            paifudata = {}
-            paifudata["title"] = paifu["title"]
-            paifudata["name"]  = paifu["name"]
-            paifudata["rule"]  = paifu["rule"]
-            paifudata["log"]   = [kyoku for kyoku in paifu["log"] if kyoku[0][0]==ju and kyoku[0][1]==chang]
+            paifus = []
+            names = []
+            ju_dict = {  0:"東一局",  1:"東二局",  2:"東三局",  3:"東四局",
+                         4:"南一局",  5:"南二局",  6:"南三局",  7:"南四局",
+                         8:"西一局",  9:"西二局", 10:"西三局", 11:"西四局",
+                        12:"北一局", 13:"北二局", 14:"北三局", 15:"北四局",}
+            for log in paifudata["log"]:
+                paifu = {}
+                paifu["title"] = paifudata["title"]
+                paifu["name"]  = paifudata["name"]
+                paifu["rule"]  = paifudata["rule"]
+                paifu["log"]   = [log]
+                paifu = json.dumps(paifu)
+                paifu = urllib.parse.quote(paifu)
+                paifus.append(paifu)
 
-            paifudata = json.dumps(paifudata)
-            paifudata = urllib.parse.quote(paifudata)
-            messages.success(request, "牌譜{}を読み込みました！".format(paifu["ref"]))
-            return await async_render(request, 'nnkr/paifu_preview.html', {'form':form,'paifudata':paifudata})
+                ju    = log[0][0]
+                chang = log[0][1]
+                names.append(ju_dict.get(ju)+" "+str(chang)+"本場")
+
+            messages.success(request, "牌譜{}を読み込みました！".format(paifudata["ref"]))
+            return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu,'paifus':paifus, 'seat':seat ,'names':names,})
 
     else:
-        form = PaifuForm
+        form_paifu = PaifuForm
 
-    return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
+    return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu})
+

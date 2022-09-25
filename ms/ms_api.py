@@ -138,6 +138,7 @@ async def load_and_process_game_log(lobby, uuid):
         ".lq.RecordHule":pb.RecordHule,
         ".lq.RecordNoTile":pb.RecordNoTile,
         ".lq.RecordLiuJu":pb.RecordLiuJu,
+        ".lq.RecordBaBei":pb.RecordBaBei,
     }
 
     if details.version == 0:
