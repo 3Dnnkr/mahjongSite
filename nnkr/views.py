@@ -429,14 +429,14 @@ async def paifu_preview(request):
     async_render = sync_to_async(render, thread_sensitive=False)
 
     if request.method == "POST":
-        form_paifu = PaifuForm(request.POST)
-        if form_paifu.is_valid():
-            url = form_paifu.cleaned_data.get('url')
-            seat = form_paifu.cleaned_data.get('seat')
+        form = PaifuForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data.get('url')
+            seat = form.cleaned_data.get('seat')
             paifudata = await ms_api.load_paifu(username, password, url)
             if paifudata.get("error"):
                 messages.warning(request, "牌譜の読み込みに失敗しました...")
-                return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu})
+                return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
             
             # url encode
             paifus = []
@@ -460,10 +460,10 @@ async def paifu_preview(request):
                 names.append(ju_dict.get(ju)+" "+str(chang)+"本場")
 
             messages.success(request, "牌譜{}を読み込みました！".format(paifudata["ref"]))
-            return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu,'paifus':paifus, 'seat':seat ,'names':names,})
+            return await async_render(request, 'nnkr/paifu_preview.html', {'form':form,'paifus':paifus, 'seat':seat ,'names':names,})
 
     else:
-        form_paifu = PaifuForm
+        form = PaifuForm
 
-    return await async_render(request, 'nnkr/paifu_preview.html', {'form_paifu':form_paifu})
+    return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
 
