@@ -10,6 +10,7 @@ urlpatterns = [
     path('tag/<int:pk>/', views.TagQuestion.as_view(), name='tag_question'),
     path('faq/', views.FAQIndex.as_view(),name='faq'),
     path('create_lobbychat/', views.CreateLobbychat.as_view(), name='create_lobbychat'),
+    path('delete_lobbychat/<int:pk>/', views.delete_lobbychat, name='delete_lobbychat'),
     path('create_lobbychat_like/<int:pk>/', views.create_lobbychat_like, name='create_lobbychat_like'),
     path('create_question/', views.CreateQuestion.as_view(), name='create_question'),
     path('delete_question/<int:pk>/', views.delete_question, name='delete_question'),

@@ -407,6 +407,16 @@ class CreateLobbychat(CreateView):
             Lobbychat.objects.create(text=text)
         return redirect(self.request.META['HTTP_REFERER'])
 
+def delete_lobbychat(request, pk):
+    chat = get_object_or_404(Lobbychat, pk=pk)
+    if request.user == chat.user:
+        chat.delete()
+        messages.success(request, "チャットを削除しました")
+        return redirect(request.META['HTTP_REFERER'])
+    else:
+        messages.warning(request, "発言者以外はチャットを削除できません")
+    return redirect(request.META['HTTP_REFERER'])
+
 def create_lobbychat_like(request, pk):
     lobbychat = get_object_or_404(Lobbychat, pk=pk)
     user = request.user

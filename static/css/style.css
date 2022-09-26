@@ -64,6 +64,24 @@
 	color: black;
 }
 
+.link-gray-u {
+	text-decoration: underline;
+	color: #808080;
+}
+.link-gray-u:hover {
+	text-decoration: none;
+	color: #808080;
+}
+
+.link-gray-nu {
+	text-decoration: none;
+	color: #808080;
+}
+.link-gray-nu:hover {
+	text-decoration: underline;
+	color: #808080;
+}
+
 .link-white-nu {
 	text-decoration: none;
 	color: white;

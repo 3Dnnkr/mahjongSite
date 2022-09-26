@@ -197,8 +197,10 @@
                     <!-- Content -->
                     <div style="font-size:16px;">
                       {{chat.text | linebreaksbr}}
-                      {% if chat.is_updated %}
-                        <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                      {% if user.is_authenticated and user == chat.user %}
+                        <a href="{% url 'nnkr:delete_lobbychat' chat.pk %}"
+                          class="link-gray-u"><small>削除</small>
+                        </a>
                       {% endif %}
                     </div>
 
@@ -274,8 +276,10 @@
                 <!-- Content -->
                 <div style="font-size:16px;">
                   {{chat.text | linebreaksbr}}
-                  {% if chat.is_updated %}
-                    <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                  {% if user.is_authenticated and user == chat.user %}
+                    <a href="{% url 'nnkr:delete_lobbychat' chat.pk %}"
+                      class="link-gray-u" style="color:#808080"><small>削除</small>
+                    </a>
                   {% endif %}
                 </div>
 
