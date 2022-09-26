@@ -4,7 +4,7 @@ import hmac
 import logging
 import random
 import uuid
-import urllib.request, json
+import urllib.request, json, re
 
 import aiohttp
 
@@ -178,14 +178,24 @@ async def load_and_process_game_log(lobby, uuid):
 
 def url_to_uuid(url):
     # url has 4 patterns
-    #uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
-    #uuid = "220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
-    #uuid = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704"
-    #uuid = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
+    # url = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
+    # url = "220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
+    # url = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704"
+    # url = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
+    # url = "https://game.mahjongsoul.com/?paipu=jkjtmv-uzzvx8xv-5y97-6b9i-gcob-rssmplsvyz1q_a422132067_2"
+    
+    # uuid = re.search('=(.*)_a', url)
+    # if uuid:
+    #     return uuid
+    # else:
+    #     return url
+    
     sp1 = url.split('=')
-    sp2 = url.split('_') 
+    sp2 = url.split('_a')
+
     if len(sp1)==2 and len(sp2)==2:
-        return sp1[1].split('_')[0]
+        print(sp1[1].split('_a')[0])
+        return sp1[1].split('_a')[0]
     elif len(sp1)==2 and len(sp2)==1:
         return sp1[1]
     elif len(sp1)==1 and len(sp2)==2:

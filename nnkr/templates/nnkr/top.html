@@ -43,6 +43,15 @@
     </div>
   </button>
 
+  <!-- 牌譜再生 -->
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "nnkr:paifu_preview" %}'">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/etc/desktop1.png' %}" style="max-height:70px; margin:-5px; margin-left:-5px; margin-right:0px" class="p-1">  
+      <a href="{% url 'nnkr:paifu_preview' %}" class="link-white-nu"><b>牌譜再生</b></a>
+    </div>
+  </button>
+
   <!-- FAQ -->
   <button type="button" class="btn btn-dark shadow m-1"
     onclick="location.href='{% url "nnkr:faq" %}'">

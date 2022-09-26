@@ -114,6 +114,7 @@
               <a class="mx-1 link-nu" href="{% url 'nnkr:index' %}">問題一覧</a>
               <a class="mx-1 link-nu" href="{% url 'user:index' %}">ユーザーリスト</a>
               <a class="mx-1 link-nu" href="{% url 'nnkr:faq' %}">FAQ</a>
+              <a class="mx-1 link-nu" href="{% url 'nnkr:paifu_preview' %}">牌譜再生</a>
               <br>
               <h5 class="mt-3">閲覧者</h5>
               現在{% if active_user_num == 0 %}1{% else %}{{ active_user_num }}{% endif %}人閲覧中<br>
