@@ -130,158 +130,78 @@
           <div class="chat-content">
             <div class="mb-3">
               <div>
-
-                <div class=" d-none d-sm-block">
-                  <div class="d-flex justify-content-start">
-                    <!-- Icon -->
-                    <div class="p-2" style="float:left; margin-bottom:-11px">
-                      <div  style="display:inline-block; vertical-align:top;">
-                        <div class="icon-frame shadow-sm">
-                          <div class="icon">
-                            {% if chat.user %}
-                              <img src="{{ chat.user.icon.url }}">
-                            {% else %}
-                              <img src="{% static 'img/icon/icon_guest.png' %}">
-                            {% endif %}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <!-- Info and Like -->
-                      <div class="d-flex justify-content-between align-items-center">
-                        <!-- Info -->
-                        <div>
-                          <div class="d-none d-sm-block">
-                            {% if chat.user %}
-                              <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                            {% else %}
-                              [名無しさん]
-                            {% endif %}
-                            <small>
-                            {{chat.posted_at|date:"y年m月j日 H:i"}}
-                            </small>
-                          </div>
-                          <div class="d-sm-none">
-                            {% if chat.user %}
-                              <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                            {% else %}
-                              [名無しさん]
-                            {% endif %}
-                            <small>{{chat.posted_at|date:"m月j日"}}</small>              
-                          </div>
-                          
-                        </div>
-                        <!-- Like -->
-                        <div class="d-flex align-items-center ms-2">
-                          {% with chat.likers.all|length as likers_num %}
-                            {% if user in chat.likers.all %}
-                              <i class="bi bi-heart-fill" style="color:crimson;"></i>
-                              +{{likers_num}}
-                            {% else %}
-                              <form action="{% url 'nnkr:create_lobbychat_like' chat.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                                <button type="submit" class="btn-icon">
-                                  <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
-                                    <i class="bi bi-heart" style="color:gray;"></i>
-                                  </div>
-                                </button>
-                              </form>
-                              {% if likers_num > 0 %}
-                                +{{likers_num}}
-                              {% endif %}
-                            {% endif %}
-                          {% endwith %}
-                        </div>
-                      </div>
-
-                      <!-- Content -->
-                      <div style="font-size:16px;">
-                        {{chat.text | linebreaksbr}}
-                        {% if chat.is_updated %}
-                          <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                <!-- Icon -->
+                <div class="p-2" style="float:left; margin-bottom:-11px">
+                  <div  style="display:inline-block; vertical-align:top;">
+                    <div class="icon-frame shadow-sm">
+                      <div class="icon">
+                        {% if chat.user %}
+                          <img src="{{ chat.user.icon.url }}">
+                        {% else %}
+                          <img src="{% static 'img/icon/icon_guest.png' %}">
                         {% endif %}
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Info and Like -->
+                <div class="d-flex justify-content-between align-items-center">
+                  <!-- Info -->
+                  <div>
+                    <div class="d-none d-sm-block">
+                      {% if chat.user %}
+                        <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
+                      {% else %}
+                        [名無しさん]
+                      {% endif %}
+                      <small>
+                      {{chat.posted_at|date:"y年m月j日 H:i"}}
+                      </small>
+                    </div>
+                    <div class="d-sm-none">
+                      {% if chat.user %}
+                        <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
+                      {% else %}
+                        [名無しさん]
+                      {% endif %}
+                      <small>{{chat.posted_at|date:"m月j日"}}</small>              
                     </div>
                     
                   </div>
-                </div>
-
-                <div class="d-sm-none">
-                  <!-- Icon -->
-                  <div class="p-2" style="float:left; margin-bottom:-11px">
-                    <div  style="display:inline-block; vertical-align:top;">
-                      <div class="icon-frame shadow-sm">
-                        <div class="icon">
-                          {% if chat.user %}
-                            <img src="{{ chat.user.icon.url }}">
-                          {% else %}
-                            <img src="{% static 'img/icon/icon_guest.png' %}">
-                          {% endif %}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Info and Like -->
-                  <div class="d-flex justify-content-between align-items-center">
-                    <!-- Info -->
-                    <div>
-                      <div class="d-none d-sm-block">
-                        {% if chat.user %}
-                          <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                        {% else %}
-                          [名無しさん]
-                        {% endif %}
-                        <small>
-                        {{chat.posted_at|date:"y年m月j日 H:i"}}
-                        </small>
-                      </div>
-                      <div class="d-sm-none">
-                        {% if chat.user %}
-                          <a class="link-dark-u" href="{% url 'user:detail' chat.user.id %}">[{{chat.user}}]</a>
-                        {% else %}
-                          [名無しさん]
-                        {% endif %}
-                        <small>{{chat.posted_at|date:"m月j日"}}</small>              
-                      </div>
-                      
-                    </div>
-                    <!-- Like -->
-                    <div class="d-flex align-items-center ms-2">
-                      {% with chat.likers.all|length as likers_num %}
-                        {% if user in chat.likers.all %}
-                          <i class="bi bi-heart-fill" style="color:crimson;"></i>
+                  <!-- Like -->
+                  <div class="d-flex align-items-center ms-2">
+                    {% with chat.likers.all|length as likers_num %}
+                      {% if user in chat.likers.all %}
+                        <i class="bi bi-heart-fill" style="color:crimson;"></i>
+                        +{{likers_num}}
+                      {% else %}
+                        <form action="{% url 'nnkr:create_lobbychat_like' chat.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                          <button type="submit" class="btn-icon">
+                            <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                              <i class="bi bi-heart" style="color:gray;"></i>
+                            </div>
+                          </button>
+                        </form>
+                        {% if likers_num > 0 %}
                           +{{likers_num}}
-                        {% else %}
-                          <form action="{% url 'nnkr:create_lobbychat_like' chat.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                            <button type="submit" class="btn-icon">
-                              <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
-                                <i class="bi bi-heart" style="color:gray;"></i>
-                              </div>
-                            </button>
-                          </form>
-                          {% if likers_num > 0 %}
-                            +{{likers_num}}
-                          {% endif %}
                         {% endif %}
-                      {% endwith %}
-                    </div>
-                  </div>
-
-                  <!-- Content -->
-                  <div style="font-size:16px;">
-                    {{chat.text | linebreaksbr}}
-                    {% if chat.is_updated %}
-                      <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
-                    {% endif %}
-                  </div>
-
-                  <!-- Clear float -->
-                  <div style="clear:left;">
+                      {% endif %}
+                    {% endwith %}
                   </div>
                 </div>
 
+                <!-- Content -->
+                <div style="font-size:16px;">
+                  {{chat.text | linebreaksbr}}
+                  {% if chat.is_updated %}
+                    <small style="color:#808080">[{{chat.updated_at|date:"y年m月j日 H:i"}} 編集済] </small>
+                  {% endif %}
+                </div>
+
+                <!-- Clear float -->
+                <div style="clear:left;">
+                </div>
               </div>
             </div>
           </div>
