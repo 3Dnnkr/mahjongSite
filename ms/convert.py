@@ -186,7 +186,7 @@ class Kyoku():
             
         else:
             # ron
-            delta = [0.]*self.nplayers
+            delta = [0]*self.nplayers
             delta[h.seat]      = rp + (self.nplayers - 1) * hb + h.point_rong
             delta[self.ldseat] = -(self.nplayers - 1) * hb - h.point_rong
             points = str(h.point_rong)
@@ -264,7 +264,7 @@ class Kyoku():
             )
 
 
-        return [Kyoku.pad_right(delta, 4, 0.), res]
+        return [Kyoku.pad_right(delta, 4, 0), res]
 
     # pad a to length l with f, needed to pad log for >sanma
     @classmethod
@@ -507,7 +507,7 @@ def generatelog(mjslog):
             case ".lq.RecordNoTile":
                 # ryuukyoku
                 entry = kyoku.dump([])
-                delta = [0.]*4
+                delta = [0]*4
 
                 # NOTE: mjs wll not give delta_scores if everyone is (no)ten - TODO: minimize the autism
                 if data.scores and data.scores[0] and data.scores[0].delta_scores and len(data.scores[0].delta_scores):

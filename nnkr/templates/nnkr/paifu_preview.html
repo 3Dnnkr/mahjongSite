@@ -69,10 +69,33 @@
           {% endfor %}
         </select>
       {% endif %}
+
+      <!-- 牌譜ダウンロード -->
+      {% if paifudata %}
+        <div>
+          <a href="javascript:download();">牌譜をダウンロード</a>
+        </div>
+      {% endif %}
     </div>
 
   </div>
 </div>
-
 {% endblock %}
 
+{% block extrajs %}
+  <script>
+    const data = {{ paifudata | safe }}; // get paifudata as json
+    function download(){
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(data, null, "  ")],
+          {type: "text/plain"}));
+      a.download = "mahjongsoul_paifu.json";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+  </script>
+{% endblock %}

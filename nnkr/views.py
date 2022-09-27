@@ -444,6 +444,7 @@ async def paifu_preview(request):
             url = form.cleaned_data.get('url')
             seat = form.cleaned_data.get('seat')
             paifudata = await ms_api.load_paifu(username, password, url)
+            paifudata_json = json.dumps(paifudata)
             if paifudata.get("error"):
                 messages.warning(request, "牌譜の読み込みに失敗しました...")
                 return await async_render(request, 'nnkr/paifu_preview.html', {'form':form})
@@ -470,7 +471,7 @@ async def paifu_preview(request):
                 names.append(ju_dict.get(ju)+" "+str(chang)+"本場")
 
             messages.success(request, "牌譜{}を読み込みました！".format(paifudata["ref"]))
-            return await async_render(request, 'nnkr/paifu_preview.html', {'form':form,'paifus':paifus, 'seat':seat ,'names':names,})
+            return await async_render(request, 'nnkr/paifu_preview.html', {'form':form,'paifus':paifus, 'seat':seat ,'names':names, 'paifudata':paifudata_json})
 
     else:
         form = PaifuForm
