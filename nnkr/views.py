@@ -29,11 +29,11 @@ class Top(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        hot_comments = list(Comment.objects.order_by('posted_at')[:3])
-        random.shuffle(hot_comments)
-        hot_comments = hot_comments[:1]
-        hot_questions = [c.question for c in hot_comments]
-        context['questions'] = hot_questions
+        # hot_comments = list(Comment.objects.order_by('posted_at')[:3])
+        # random.shuffle(hot_comments)
+        # hot_comments = hot_comments[:1]
+        # hot_questions = [c.question for c in hot_comments]
+        context['questions'] = Question.objects.order_by('-created_datetime')[:1]
 
         lobby_chats = Lobbychat.objects.order_by('-posted_at')
         paginator = Paginator(lobby_chats, 8)
