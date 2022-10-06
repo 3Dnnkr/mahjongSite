@@ -1,0 +1,101 @@
+{% extends 'nnkr/base.html' %}
+{% block headjs %}
+  <script>
+    function viewChange(){
+        let pd = document.getElementById('paifu-pd');
+        let id = document.getElementById('paifu-pd').value; // paifu-i
+        let os = pd.children;
+
+        for(const o of Array.from(os)) {
+            document.getElementById(o.value).style.display = "none";
+        }
+        document.getElementById(id).style.display = "";
+    }
+    // 天鳳牌譜再生の都合上、
+    // 一度表示させたいため後からdisplay="none"に
+    window.onload = viewChange;
+  </script>
+{% endblock %}
+{% block content %}
+
+<div class="pt-1 text-center">
+  <h3>牌譜再生</h3>
+</div><hr>
+
+
+<div class="container">
+  <div class="row">
+
+    <!-- 牌譜 -->
+    <div class="offset-md-1 offset-lg-0 col-md-10 col-lg-8">
+      {% for paifu in paifus %}
+        <div id="paifu-{{ forloop.counter0 }}">
+          <iframe src="{{ 'https://tenhou.net/5/?tw='|addstr:seat|add:'&tj=1'|add:'&json='|add:paifu }}"
+          style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+        </div>
+      {% empty %}
+        {% comment %} <iframe src="https://tenhou.net/5/?log=2012060420gm-0009-10011-acfd4b57&tw=2&ts=1&tj=13"
+        style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe> {% endcomment %}
+        <iframe 
+        style="width: 100%; aspect-ratio: 3/2; background:black;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+      {% endfor %}
+    </div>
+
+    
+    <!-- 入力 -->
+    <div class="col-lg-4">
+      <!-- 読み込みフォーム -->
+      <form action="{% url 'kntu:paifu_preview' %}" method="POST" class="submit-only-one">{% csrf_token %}
+        
+        {{ form.seat }}
+        <div class="input-group mb-3">
+          <input 
+            type="{{form.url.field.widget.input_type}}"
+            class="form-control" 
+            {% if form.url.field.required %}required{% endif %}
+            name="{{form.url.name}}"
+            id="{{form.url.id_for_label}}"
+            placeholder="牌譜URL" 
+            {% if form.url.value %}value="{{form.url.value}}"{% endif %}>
+          <button class="btn btn-primary" type="submit" id="button-addon2">読み込み</button>
+        </div>
+      </form>
+
+      <!-- 切り替えプルダウン -->
+      {% if names %}
+        <select class="form-control" id="paifu-pd" onchange="viewChange();">
+          {% for name in names %}
+          <option value="paifu-{{ forloop.counter0 }}">{{ name }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
+
+      <!-- 牌譜ダウンロード -->
+      {% if paifudata %}
+        <div>
+          <a href="javascript:download();">牌譜をダウンロード</a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    const data = {{ paifudata | safe }}; // get paifudata as json
+    function download(){
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(data, null, "  ")],
+          {type: "text/plain"}));
+      a.download = "mahjongsoul_paifu.json";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+  </script>
+{% endblock %}

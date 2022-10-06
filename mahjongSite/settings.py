@@ -35,8 +35,7 @@ ALLOWED_HOSTS = ["jtnnkr.herokuapp.com"]
 INSTALLED_APPS = [
     'nnkr',
     'user',
-    'wiki',
-    'mdeditor',
+    'kntu',
     'social_django',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,9 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary',
 ]
-
-# meditor setting
-X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -153,8 +149,7 @@ STATICFILES_DIRS = (
 
 # Media files
 MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media') # BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

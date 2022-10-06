@@ -20,12 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('',include('social_django.urls', namespace='social')),
+    path('', include('social_django.urls', namespace='social')),
     path('', include('nnkr.urls')),
-    path('user/',include('user.urls')),
-    path('wiki/',include('wiki.urls')),
+    path('user/', include('user.urls')),
+    path('kntu/', include('kntu.urls')),
     path('admin/', admin.site.urls),
-    path(r'mdeditor/',include('mdeditor.urls')),
 ]
 
 if settings.DEBUG:
