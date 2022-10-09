@@ -73,7 +73,14 @@
           </div>
         </details>
       {% empty %}
-        <iframe style="width: 100%; aspect-ratio: 3/2; background:black;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+        <div class="alert alert alert-info alert-dismissible shadow-sm" role="alert">
+          <h4><i class="bi bi-info-circle"></i> 説明</h4>
+          <ul>
+            <li>雀魂の牌譜URLを読み込んで再生します。匿名シェアのURLには対応していません。</li>
+            <li>牌譜の再生は天鳳レビュアーで行います。これを利用して雀魂の牌譜をNAGAで解析できます。</li>
+            <li>牌譜をjson形式でダウンロードできます。akochanでの解析などにご利用ください。</li>
+          </ul>
+        </div>
       {% endfor %}
     </div>
 
