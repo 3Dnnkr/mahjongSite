@@ -32,17 +32,12 @@ async def load_paifu(username, password, url):
     paifu = await load_and_process_game_log(lobby, uuid)
     await channel.close()
     
-    # # save as json
-    # fw = codecs.open('paifu.json', 'w', 'utf-8')
-    # json.dump(paifu, fw, indent=2, ensure_ascii=False)
-    # fw.close()
-    
     # return paifu if error
     if paifu.get("error"):
         print("Error Code: " + str(paifu.get("error").get("code")))
         return paifu
     
-    # convert ms to tenhou (Dict)
+    # convert ms paifu to tenhou paifu (Dict to Dict)
     paifu = convert(paifu)
     return paifu
 
@@ -177,19 +172,6 @@ async def load_and_process_game_log(lobby, uuid):
     return paifu
 
 def url_to_uuid(url):
-    # url has 4 patterns
-    # url = "220714-faa69c2d-8321-4748-b027-0b13edfeb704"
-    # url = "220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
-    # url = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704"
-    # url = "https://game.mahjongsoul.com/?paipu=220714-faa69c2d-8321-4748-b027-0b13edfeb704_a422132067"
-    # url = "https://game.mahjongsoul.com/?paipu=jkjtmv-uzzvx8xv-5y97-6b9i-gcob-rssmplsvyz1q_a422132067_2"
-    
-    # uuid = re.search('=(.*)_a', url)
-    # if uuid:
-    #     return uuid
-    # else:
-    #     return url
-    
     sp1 = url.split('=')
     sp2 = url.split('_a')
 
@@ -202,3 +184,67 @@ def url_to_uuid(url):
         return sp2[0]
     else:
         return url
+
+
+def get_paifuinfos_from(paifudata):
+    # url encoding
+    paifus = []
+    names = []
+    ju_dict = { 
+         0:"東一局",  1:"東二局",  2:"東三局",  3:"東四局",
+         4:"南一局",  5:"南二局",  6:"南三局",  7:"南四局",
+         8:"西一局",  9:"西二局", 10:"西三局", 11:"西四局",
+        12:"北一局", 13:"北二局", 14:"北三局", 15:"北四局",
+    }
+    for log in paifudata["log"]:
+        paifu = {}
+        paifu["title"] = paifudata["title"]
+        paifu["name"]  = paifudata["name"]
+        paifu["rule"]  = paifudata["rule"]
+        paifu["log"]   = [log]
+        paifu = json.dumps(paifu)
+        paifu = urllib.parse.quote(paifu)
+        paifus.append(paifu)
+
+        ju    = log[0][0]
+        chang = log[0][1]
+        names.append(ju_dict.get(ju)+" "+str(chang)+"本場")
+    
+    paifu_infos = zip(paifus, names)
+    return paifu_infos
+
+def get_scoreinfos_from(paifudata):
+    # create score_data
+    score_data = [{},{},{},{}]
+    for name, dic in zip(paifudata["name"], score_data):
+        dic["name"] = name
+        dic["scores"] = []
+
+    for log in paifudata["log"]:
+        for i,dic in enumerate(score_data):
+            dic["scores"].append(log[1][i])
+
+    for i, dic in enumerate(score_data):
+        dic["scores"].append(paifudata["sc"][i*2])
+
+    if score_data[3]["scores"][0] == 0:
+        score_data.pop() # remove last data if sanma
+
+    # create labels
+    labels = []
+    ju_dict = { 
+         0:"E1-",  1:"E2-",  2:"E3-",  3:"E4-",
+         4:"S1-",  5:"S2-",  6:"S3-",  7:"S4-",
+         8:"W1-",  9:"W2-", 10:"W3-", 11:"W4-",
+        12:"N1-", 13:"N2-", 14:"N3-", 15:"N4-",
+    }
+    for log in paifudata["log"]:
+        ju    = log[0][0]
+        chang = log[0][1]
+        labels.append(ju_dict.get(ju)+str(chang))
+    labels.append("END")
+
+    score_infos = {}
+    score_infos["score_data"] = score_data
+    score_infos["labels"]     = labels
+    return score_infos

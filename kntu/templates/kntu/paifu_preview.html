@@ -1,21 +1,5 @@
 {% extends 'nnkr/base.html' %}
-{% block headjs %}
-  <script>
-    function viewChange(){
-        let pd = document.getElementById('paifu-pd');
-        let id = document.getElementById('paifu-pd').value; // paifu-i
-        let os = pd.children;
 
-        for(const o of Array.from(os)) {
-            document.getElementById(o.value).style.display = "none";
-        }
-        document.getElementById(id).style.display = "";
-    }
-    // 天鳳牌譜再生の都合上、
-    // 一度表示させたいため後からdisplay="none"に
-    window.onload = viewChange;
-  </script>
-{% endblock %}
 {% block content %}
 
 <div class="pt-1 text-center">
@@ -26,18 +10,70 @@
 <div class="container">
   <div class="row">
 
+    <!-- 点数グラフ -->
+    <div>
+      <canvas id="line-chart" height="25px" width="100px"></canvas>
+
+      <script>
+        // get score_infos as dict 
+        var score_infos = {{ score_infos | safe }}
+
+        // create datasets
+        var bgcolors = [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)'
+        ]
+        var bcolors = [
+          'rgba(255, 99, 132, 0.9)',
+          'rgba(54, 162, 235, 0.9)',
+          'rgba(255,206,  86, 0.9)',
+          'rgba( 75,192, 192, 0.9)'
+        ]
+        var datasets = []
+        for(const [i, score_info] of score_infos.score_data.entries()){
+          datasets.push(
+            {
+              label: score_info.name,
+              data:  score_info.scores,
+              backgroundColor: bgcolors[i],
+              borderColor: bcolors[i],
+              pointStyle: 'circle',
+              pointRadius: 10,
+              pointHoverRadius: 15,
+            }
+          );
+        }
+
+        // draw chart
+        var ctx = document.getElementById("line-chart");
+        var myLineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: score_infos.labels,
+            datasets: datasets,
+          },
+          options: {
+            animation: { duration: 2000 },
+          },
+        });
+      </script>
+    </div>
+
+
     <!-- 牌譜 -->
     <div class="offset-md-1 offset-lg-0 col-md-10 col-lg-8">
-      {% for paifu in paifus %}
-        <div id="paifu-{{ forloop.counter0 }}">
-          <iframe src="{{ 'https://tenhou.net/5/?tw='|addstr:seat|add:'&tj=1'|add:'&json='|add:paifu }}"
-          style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
-        </div>
+      {% for paifu, name in paifu_infos %}
+        <details class="border border-4 bg-white mb-2">
+          <summary><b style="font-size:20px">{{ name }}</b></summary>
+          <div id="paifu-{{ forloop.counter0 }}">
+            <iframe src="{{ 'https://tenhou.net/5/?tw='|addstr:seat|add:'&tj=1'|add:'&json='|add:paifu }}"
+            style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+          </div>
+        </details>
       {% empty %}
-        {% comment %} <iframe src="https://tenhou.net/5/?log=2012060420gm-0009-10011-acfd4b57&tw=2&ts=1&tj=13"
-        style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe> {% endcomment %}
-        <iframe 
-        style="width: 100%; aspect-ratio: 3/2; background:black;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+        <iframe style="width: 100%; aspect-ratio: 3/2; background:black;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
       {% endfor %}
     </div>
 
@@ -61,17 +97,8 @@
         </div>
       </form>
 
-      <!-- 切り替えプルダウン -->
-      {% if names %}
-        <select class="form-control" id="paifu-pd" onchange="viewChange();">
-          {% for name in names %}
-          <option value="paifu-{{ forloop.counter0 }}">{{ name }}</option>
-          {% endfor %}
-        </select>
-      {% endif %}
-
       <!-- 牌譜ダウンロード -->
-      {% if paifudata %}
+      {% if paifu_json %}
         <div>
           <a href="javascript:download();">牌譜をダウンロード</a>
         </div>
@@ -84,11 +111,11 @@
 
 {% block extrajs %}
   <script>
-    const data = {{ paifudata | safe }}; // get paifudata as json
+    const paifudata = {{ paifu_json | safe }}; // get paifudata as json
     function download(){
       let a = document.createElement("a");
       a.href = URL.createObjectURL(
-          new Blob([JSON.stringify(data, null, "  ")],
+          new Blob([JSON.stringify(paifudata, null, "  ")],
           {type: "text/plain"}));
       a.download = "mahjongsoul_paifu.json";
       a.style.display = "none";
@@ -96,6 +123,5 @@
       a.click();
       document.body.removeChild(a);
     }
-
   </script>
 {% endblock %}
