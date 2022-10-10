@@ -14,4 +14,5 @@ urlpatterns = [
     path('<int:pk>/question/', views.UserQuestion.as_view(), name='question'),
     path('<int:pk>/bookmark/', views.UserBookmark.as_view(), name='bookmark'),
     path('<int:pk>/history/', views.UserHistory.as_view(), name='history'),
+    path('<int:pk>/exam/', views.UserExam.as_view(), name='exam'),
 ]

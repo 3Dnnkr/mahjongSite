@@ -26,6 +26,24 @@
     </div>
   </button>
 
+  <!-- 牌譜再生 -->
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "kntu:preview" %}'">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/etc/desktop1.png' %}" style="max-height:70px; margin:-5px; margin-left:-5px; margin-right:0px" class="p-1">  
+      <a href="{% url 'kntu:preview' %}" class="link-white-nu"><b>牌譜再生</b></a>
+    </div>
+  </button>
+
+  <!-- 牌譜検討 -->
+  <button type="button" class="btn btn-dark shadow m-1"
+    onclick="location.href='{% url "kntu:index" %}'">
+    <div class="d-flex align-items-center">
+      <img src="{% static 'img/etc/cat_02.png' %}" style="max-height:70px; margin:-5px; margin-left:-5px; margin-right:0px" class="p-1">  
+      <a href="{% url 'kntu:index' %}" class="link-white-nu"><b>牌譜検討</b></a>
+    </div>
+  </button>
+
   <!-- ユーザー -->
   <button type="button" class="btn btn-dark shadow m-1"
     onclick="location.href='{% url "user:index" %}'">
@@ -40,15 +58,6 @@
         </div>
       </div> 
       <a href="{% url 'user:index' %}" class="link-white-nu"><b>ユーザー</b></a>
-    </div>
-  </button>
-
-  <!-- 牌譜再生 -->
-  <button type="button" class="btn btn-dark shadow m-1"
-    onclick="location.href='{% url "kntu:paifu_preview" %}'">
-    <div class="d-flex align-items-center">
-      <img src="{% static 'img/etc/desktop1.png' %}" style="max-height:70px; margin:-5px; margin-left:-5px; margin-right:0px" class="p-1">  
-      <a href="{% url 'kntu:paifu_preview' %}" class="link-white-nu"><b>牌譜再生</b></a>
     </div>
   </button>
 

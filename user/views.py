@@ -15,7 +15,9 @@ from social_django.models import UserSocialAuth
 from .forms import LoginForm, UserCreateForm, UserUpdateForm
 from nnkr.models import Question
 from nnkr import twitter
+from kntu.models import Examination
 from .models import Icon
+
 
 class Index(ListView):
     template_name = 'user/user_index.html'
@@ -168,6 +170,27 @@ class UserHistory(ListView):
         p = self.request.GET.get('page')
         questions = paginator.get_page(p)
         return questions
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        context['target_user'] = target_user
+        return context
+
+class UserExam(ListView):
+    template_name = 'user/user_exam.html'
+    model = Examination
+    context_object_name = 'exams'
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('pk')
+        target_user = get_object_or_404(get_user_model(), pk=user_id)
+        all_exams = Examination.objects.all().filter(author=target_user).order_by('-created_datetime')
+        paginator = Paginator(all_exams, 6)
+        p = self.request.GET.get('page')
+        exams = paginator.get_page(p)
+        return exams
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

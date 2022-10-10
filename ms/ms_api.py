@@ -186,7 +186,7 @@ def url_to_uuid(url):
         return url
 
 
-def get_paifuinfos_from(paifudata):
+def get_paifuinfos_from(paifudata, anonymous=False, seat=0, player_name="Player1"):
     # url encoding
     paifus = []
     names = []
@@ -199,7 +199,13 @@ def get_paifuinfos_from(paifudata):
     for log in paifudata["log"]:
         paifu = {}
         paifu["title"] = paifudata["title"]
-        paifu["name"]  = paifudata["name"]
+        if anonymous:
+            paifu["name"] = ['Player1','Player2','Player3','Player4']
+            paifu["name"][seat] = player_name
+            if paifudata["name"][3]=="":
+                paifu["name"][3]=""
+        else:
+            paifu["name"]  = paifudata["name"]
         paifu["rule"]  = paifudata["rule"]
         paifu["log"]   = [log]
         paifu = json.dumps(paifu)
@@ -213,11 +219,16 @@ def get_paifuinfos_from(paifudata):
     paifu_infos = zip(paifus, names)
     return paifu_infos
 
-def get_scoreinfos_from(paifudata):
+def get_scoreinfos_from(paifudata, anonymous=False, seat=0, player_name="Player1"):
     # create score_data
     score_data = [{},{},{},{}]
-    for name, dic in zip(paifudata["name"], score_data):
-        dic["name"] = name
+    a_names = ['Player1','Player2','Player3','Player4']
+    a_names[seat] = player_name
+    for name, a_name, dic in zip(paifudata["name"], a_names, score_data):
+        if anonymous:
+            dic["name"] = a_name
+        else:
+            dic["name"] = name
         dic["scores"] = []
 
     for log in paifudata["log"]:
@@ -248,3 +259,4 @@ def get_scoreinfos_from(paifudata):
     score_infos["score_data"] = score_data
     score_infos["labels"]     = labels
     return score_infos
+

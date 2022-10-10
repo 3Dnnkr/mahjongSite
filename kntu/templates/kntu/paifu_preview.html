@@ -1,8 +1,8 @@
 {% extends 'nnkr/base.html' %}
-
+{% load static %}
 {% block content %}
 
-<div class="pt-1 text-center">
+<div class="pt-3 text-center">
   <h3>牌譜再生</h3>
 </div><hr>
 
@@ -62,9 +62,10 @@
     </div>
 
 
-    <!-- 牌譜 -->
+    <!-- 左側 -->
     <div class="offset-md-1 offset-lg-0 col-md-10 col-lg-8">
       {% for paifu, name in paifu_infos %}
+        <!-- 牌譜 -->
         <details class="border border-4 bg-white mb-2">
           <summary><b style="font-size:20px">{{ name }}</b></summary>
           <div id="paifu-{{ forloop.counter0 }}">
@@ -73,24 +74,26 @@
           </div>
         </details>
       {% empty %}
+        <!-- 説明 -->
         <div class="alert alert alert-info alert-dismissible shadow-sm" role="alert">
           <h4><i class="bi bi-info-circle"></i> 説明</h4>
           <ul>
             <li>雀魂の牌譜URLを読み込んで再生します。匿名シェアのURLには対応していません。</li>
             <li>牌譜の再生は天鳳レビュアーで行います。これを利用して雀魂の牌譜をNAGAで解析できます。</li>
             <li>牌譜をjson形式でダウンロードできます。akochanでの解析などにご利用ください。</li>
+            <li>牌譜の読み込み後、牌譜検討を依頼することができます。</li>
           </ul>
         </div>
       {% endfor %}
     </div>
 
-    
-    <!-- 入力 -->
+
+    <!-- 右側 -->
     <div class="col-lg-4">
       <!-- 読み込みフォーム -->
-      <form action="{% url 'kntu:paifu_preview' %}" method="POST" class="submit-only-one">{% csrf_token %}
-        
+      <form action="{% url 'kntu:preview' %}" method="POST" class="submit-only-one">{% csrf_token %}
         {{ form.seat }}
+        ※対象プレイヤー
         <div class="input-group mb-3">
           <input 
             type="{{form.url.field.widget.input_type}}"
@@ -104,11 +107,90 @@
         </div>
       </form>
 
-      <!-- 牌譜ダウンロード -->
+      
       {% if paifu_json %}
+        <!-- 牌譜ダウンロード -->
         <div>
           <a href="javascript:download();">牌譜をダウンロード</a>
         </div>
+
+        <!-- 牌譜検討フォーム -->
+        <div class="my-2">
+          <div class="accordion shadow" id="accordionExample">
+            <div class="accordion-item">
+              <!-- accordion header -->
+              <h2 class="accordion-header" id="heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
+                  <div class="d-flex align-items-center">
+                    <img src="{% static 'img/etc/cat_02.png' %}" style="max-height:70px;height:auto;margin-top:-15px;margin-bottom:-15px;margin-right:15px">  
+                    <b style="font-size:20px">牌譜検討を依頼</b>
+                  </div>
+                </button>
+              </h2>
+              <!-- accordion content -->
+              <div id="collapse" class="accordion-collapse collapse" aria-labelledby="heading" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  {% if user.is_authenticated %}
+                    <form action="{% url 'kntu:create_exam' %}" method="POST" class="submit-only-one">{% csrf_token %}
+                      <div class="form-group mb-1">
+                        <label>タイトル</label>
+                        <input
+                          type="{{exam_form.title.field.widget.input_type}}"
+                          class="form-control"
+                          {% if exam_form.title.field.required %}required{% endif %}
+                          name="{{exam_form.title.name}}"
+                          id="{{exam_form.title.id_for_label}}"
+                          {% if exam_form.title.value %}
+                            value="{{exam_form.title.value}}"
+                          {% else %}
+                            value="{{user.username}}さんの依頼" 
+                          {% endif %}>
+                      </div>
+                      <div class="form-group mb-1">
+                        <label>説明文(見て欲しいポイントや依頼の言葉など)</label>
+                        <textarea
+                          type="{{exam_form.description.field.widget.input_type}}"
+                          class="form-control"
+                          {% if exam_form.description.field.required %}required{% endif %}
+                          name="{{exam_form.description.name}}"
+                          id="{{exam_form.description.id_for_label}}"
+                          cols="50" rows="2"></textarea>
+                      </div>
+                      <div class="form-group mb-1">
+                        <label>公開範囲(後から変更可)</label>
+                        {{ exam_form.release }}
+                      </div>
+                      <div class="form-group">
+                        <input
+                          type="hidden"
+                          class="form-control"
+                          {% if exam_form.paifudata.field.required %}required{% endif %}
+                          name="{{exam_form.paifudata.name}}"
+                          id="{{exam_form.paifudata.id_for_label}}"
+                          {% if exam_form.paifudata.value %}value="{{exam_form.paifudata.value}}"{% endif %}>
+                      </div>
+                      <div class="form-group">
+                        <input
+                          type="hidden"
+                          class="form-control"
+                          {% if exam_form.seat.field.required %}required{% endif %}
+                          name="{{exam_form.seat.name}}"
+                          id="{{exam_form.seat.id_for_label}}"
+                          value="{{seat}}">
+                      </div>
+                      <button style="width:100%" class="btn btn-primary mt-3" type="submit" id="button-addon2">依頼する</button>
+                    </form>
+                  {% else %}
+                    <a href="{% url 'user:login' %}">ログイン</a>が必要です
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <!-- 雀卓とキャラx3 -->
       {% endif %}
     </div>
 

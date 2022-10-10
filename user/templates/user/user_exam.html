@@ -1,0 +1,20 @@
+{% extends 'nnkr/base.html' %}
+{% block content %}
+
+{% include "user/user_subheader.html" with exam="True" %}
+
+<div class="pt-3">
+  <h3 class="text-center"><b>{{ target_user.username }}さんの牌譜検討依頼</b></h3><hr>
+</div>
+
+<div class="row pb-5">
+  <div class="col-lg-8 offset-lg-2">
+  {% include "kntu/exam_cards.html" with exams=exams %}
+  
+  <!-- ページング -->
+  {% if exams %}
+  {% include "nnkr/pagination.html" with page_obj=exams %}
+  {% endif %}
+  </div>
+</div>
+{% endblock %}

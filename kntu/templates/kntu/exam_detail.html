@@ -1,0 +1,355 @@
+{% extends 'nnkr/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pt-3 text-center">
+  <h3>牌譜検討</h3>
+</div><hr>
+
+{% if exam.release == 2 and user != exam.author %}
+  この牌譜は非公開です
+{% else %}
+<div class="container">
+  <div class="row">
+
+    <!-- 点数グラフ -->
+    <div class="col-12">
+      <canvas id="line-chart" height="25px" width="100px"></canvas>
+
+      <script>
+        // get score_infos as dict 
+        var score_infos = {{ exam.score_infos | safe }}
+
+        // create datasets
+        var bgcolors = [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)'
+        ]
+        var bcolors = [
+          'rgba(255, 99, 132, 0.9)',
+          'rgba(54, 162, 235, 0.9)',
+          'rgba(255,206,  86, 0.9)',
+          'rgba( 75,192, 192, 0.9)'
+        ]
+        var datasets = []
+        for(const [i, score_info] of score_infos.score_data.entries()){
+          datasets.push(
+            {
+              label: score_info.name,
+              data:  score_info.scores,
+              backgroundColor: bgcolors[i],
+              borderColor: bcolors[i],
+              pointStyle: 'circle',
+              pointRadius: 10,
+              pointHoverRadius: 15,
+            }
+          );
+        }
+
+        // draw chart
+        var ctx = document.getElementById("line-chart");
+        var myLineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: score_infos.labels,
+            datasets: datasets,
+          },
+          options: {
+            animation: { duration: 2000 },
+          },
+        });
+      </script>
+    </div>
+
+    <!-- 牌譜とコメント -->
+    <div class="offset-md-1 offset-lg-0 col-md-10 col-lg-8">
+      {% for kyoku in exam.kyokus.all %}
+        <details class="border border-4 bg-white mb-2">
+          
+          <!-- 局名 -->
+          <summary>
+            <b style="font-size:20px">{{ kyoku.name }}</b>
+            {% if kyoku.comments.all %}
+              <i class="bi bi-chat-right-dots"></i>
+              {{ kyoku.comments.all|length }}
+            {% endif %}
+          </summary>
+          
+          <div class="row">
+            <!-- 牌譜 -->
+            <div class="col-12">
+              <div id="paifu-{{ forloop.counter0 }}">
+                <iframe src="{{ 'https://tenhou.net/5/?tw='|addstr:exam.seat|add:'&tj=1'|add:'&json='|add:kyoku.paifu }}"
+                style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+              </div>
+            </div>
+
+            <!-- コメントとフォーム -->
+            <div class="col-12">
+              <div class="p-2 shadow-lg border border-3" style="background:#f5f5f5;">
+
+                <!-- Cmments -->
+                <div class="comment-box">
+                  <b>この局についてコメントしよう！</b>            
+                  <hr style="margin-top:8px;margin-bottom:4px">
+                  {% for comment in kyoku.comments.all reversed %}
+                    <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 pb-1 shadow" style="">
+
+                      <!-- Info and Like -->
+                      <div class="d-flex align-items-center">
+                        <!-- Info -->
+                        <div class="">
+                          {{comment.comment_id}}
+                          {% if comment.commenter %}
+                            <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                              {{comment.commenter}}
+                            </a>
+                          {% else %}
+                            名無しさん
+                          {% endif %}
+                          <small>
+                            {{comment.posted_at|date:"y年m月j日 H:i"}}
+                          </small>
+                        </div>  
+
+                        <!-- Like -->
+                        <div class="d-flex align-items-center ms-1">
+                            {% with comment.likers.all|length as likers_num %}
+                              {% if user in comment.likers.all %}
+                                <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
+                                +{{likers_num}}
+                              {% else %}
+                                <form action="{% url 'kntu:create_comment_like' comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                                    <button type="submit" class="btn-icon">
+                                    <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                                        <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                                    </div>
+                                    </button>
+                                </form>
+                                {% if likers_num > 0 %}
+                                    +{{likers_num}}
+                                {% endif %}
+                              {% endif %}
+                            {% endwith %}
+                        </div>
+                      </div>
+                
+                      <!-- Icon and Content -->
+                      <div class="">
+                        <div class="mb-1">
+
+                            <!-- Icon -->
+                            <div class="me-2 mt-1" style="float:left;">
+                            <div  style="display:inline-block; vertical-align:top;">
+                                <div class="icon-frame shadow-sm">
+                                <div class="icon">
+                                    {% if comment.commenter %}
+                                    <img src="{{ comment.commenter.icon.url }}">
+                                    {% else %}
+                                    <img src="{% static 'img/icon/icon_guest.png' %}">
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="px-2">
+                              <div style="font-size:16px;">
+                                {{comment.text | anchor_filter | linebreaksbr }}
+
+                                {% if comment.is_updated %}
+                                  {% comment %} <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small> {% endcomment %}
+                                  <small style="color:#808080">[編集済] </small>
+                                {% endif %}
+
+                                {% if user.is_authenticated and user == comment.commenter %}
+                                  <a href="{% url 'kntu:update_comment' comment.pk %}"
+                                    class="link-dark-u"><small>編集</small>
+                                  </a>
+                                {% endif %}
+                              </div>
+                            </div>
+
+                            <!-- Clear float -->
+                            <div style="clear:left">
+                            </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  {% endfor %}
+                </div>
+            
+                <!-- Form -->
+                <div class="comment-form mt-3">
+                  <form  action="{% url 'kntu:create_comment' kyoku.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-9 form-group">
+                          <textarea
+                            placeholder="コメント"
+                            type="{{comment_form.text.field.widget.input_type}}"
+                            class="form-control"
+                            {% if comment_form.text.field.required %}required{% endif %}
+                            name="{{comment_form.text.name}}"
+                            id="{{comment_form.text.id_for_label}}"
+                            rows="1"></textarea>
+                        </div>
+                        <div class="col-3">
+                          <button type="submit" class="btn btn-primary" style="width:100%;height:auto">送信</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </details>
+      {% endfor %}
+      <!-- Anchor -->
+      <div id="anchor" style="display:inline-block; width:fit-content;">
+      </div>
+    </div>
+
+    <!-- 問題情報 -->
+    <div class="col-lg-4">
+      <div class="card mb-2 shadow-sm" style="background:#f5f5f5">
+        <div class="card-body">
+          
+            <div>
+              <h5>{{exam.title}}</h5>
+              <div class="ms-2">
+                {{exam.description | linebreaksbr}}
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-end">
+              <small class="text-muted"><a class="link-dark-u" href="{% url 'user:detail' exam.author.id %}">[{{exam.author}}]</a></small>
+              <small class="text-muted">{{exam.updated_datetime|date:"y年m月j日H:i:s"}}</small>
+              <div class="icon-frame shadow-sm">
+                <div class="icon">
+                  <img src="{{ exam.author.icon.url }}">
+                </div>
+              </div>
+            </div>
+          
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- 設定画面 -->
+    {% if user == exam.author %}
+      <div class="accordion my-3" id="accordionFlushExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="flush-headingOne">
+            <button class="accordion-button collapsed" type="button" 
+              data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+              aria-expanded="false" aria-controls="flush-collapseOne">
+              設定画面を開く
+            </button>
+          </h2>
+          <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body">
+
+              <div class="mb-3">
+                <b>公開範囲の変更</b>
+                <form action="{% url 'kntu:update_exam' exam.pk %}" method="POST" class="submit-only-one">{% csrf_token %}
+                  {{ exam_form.release }}
+                  <button class="btn btn-primary mt-3" type="submit" id="button-addon2">
+                    更新する
+                  </button>
+                </form>
+              </div>
+
+              <div class="text-end">
+                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                  依頼の削除
+                </button>
+              </div>
+    
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- 削除Modal -->
+      <div class="modal fade" id="deleteModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h5 class="modal-title">最終確認</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="delete-form">
+                <form  action="{% url 'kntu:delete_exam' exam.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                  <div class="input-group">
+                    <input type="text" 
+                      class="form-control" placeholder="タイトルを入力して下さい" aria-describedby="button-addon2"
+                      name="delete_title" required>
+                    <button class="btn btn-outline-danger" type="submit" id="button-addon2">削除</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extrajs %}
+  <!-- download paifudata -->
+  <script>
+    const paifudata = {{ paifu_json | safe }}; // get paifudata as json
+    function download(){
+      let a = document.createElement("a");
+      a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(paifudata, null, "  ")],
+          {type: "text/plain"}));
+      a.download = "mahjongsoul_paifu.json";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  </script>
+
+  <!-- anchor -->
+  <script>
+    $(function(){
+    $("#anchor").css({
+        opacity:"1.0",
+        position:"absolute",
+        //display:"none"
+    });
+    $("a.onMouse").mouseover(function(){
+        var popupID = $(this).attr("name");
+        $("#anchor").html($("#comment-" + popupID).clone());
+        $("#anchor").fadeIn("fast");
+    }).mouseout(function(){
+        $("#anchor").fadeOut("fast");
+    }).mousemove(function(e){
+    $("#anchor").css({
+        "top":e.pageY+10+"px",
+        "left":e.pageX+10+"px"
+        });
+    });
+    });
+  </script>
+{% endblock %}

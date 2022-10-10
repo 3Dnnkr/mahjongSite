@@ -1,0 +1,62 @@
+{% extends 'nnkr/base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pt-3">
+  <h3 class="text-center">牌譜検討一覧</h3><hr>
+</div>
+
+<div class="album py-1">
+  <div class="container">
+    <div class="row">
+
+      <!-- 依頼一覧ページング -->
+      <div class="col-12 col-lg-9"> 
+        
+        <!-- 依頼一覧 -->
+        <div> 
+          {% include "kntu/exam_cards.html" with exams=exams %}
+        </div>
+
+        <!-- ページング -->
+        <div class="p-2">
+          {% include "nnkr/pagination.html" with page_obj=exams %}
+        </div>
+      
+      </div>
+
+      <!-- 牌譜検討を依頼する -->
+      <div class="col-12 col-lg-3"> 
+        <!-- 牌譜再生 -->
+        <div class="my-2">
+          <div class="accordion shadow" id="accordionExample">
+            <div class="accordion-item">
+              <!-- accordion header -->
+              <h2 class="accordion-header" id="heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
+                  <div class="d-flex align-items-center">
+                    <img src="{% static 'img/etc/cat_02.png' %}" style="max-height:70px;height:auto;margin-top:-15px;margin-bottom:-15px;margin-right:5px;margin-left:-10px">  
+                    <b style="font-size:20px">牌譜検討を依頼</b>
+                  </div>
+                </button>
+              </h2>
+              <!-- accordion content -->
+              <div id="collapse" class="accordion-collapse collapse" aria-labelledby="heading" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  {% if user.is_authenticated %}
+                    検討してもらいたい牌譜を<a href="{% url 'kntu:preview' %}">こちら</a>で再生して下さい。
+                  {% else %}
+                    <a href="{% url 'user:login' %}">ログイン</a>が必要です
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
