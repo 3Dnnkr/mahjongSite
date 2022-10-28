@@ -107,7 +107,12 @@
 
     <!-- Lobby Chat -->
     <div class="col-lg-7 my-2">
-      <img src="{% static 'img/etc/cat_chat_bar.png' %}" style="width:100%;vertical-align: bottom;">
+      <img src="{% static 'img/etc/cat_chat_bar.png' %}"
+        style="width:100%;
+          vertical-align:bottom;
+          user-drag: none;
+	        -webkit-user-drag: none;
+	        -moz-user-select: none;">
       <div class="bg-chat p-1 shadow-lg bg-light rounded">
         <div class="bg-chat-box py-2 m-1">
 

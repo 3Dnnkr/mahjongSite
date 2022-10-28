@@ -159,6 +159,11 @@ html {
 	background-size:100%;
 }
 
+/* No drag */
+.no-drag{
+	pointer-events: none;
+}
+
 /* Icon */
 .icon-frame{
 	display:inline-block;
