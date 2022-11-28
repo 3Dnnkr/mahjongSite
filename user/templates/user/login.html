@@ -36,7 +36,7 @@
     </div>
 
     <!-- Twitterログイン -->
-    <div class="card col-md-6 offset-md-3 mt-3">
+    {% comment %} <div class="card col-md-6 offset-md-3 mt-3">
       <div class="card">
         <div class="card-body">
           <button type="button" class="btn-twitter"
@@ -46,11 +46,13 @@
           </button>
         </div>
       </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- 新規会員登録 -->
     <div class="card col-md-8 offset-md-2 my-3">
-        <a href="{% url 'user:create' %}" class="btn btn-success btn-lg shadow" style="width:100%;height:auto">新規会員登録</a>
+        <a href="{% url 'user:create' %}" class="btn btn-success btn-lg shadow" style="width:100%;height:auto">
+          新規ユーザー登録
+        </a>
     </div>
 </form>
 
