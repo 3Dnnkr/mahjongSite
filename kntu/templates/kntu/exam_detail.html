@@ -14,53 +14,12 @@
 
     <!-- 点数グラフ -->
     <div class="col-12">
-      <canvas id="line-chart" height="25px" width="100px"></canvas>
-
-      <script>
-        // get score_infos as dict 
-        var score_infos = {{ exam.score_infos | safe }}
-
-        // create datasets
-        var bgcolors = [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)'
-        ]
-        var bcolors = [
-          'rgba(255, 99, 132, 0.9)',
-          'rgba(54, 162, 235, 0.9)',
-          'rgba(255,206,  86, 0.9)',
-          'rgba( 75,192, 192, 0.9)'
-        ]
-        var datasets = []
-        for(const [i, score_info] of score_infos.score_data.entries()){
-          datasets.push(
-            {
-              label: score_info.name,
-              data:  score_info.scores,
-              backgroundColor: bgcolors[i],
-              borderColor: bcolors[i],
-              pointStyle: 'circle',
-              pointRadius: 10,
-              pointHoverRadius: 15,
-            }
-          );
-        }
-
-        // draw chart
-        var ctx = document.getElementById("line-chart");
-        var myLineChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: score_infos.labels,
-            datasets: datasets,
-          },
-          options: {
-            animation: { duration: 2000 },
-          },
-        });
-      </script>
+      <div class="d-none d-lg-block">
+        {% include "kntu/paifu_graph.html" with score_infos=exam.score_infos chart_id="chart_01" height=25 width=100 %}
+      </div>
+      <div class="d-lg-none">
+        {% include "kntu/paifu_graph.html" with score_infos=exam.score_infos chart_id="chart_02" height=50 width=100 %}
+      </div>
     </div>
 
     <!-- 牌譜とコメント -->
