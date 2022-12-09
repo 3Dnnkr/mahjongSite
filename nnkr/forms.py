@@ -18,6 +18,9 @@ class LobbychatForm(forms.ModelForm):
     class Meta:
         model = Lobbychat
         fields = ['text']
+        widgets = {
+            'text' : forms.Textarea(attrs={'rows':'1', 'placeholder': '他のユーザーに挨拶しよう！'}),
+        }
 
 class ChoiceForm(forms.ModelForm):
     class Meta:

@@ -408,7 +408,10 @@ class CreateLobbychat(CreateView):
         return redirect(self.request.META['HTTP_REFERER'])
 
 def delete_lobbychat(request, pk):
-    chat = get_object_or_404(Lobbychat, pk=pk)
+    try:
+        chat = Lobbychat.objects.get(pk=pk)
+    except Lobbychat.DoesNotExist:
+        return redirect(request.META['HTTP_REFERER'])
     if request.user == chat.user:
         chat.delete()
         messages.success(request, "チャットを削除しました")

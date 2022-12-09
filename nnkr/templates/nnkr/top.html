@@ -137,9 +137,10 @@
                     placeholder="他のユーザーに挨拶しよう！"
                     type="{{chat_form.text.field.widget.input_type}}"
                     class="form-control"
-                    required
+                    {% if chat_form.text.field.required %}required{% endif %}
                     name="{{chat_form.text.name}}"
                     id="{{chat_form.text.id_for_label}}"
+                    maxlength="300"
                     rows="1"></textarea>
                 </div>
                 <div class="col-md-2">
@@ -222,7 +223,7 @@
                       </div>
 
                       <!-- Content -->
-                      <div style="font-size:16px;">
+                      <div style="font-size:16px; overflow-wrap:break-word; word-break:break-word;">
                         {{chat.text | linebreaksbr}}
                         {% if user.is_authenticated and user == chat.user %}
                           <a href="{% url 'nnkr:delete_lobbychat' chat.pk %}"
@@ -301,7 +302,7 @@
                   </div>
 
                   <!-- Content -->
-                  <div style="font-size:16px;">
+                  <div style="font-size:16px; overflow-wrap:break-word; word-break:break-word;">
                     {{chat.text | linebreaksbr}}
                     {% if user.is_authenticated and user == chat.user %}
                       <a href="{% url 'nnkr:delete_lobbychat' chat.pk %}"
