@@ -23,7 +23,7 @@
     </div>
 
     <!-- 牌譜とコメント -->
-    <div class="offset-md-1 offset-lg-0 col-md-10 col-lg-8">
+    <div class="col-12">
       {% for kyoku in exam.kyokus.all %}
         <details class="border border-4 bg-white mb-2">
           
@@ -38,7 +38,7 @@
           
           <div class="row">
             <!-- 牌譜 -->
-            <div class="col-12">
+            <div class="col-lg-8">
               <div id="paifu-{{ forloop.counter0 }}">
                 <iframe src="{{ 'https://tenhou.net/5/?tw='|addstr:exam.seat|add:'&tj=1'|add:'&json='|add:kyoku.paifu }}"
                 style="width: 100%; aspect-ratio: 3/2;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
@@ -46,125 +46,129 @@
             </div>
 
             <!-- コメントとフォーム -->
-            <div class="col-12">
-              <div class="p-2 shadow-lg border border-3" style="background:#f5f5f5;">
+            <div class="col-lg-4">
+              <div class="bg-chat p-2 shadow-lg">
 
-                <!-- Cmments -->
-                <div class="comment-box">
-                  <b>この局についてコメントしよう！</b>            
-                  <hr style="margin-top:8px;margin-bottom:4px">
-                  {% for comment in kyoku.comments.all reversed %}
-                    <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="bg-white mb-1 px-2 pb-1 shadow" style="">
+                <div class="bg-chat-box p-2">
 
-                      <!-- Info and Like -->
-                      <div class="d-flex align-items-center">
-                        <!-- Info -->
+                  <!-- Cmments -->
+                  <div class="comment-box" style="height:350px;overflow-y:scroll;">
+                    <b>この局についてコメントしよう！</b>            
+                    <hr style="margin-top:8px;margin-bottom:4px">
+                    {% for comment in kyoku.comments.all reversed %}
+                      <div id="{{ 'comment-'|addstr:comment.comment_id }}" class="mb-1 px-2 pb-1 shadow" style="background-color: rgba(255,255,255,0.5);">
+
+                        <!-- Info and Like -->
+                        <div class="d-flex align-items-center">
+                          <!-- Info -->
+                          <div class="">
+                            {{comment.comment_id}}
+                            {% if comment.commenter %}
+                              <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
+                                {{comment.commenter}}
+                              </a>
+                            {% else %}
+                              名無しさん
+                            {% endif %}
+                            <small>
+                              {{comment.posted_at|date:"y年m月j日 H:i"}}
+                            </small>
+                          </div>  
+
+                          <!-- Like -->
+                          <div class="d-flex align-items-center ms-1">
+                              {% with comment.likers.all|length as likers_num %}
+                                {% if user in comment.likers.all %}
+                                  <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
+                                  +{{likers_num}}
+                                {% else %}
+                                  <form action="{% url 'kntu:create_comment_like' comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
+                                      <button type="submit" class="btn-icon">
+                                      <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
+                                          <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
+                                      </div>
+                                      </button>
+                                  </form>
+                                  {% if likers_num > 0 %}
+                                      +{{likers_num}}
+                                  {% endif %}
+                                {% endif %}
+                              {% endwith %}
+                          </div>
+                        </div>
+                  
+                        <!-- Icon and Content -->
                         <div class="">
-                          {{comment.comment_id}}
-                          {% if comment.commenter %}
-                            <a class="link-dark-u" href="{% url 'user:detail' comment.commenter.id %}">
-                              {{comment.commenter}}
-                            </a>
-                          {% else %}
-                            名無しさん
-                          {% endif %}
-                          <small>
-                            {{comment.posted_at|date:"y年m月j日 H:i"}}
-                          </small>
-                        </div>  
+                          <div class="mb-1">
 
-                        <!-- Like -->
-                        <div class="d-flex align-items-center ms-1">
-                            {% with comment.likers.all|length as likers_num %}
-                              {% if user in comment.likers.all %}
-                                <i class="bi bi-hand-thumbs-up-fill" style="color:orange;"></i>
-                                +{{likers_num}}
-                              {% else %}
-                                <form action="{% url 'kntu:create_comment_like' comment.id %}" method="post" style="display:inline-block;">{% csrf_token %}
-                                    <button type="submit" class="btn-icon">
-                                    <div style="margin:-0.25rem; margin-right:-0.4rem; margin-left:-0.4rem;">
-                                        <i class="bi bi-hand-thumbs-up" style="color:gray;"></i>
-                                    </div>
-                                    </button>
-                                </form>
-                                {% if likers_num > 0 %}
-                                    +{{likers_num}}
-                                {% endif %}
-                              {% endif %}
-                            {% endwith %}
-                        </div>
-                      </div>
-                
-                      <!-- Icon and Content -->
-                      <div class="">
-                        <div class="mb-1">
-
-                            <!-- Icon -->
-                            <div class="me-2 mt-1" style="float:left;">
-                            <div  style="display:inline-block; vertical-align:top;">
-                                <div class="icon-frame shadow-sm">
-                                <div class="icon">
-                                    {% if comment.commenter %}
-                                    <img src="{{ comment.commenter.icon.url }}">
-                                    {% else %}
-                                    <img src="{% static 'img/icon/icon_guest.png' %}">
-                                    {% endif %}
-                                </div>
-                                </div>
-                            </div>
-                            </div>
-
-                            <!-- Content -->
-                            <div class="px-2">
-                              <div style="font-size:16px;">
-                                {{comment.text | anchor_filter | linebreaksbr }}
-
-                                {% if comment.is_updated %}
-                                  {% comment %} <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small> {% endcomment %}
-                                  <small style="color:#808080">[編集済] </small>
-                                {% endif %}
-
-                                {% if user.is_authenticated and user == comment.commenter %}
-                                  <a href="{% url 'kntu:update_comment' comment.pk %}"
-                                    class="link-dark-u"><small>編集</small>
-                                  </a>
-                                {% endif %}
+                              <!-- Icon -->
+                              <div class="me-2 mt-1" style="float:left;">
+                              <div  style="display:inline-block; vertical-align:top;">
+                                  <div class="icon-frame shadow-sm">
+                                  <div class="icon">
+                                      {% if comment.commenter %}
+                                      <img src="{{ comment.commenter.icon.url }}">
+                                      {% else %}
+                                      <img src="{% static 'img/icon/icon_guest.png' %}">
+                                      {% endif %}
+                                  </div>
+                                  </div>
                               </div>
-                            </div>
+                              </div>
 
-                            <!-- Clear float -->
-                            <div style="clear:left">
-                            </div>
+                              <!-- Content -->
+                              <div class="px-2"  style="overflow-wrap:break-word; word-break:break-word;">
+                                <div style="font-size:16px;">
+                                  {{comment.text | anchor_filter | linebreaksbr }}
+
+                                  {% if comment.is_updated %}
+                                    {% comment %} <small style="color:#808080">[{{comment.updated_at|date:"y年m月j日 H:i"}} 編集済] </small> {% endcomment %}
+                                    <small style="color:#808080">[編集済] </small>
+                                  {% endif %}
+
+                                  {% if user.is_authenticated and user == comment.commenter %}
+                                    <a href="{% url 'kntu:update_comment' comment.pk %}"
+                                      class="link-dark-u"><small>編集</small>
+                                    </a>
+                                  {% endif %}
+                                </div>
+                              </div>
+
+                              <!-- Clear float -->
+                              <div style="clear:left">
+                              </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    {% endfor %}
+                  </div>
+              
+                  <!-- Form -->
+                  <div class="comment-form mt-3">
+                    <form  action="{% url 'kntu:create_comment' kyoku.pk %}" method="post" class="submit-only-one">{% csrf_token %}
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-9 form-group">
+                            <textarea
+                              placeholder="コメント"
+                              type="{{comment_form.text.field.widget.input_type}}"
+                              class="form-control"
+                              required
+                              name="{{comment_form.text.name}}"
+                              id="{{comment_form.text.id_for_label}}"
+                              maxlength="400"
+                              rows="1"></textarea>
+                          </div>
+                          <div class="col-3">
+                            <button type="submit" class="btn btn-primary" style="width:100%;height:auto">送信</button>
+                          </div>
                         </div>
                       </div>
+                    </form>
+                  </div>
 
-                    </div>
-                  {% endfor %}
                 </div>
-            
-                <!-- Form -->
-                <div class="comment-form mt-3">
-                  <form  action="{% url 'kntu:create_comment' kyoku.pk %}" method="post" class="submit-only-one">{% csrf_token %}
-                    <div class="container">
-                      <div class="row">
-                        <div class="col-9 form-group">
-                          <textarea
-                            placeholder="コメント"
-                            type="{{comment_form.text.field.widget.input_type}}"
-                            class="form-control"
-                            {% if comment_form.text.field.required %}required{% endif %}
-                            name="{{comment_form.text.name}}"
-                            id="{{comment_form.text.id_for_label}}"
-                            rows="1"></textarea>
-                        </div>
-                        <div class="col-3">
-                          <button type="submit" class="btn btn-primary" style="width:100%;height:auto">送信</button>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-
               </div>
             </div>
           </div>
@@ -177,7 +181,7 @@
     </div>
 
     <!-- 問題情報 -->
-    <div class="col-lg-4">
+    <div class="col-12">
       <div class="card mb-2 shadow-sm" style="background:#f5f5f5">
         <div class="card-body">
           
@@ -202,6 +206,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- 設定画面 -->
     {% if user == exam.author %}
@@ -290,25 +295,27 @@
   </script>
 
   <!-- anchor -->
-  <script>
-    $(function(){
-    $("#anchor").css({
-        opacity:"1.0",
-        position:"absolute",
-        //display:"none"
+ <script>
+$(function(){
+  $("#anchor").css({
+    opacity:"1.0",
+    position:"absolute",
+    //display:"none"
+  });
+  $("a.onMouse").mouseover(function(){
+    var popupID = $(this).attr("name");
+    var popup = $("#comment-" + popupID).clone().css('background-color','white');
+    
+    $("#anchor").html(popup);
+    $("#anchor").fadeIn("fast");
+  }).mouseout(function(){
+    $("#anchor").fadeOut("fast");
+  }).mousemove(function(e){
+  $("#anchor").css({
+      "top":e.pageY+10+"px",
+      "left":e.pageX+10+"px"
     });
-    $("a.onMouse").mouseover(function(){
-        var popupID = $(this).attr("name");
-        $("#anchor").html($("#comment-" + popupID).clone());
-        $("#anchor").fadeIn("fast");
-    }).mouseout(function(){
-        $("#anchor").fadeOut("fast");
-    }).mousemove(function(e){
-    $("#anchor").css({
-        "top":e.pageY+10+"px",
-        "left":e.pageX+10+"px"
-        });
-    });
-    });
-  </script>
+  });
+});
+</script>
 {% endblock %}
