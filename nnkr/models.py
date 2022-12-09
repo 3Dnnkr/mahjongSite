@@ -86,7 +86,7 @@ class Comment(models.Model):
     posted_at = models.DateTimeField('発言日',auto_now_add=True)
     updated_at = models.DateTimeField('更新日時',auto_now=True)
     is_updated = models.BooleanField('更新されたか',default=False)
-    text = models.TextField('本文')
+    text = models.TextField('本文',blank=True)
     likers = models.ManyToManyField(get_user_model(),through='CommentLike',blank=True,related_name='like_comments',verbose_name='いいねした人')
 
 class CommentLike(models.Model):

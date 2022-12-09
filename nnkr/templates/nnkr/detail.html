@@ -385,7 +385,7 @@
 
                   <!-- Content -->
                   <div class="px-2">
-                    <div style="font-size:16px; display:inline-block;">
+                    <div style="font-size:16px; display:inline-block; overflow-wrap:break-word; word-break:break-word;">
                       {{comment.text | anchor_filter | linebreaksbr }}
 
                       {% if comment.is_updated %}
@@ -463,9 +463,10 @@
                     placeholder="コメント"
                     type="{{comment_form.text.field.widget.input_type}}"
                     class="form-control"
-                    {% if comment_form.text.field.required %}required{% endif %}
+                    required
                     name="{{comment_form.text.name}}"
                     id="{{comment_form.text.id_for_label}}"
+                    maxlength="400"
                     rows="1"></textarea>
                 </div>
                 <div class="col-md-2">
