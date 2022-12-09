@@ -336,7 +336,7 @@ def create_bookmark(request, pk):
     user = request.user
     if user.is_anonymous:
         messages.warning(request, "ログインが必要です")
-        redirect(request.META['HTTP_REFERER'])
+        return redirect(request.META['HTTP_REFERER'])
     b_question = user.bookmarks.filter(id=question.id).first()
     if b_question==None:
         Bookmark.objects.create(user=user,question=question,bookmark_datetime=timezone.datetime.now())
