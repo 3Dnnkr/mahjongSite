@@ -297,26 +297,26 @@
 
   <!-- anchor -->
  <script>
-$(function(){
-  $("#anchor").css({
-    opacity:"1.0",
-    position:"absolute",
-    //display:"none"
-  });
-  $("a.onMouse").mouseover(function(){
-    var popupID = $(this).attr("name");
-    var popup = $("#comment-" + popupID).clone().css('background-color','white');
-    
-    $("#anchor").html(popup);
-    $("#anchor").fadeIn("fast");
-  }).mouseout(function(){
-    $("#anchor").fadeOut("fast");
-  }).mousemove(function(e){
-  $("#anchor").css({
-      "top":e.pageY+10+"px",
-      "left":e.pageX+10+"px"
+  $(function(){
+    $("#anchor").css({
+      opacity:"1.0",
+      position:"absolute",
+      //display:"none"
+    });
+    $("a.onMouse").mouseover(function(){
+      var popupID = $(this).attr("name");
+      var popup = $("#comment-" + popupID).clone().css('background-color','white');
+      
+      $("#anchor").html(popup);
+      $("#anchor").fadeIn("fast");
+    }).mouseout(function(){
+      $("#anchor").fadeOut("fast");
+    }).mousemove(function(e){
+    $("#anchor").css({
+        "top":e.pageY+10+"px",
+        "left":e.pageX+10+"px"
+      });
     });
   });
-});
-</script>
+  </script>
 {% endblock %}
